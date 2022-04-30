@@ -1,0 +1,5 @@
+trk/*.dat
+png/*.png
+dat/EField.dat
+dat/BField.dat
+dat/particles.dat

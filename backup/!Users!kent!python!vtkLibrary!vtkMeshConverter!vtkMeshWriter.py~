@@ -1,0 +1,103 @@
+import os, sys, subprocess
+import vtk
+import numpy                        as np
+import nkVTKRoutines.vtkDataManager as vdm
+import vtk.util.numpy_support       as vtknp
+
+
+# ========================================================= #
+# ===  vtkMeshWriter                                 === #
+# ========================================================= #
+
+class vtkMeshWriter():
+
+    # ------------------------------------------------- #
+    # --- constructor                               --- #
+    # ------------------------------------------------- #
+
+    def __init__( self,  nodes=None, elems=None, Data=None, tag=None,
+                  vtkFile="out.vtu", DataFormat="ascii" ):
+
+        # ------------------------------------------------- #
+        # --- vtk native variables                      --- #
+        # ------------------------------------------------- #
+        self.vtkFile     = vtkFile
+        self.DataFormat  = DataFormat
+    
+        # ------------------------------------------------- #
+        # --- inspect vtkFileType                       --- #
+        # ------------------------------------------------- #
+        extention = ( vtkFile.split( "." ) )[-1]
+        if   ( extention == "vtu" ):
+            self.vtkFileType = "UnstructuredGrid"
+            self.uGrid       = vtk.vtkUnstructuredGrid()
+        else:
+            print( "[vtkMeshWriter] Unknown extention :: {0}".format( extention ) )
+            print( "[vtkMeshWriter]         vtkFile   :: {0}".format( vtkFile   ) )
+            print( "[vtkMeshWriter] please specify extention from .vti, .vts, .vtu " )
+            sys.exit()
+
+        # ------------------------------------------------- #
+        # --- single Data convert                       --- #
+        # ------------------------------------------------- #
+        if ( ( Data is not None ) and ( tag is not None ) ):
+            if ( self.vtkFileType == "ImageData" ):
+                self.convert__imageData2vti( tag=tag )
+            if ( self.vtkFileType == "StructuredGrid" ):
+                self.convert__pointData2vts( tag=tag )
+            if ( self.vtkFileType == "UnstructuredGrid" ):
+                self.convert__pointData2vtu( tag=tag )
+            if ( self.vtkFileType == "PolyData" ):
+                self.generate__surfacePolyData( tag=tag )
+
+                
+
+
+    # ------------------------------------------------- #
+    # --- add Unstructured Data from pointData      --- #
+    # ------------------------------------------------- #
+    
+    def convert__pointData2vtu( self, tag=None ):
+
+        # ------------------------------------------------- #
+        # --- [1] Arguments Check                       --- #
+        # ------------------------------------------------- #
+        if ( tag is None ): sys.exit( "[convert__pointData2vtu -@vtkDataManager-] tag == ???" )
+        if ( self.Data[tag].fieldData is None ):
+            self.Data[tag].generate__fieldData()
+        if ( self.Data[tag].coordinateData is None ):
+            self.Data[tag].generate__coordinateData()
+        # ------------------------------------------------- #
+        # --- [2] Coordinates Points Settings           --- #
+        # ------------------------------------------------- #
+        coordinates_ = vtknp.numpy_to_vtk( self.Data[tag].coordinateData, deep=True )
+        points       = vtk.vtkPoints()
+        points.SetData( coordinates_ )
+        self.uGrid.SetPoints( points )
+        # ------------------------------------------------- #
+        # --- [3] store points & pointData              --- #
+        # ------------------------------------------------- #
+        for ik in range( self.Data[tag].nFields ):
+            pointData_   = vtknp.numpy_to_vtk( self.Data[tag].fieldData[:,ik], deep=True )
+            pointData_.SetName( self.Data[tag].fieldLabel[ik] )
+            self.uGrid.GetPointData().AddArray( pointData_ )
+        # ------------------------------------------------- #
+        # --- [4] Delaunay triangulation                --- #
+        # ------------------------------------------------- #
+        delaunay = vtk.vtkDelaunay3D()
+        delaunay.SetInputData( self.uGrid )
+        delaunay.Update()
+        # ------------------------------------------------- #
+        # --- [5] save in vtu File                      --- #
+        # ------------------------------------------------- #
+        writer = vtk.vtkXMLUnstructuredGridWriter()
+        if ( self.DataFormat.lower() == "ascii"  ):
+            writer.SetDataModeToAscii()
+        if ( self.DataFormat.lower() == "binary" ):
+            writer.SetDataModeToBinary()
+        writer.SetFileName( self.vtkFile )
+        writer.SetInputData( delaunay.GetOutput() )
+        writer.Write()
+        print( "[vtkDataConverter] output :: {0} ".format( self.vtkFile ) )
+
+

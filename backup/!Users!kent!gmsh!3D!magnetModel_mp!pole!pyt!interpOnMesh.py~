@@ -1,0 +1,60 @@
+import os, sys
+import numpy as np
+
+
+# ========================================================= #
+# ===  interpolate grided Data on nodes of a Mesh       === #
+# ========================================================= #
+def interpOnMesh( gridFile="dat/grid.dat", meshFile="dat/mesh.dat" ):
+    # ------------------------------------------------- #
+    # --- [1] Preparation                           --- #
+    # ------------------------------------------------- #
+
+    # ------------------------------------------------- #
+    # --- [2] grid & mesh Loading                   --- #
+    # ------------------------------------------------- #
+    #  -- [2-1] grid Data Loading                   --  #
+    import nkUtilities.load__pointFile as lpf
+    rData          = lpf.load__pointFile( inpFile=gridFile, returnType="structured" )
+    gridData_      = rData[0,:,:,:]
+    #  -- [2-2] Mesh Data Loading                   --  #
+    with open( meshFile, "r" ) as f:
+        meshData = np.loadtxt( f )
+    meshData_      = np.zeros( (meshData.shape[0],3) )
+    meshData_[:,0] = meshData[:,2]
+    meshData_[:,1] = meshData[:,3]
+    
+    # ------------------------------------------------- #
+    # --- [3] linear Interpolation                  --- #
+    # ------------------------------------------------- #
+    import interpRoutines.LinearInterp2D as li2
+    ret = li2.LinearInterp2D( gridData=gridData_, pointData=meshData_, \
+                              gridDataType="structured" )
+
+    # ------------------------------------------------- #
+    # --- [4] grid Data contouring                  --- #
+    # ------------------------------------------------- #
+    import nkUtilities.cMapTri as cmt
+    xAxis, yAxis = np.ravel( rData[:,:,:,0] ), np.ravel( rData[:,:,:,1] )
+    zAxis        = np.ravel( rData[:,:,:,2] )
+    cmt.cMapTri( xAxis=ret[:,0], yAxis=ret[:,1], cMap=ret[:,2], pngFile="png/out_onMesh.png" )
+    cmt.cMapTri( xAxis=xAxis   , yAxis=yAxis   , cMap=zAxis   , pngFile="png/out_onGrid.png" )
+    return( ret )
+    
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    interpOnMesh()
+
+
+    # with open( gridFile, "r" ) as f:
+    #     line         = f.readline()
+    #     gridDataSize = ( ( ( f.readline() ).split( "#" ) )[1] ).split()
+    #     gridDataSize = ( int( gridDataSize[1] ), int( gridDataSize[2] ) )
+    #     gridData     = np.loadtxt( f )
+    # gridData_      = np.zeros( (gridDataSize[0]*gridDataSize[1],3) )
+    # gridData_[:,0] = gridData[:,0]
+    # gridData_[:,1] = gridData[:,1]
+    # gridData_[:,2] = gridData[:,3]

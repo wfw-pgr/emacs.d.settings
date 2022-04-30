@@ -1,0 +1,78 @@
+import numpy as np
+import vtk
+import vtk.util.numpy_support as npv
+
+
+# ========================================================= #
+# ===  numpy2ugrid.py                                   === #
+# ========================================================= #
+
+class numpy2ugrid:
+
+    def __init__( self, nodes=None, elems=None ):
+
+        if vtk.VTK_ID_TYPE == 12:
+            self.ID_TYPE = np.int64
+        else:
+            self.ID_TYPE = np.int32
+
+        self.nodes = nodes
+        self.elems = elems
+
+        self.nElem = self.elems.shape[0]
+        self.nVert = self.elems.shape[1]
+
+        self.offset = np.cumsum( np.insert( np.sum( np.ones_like( elems ), axis=1 ), 0, 0.0 ) )
+        self.offset = npv.numpy_to_vtkIdTypeArray( ( self.offset[:-1] ).astype( np.int64 ) )
+
+        self.vtkPoints = vtk.vtkPoints()
+        self.vtkPoints.SetData( npv.numpy_to_vtk( self.nodes ) ) 
+
+        if ( self.nVert == 4 ):
+            self.cellType = np.full( (self.nElem,), vtk.VTK_QUAD       )
+        if ( self.nVert == 8 ):
+            self.cellType = np.full( (self.nElem,), vtk.VTK_HEXAHEDRON )
+        self.cellType = self.cellType.astype( np.uint8 )
+        self.cellType = npv.numpy_to_vtk( self.cellType )
+        
+
+        self.CellArrays = vtk.vtkCellArray()
+        self.CellArrays.SetCells( self.nElem, \
+                                  npv.numpy_to_vtkIdTypeArray( np.ravel( self.elems ) ) )
+
+        self.ugrid = vtk.vtkUnstructuredGrid()
+        self.ugrid.SetPoints( self.vtkPoints )
+        # self.ugrid.SetCells( self.cellType, self.offset, self.CellArrays )
+
+        print( self.offset )
+        print( self.vtkPoints )
+        print( self.CellArrays )
+        print( self.cellType )
+        print( self.ugrid )
+
+
+        writer = vtk.vtkXMLUnstructuredGridWriter()
+        writer.SetDataModeToBinary()
+        writer.SetFileName('test.vtu')
+        writer.SetInputData( self.ugrid )
+        writer.Write()
+
+
+
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+
+    import nkUtilities.equiSpaceGrid as esg
+    x1MinMaxNum = [ 0.0, 1.0, 2 ]
+    x2MinMaxNum = [ 0.0, 1.0, 2 ]
+    x3MinMaxNum = [ 0.0, 1.0, 3 ]
+    nodes       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                     x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+    
+    elems       = np.array( [ [ 0, 1, 2, 3, 4, 5, 6, 7, ], \
+                              [ 4, 5, 6, 7, 8, 9, 10, 11 ]  ] )
+    numpy2ugrid( nodes=nodes, elems=elems )

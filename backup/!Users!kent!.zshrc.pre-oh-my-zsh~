@@ -1,0 +1,127 @@
+# ----------------------------------------------- #
+# --- コマンド alias                           --- #
+# ----------------------------------------------- #
+# -- open コマンド -- #
+alias firefox="open -a Firefox"
+alias evince='open'
+alias eom='open'
+# -- grep コマンド -- #
+alias grep="grep --color=auto"
+
+# ----------------------------------------------- #
+# --- 補完の設定                               --- #
+# ----------------------------------------------- #
+# -- 補完について -- #
+if [ -e /usr/local/share/zsh-completions ]; then
+    fpath=(/usr/local/share/zsh-completions $fpath)
+fi
+autoload -Uz compinit
+compinit -u
+# -- 大文字小文字区別なし補完 -- #
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}'
+
+# -- Ctrl+Dでログアウトしてしまうことを防ぐ -- #
+setopt IGNOREEOF
+
+# -- 文字コード指定 -- #
+export LC_ALL=ja_JP.UTF-8
+
+# ----------------------------------------------- #
+# --- 外観の設定                               --- #
+# ----------------------------------------------- #
+# -- ls の色 -- #
+alias ls='gls --color=auto'
+export LSCOLORS=gxfxcxdxbxegedabagacad
+
+# -- プロンプトの色 -- #
+# 色を使用
+autoload -Uz colors
+colors
+PS1="%{$fg[cyan]%}[${USER}@${HOST%%.*} %1~]%(!.#.$)${reset_color} "
+PROMPT_USER="%{$fg[cyan]%}${USER}${reset_color}"
+PROMPT_att="%{$fg[white]%}@${reset_color}"
+PROMPT_HOST="%{$fg[cyan]%}${HOST%%.*} ${reset_color}"
+PROMPT_DIR="%{$fg[magenta]%}%(5~,%-1~/.../%2~,%~)${reset_color}"
+PROMPT_mark="%{$fg[white]%} $ ${reset_color}"
+PROMPT=${PROMPT_USER}${PROMPT_att}${PROMPT_HOST}${PROMPT_DIR}${PROMPT_mark}
+
+# -- dircolors 設定 -- #
+# if [ -f ~/.dircolors ]; then
+#     if type dircolors > /dev/null 2>&1; then
+#         eval $(dircolors ~/.dircolors)
+#     elif type gdircolors > /dev/null 2>&1; then
+#         eval $(gdircolors ~/.dircolors)
+#     fi
+# fi
+
+# ----------------------------------------------- #
+# --- python 設定                             --- #
+# ----------------------------------------------- #
+# -- デフォルト = python3 -- #
+alias python='python3'
+# -- 環境変数 -- #
+# export PYTHONPATH=$HOME/.python/lib
+# export PYTHONSTARTUP=$HOME/.python/pythonstartup.py
+# -- デフォルトセッティングス -- #
+# export PYCONFIGFILE=$HOME/.python/lib/myStyle/default.conf
+# export PYCONFIGFILE=$HOME/.python/lib/nkUtilities/default.conf
+
+
+# ----------------------------------------------- #
+# --- Fortran 設定                            --- #
+# ----------------------------------------------- #
+# --- OpenMP の設定 --- #
+export OMP_NUM_THREADS=2
+
+
+
+# idl environment parameter setup
+# export IDL_STARTUP="~/.idl/init.pro"
+# export IDL_CONFIG="default.conf"
+# # launch IDL console whenever demo-mode
+# alias idl='idl -quiet -demo '
+# alias idlconnect="python3 ~/.idl/idlconnect.py"
+# alias idlkillusr="python3 ~/.idl/idlkillusr.py"
+
+# bash-completion 補完のやつ
+# if [ -f $(brew --prefix)/etc/bash_completion ]; then
+#   . $(brew --prefix)/etc/bash_completion
+# fi
+
+# ifortでのqopenmp時のエラー( libiomp5.dylib )が見つからない，パスの指定．
+# export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/opt/intel/lib
+
+# --- MPICH3.2の設定 --- #
+# export PATH=$PATH:/opt/mpich2/bin
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/mpich2/lib
+# export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/opt/mpich2/lib
+# export PATH=$PATH:/usr/local/lib
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+# --- OpenMPI3.0.0の設定 --- #
+# export PATH=$PATH:/opt/openmpi/bin
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openmpi/lib
+# export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/opt/openmpi/lib
+
+
+# --- locate の更新用命令をlinuxと同様にしておく --- #
+# alias updatedb="sudo /usr/libexec/locate.updatedb"
+
+# --- AMRVAC 用の設定 --- #
+# export AMRVAC_DIR=$HOME/amrvac
+# export PATH=$PATH:$HOME/amrvac:$HOME/amrvac/tools
+
+# --- vtk ( visual toolkit ) for python 用のパス --- #
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/settings/vtk/VTK-8.0.1/build/bin
+# export DYLD_FALLBACK_LIBRARY_PATH=$HOME/settings/vtk/VTK-8.0.1/build/bin
+# export PYTHONPATH=$PYTHONPATH:$HOME/settings/vtk/VTK-8.0.1/build/bin/
+# export PYTHONPATH=$PYTHONPATH:$HOME/settings/vtk/VTK-8.0.1/Wrapping/Python/
+# export PYTHONPATH=$PYTHONPATH:$HOME/settings/vtk/VTK-8.0.1/Wrapping/PythonCore/
+
+# --- paraview 起動 --- #
+# alias paraview='/Applications/ParaView-5.4.1.app/Contents/MacOS/paraview'
+
+# --- elmer 設定 --- #
+# export ELMER_HOME=$HOME/elmer/install/
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ELMER_HOME/lib
+# export PATH=$PATH:$ELMER_HOME/bin

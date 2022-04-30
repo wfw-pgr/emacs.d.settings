@@ -1,0 +1,104 @@
+import numpy as np
+
+# ========================================================= #
+# ===  elmer2cadas                                      === #
+# ========================================================= #
+class elmer2cadas:
+
+    # ------------------------------------------------- #
+    # --- [1] elmer 2 cadas initialize              --- #
+    # ------------------------------------------------- #
+
+    def __init__( self, modelName, meshType="Tetra" ):
+        # -- arguments -- #
+        if ( modelName is None    ): modelName = "model"
+        if ( modelName[-1] == "/" ): modelName = modelName[:-1]
+        # -- settings  -- #
+        self.meshType  = meshType
+        self.modelName = modelName
+        self.dirName   = modelName + "/"
+        self.cadasFile = self.dirName + modelName + ".u4pre"
+        self.nodeFile  = self.dirName + "mesh.nodes"
+        self.elemFile  = self.dirName + "mesh.elements"
+        # -- call routines -- #
+        self.load__elmerNodes()
+        self.load__elmerElems()
+        self.save__cadasFile()
+        
+    
+    # ------------------------------------------------- #
+    # --- [2] load elmer node File                  --- #
+    # ------------------------------------------------- #
+
+    def load__elmerNodes( self ):
+
+        # -- load node info. -- #
+        with open( self.nodeFile, "r" ) as f:
+            Data = np.loadtxt( f )
+        self.nNodes      = Data.shape[0]
+        self.nodes       = np.zeros( ( self.nNodes,4 ) )
+        # -- store data      -- #
+        self.nodes[:,0 ] = Data[:,0 ]
+        self.nodes[:,1:] = Data[:,2:]
+
+        print( "[load__elmerNodes] Num of Nodes :: {0}".format( self.nNodes ) )
+        return()
+
+    # ------------------------------------------------- #
+    # --- [3] load elmer element File               --- #
+    # ------------------------------------------------- #
+
+    def load__elmerElems( self ):
+
+        # -- for tetra case  -- #
+        if ( self.meshType == "Tetra" ):
+            
+            # -- load elements  -- #
+            with open( self.elemFile, "r" ) as f:
+                Data = np.loadtxt( f )
+            elemData      = np.array( Data, dtype=np.int )
+            self.nElems   = elemData.shape[0]
+            self.elems    = np.zeros( (2*self.nElems,9), dtype=np.int )
+            
+            # -- make self.elems  -- #
+            self.ElementType   = 3040
+            for ik in range( self.nElems ):
+                MaterialNum = elemData[ik,1]
+                ElementType = elemData[ik,2]
+                line1 = [ ik, ElementType, MaterialNum, 1, MaterialNum, 1, 3, 1, MaterialNum ]
+                self.elems[2*ik  ,:] = np.array( line1, dtype=np.int )
+                for ie in range( 4 ):
+                    self.elems[2*ik+1,ie] = elemData[ik,3+ie]
+            
+            print( "[load__elmerElems] Num of Elementss :: {0}".format( self.nElems ) )
+            
+        if ( self.meshType == "multi" ):
+            pass
+
+    # ------------------------------------------------- #
+    # --- [4] save cadas File                       --- #
+    # ------------------------------------------------- #
+
+    def save__cadasFile( self ):
+
+        fmt1 = "%8d%13.6e%13.6e%13.6e"
+        fmt2 = "%8d"*9
+        with open( self.cadasFile, "w" ) as f:
+            # -- [4-1] header of cadas file  --  !
+            f.write( "ANSYS DATA"+" "*66+"EXPA" + "\n" )
+            f.write( "{0:8d}{1:8d}{2:8d}".format( self.nNodes, self.nElems, 27 ) + "\n" )
+            
+            # -- [4-2] node data             --  !
+            np.savetxt( f, self.nodes, fmt=fmt1 )
+
+        if ( self.meshType == "Tetra" ):
+            # -- [4-3] element data          --  !
+            with open( self.cadasFile, "a" ) as f:
+                np.savetxt( f, self.elems, fmt=fmt2 )
+                
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    elmer2cadas( modelName="model" )

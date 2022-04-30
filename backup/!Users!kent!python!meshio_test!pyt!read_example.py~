@@ -1,0 +1,54 @@
+import os, sys, subprocess
+import numpy as np
+import meshio
+
+mshFile   = "msh/model.msh"
+rmesh     = meshio.read( mshFile )
+cells     = rmesh.cells_dict
+celldata  = rmesh.cell_data_dict
+nodes     = rmesh.points
+cdtypes   = list( celldata.keys() )
+celltypes = list( cells.keys() )
+
+physical    = celldata["gmsh:physical"]
+geometrical = celldata["gmsh:geometrical"]
+
+
+print()
+print( " cell information :: " )
+print()
+for ik,ctype in enumerate( celltypes ):
+    print( " celltype :: {0:10}, shape = {1} ".format( ctype, cells[ctype].shape ) )
+
+print()
+print( " cell_data information :: " )
+print()
+for ik,cdtype in enumerate( cdtypes ):
+    print( " cell_data type :: {0:10} ".format( cdtype ) )
+
+print()
+print( " node information :: " )
+print()
+print( " nodes's shape == {0}".format( nodes.shape ) )
+
+print()
+print( " cell " )
+print()
+for ik,ctype in enumerate( celltypes ):
+    print()
+    print( " celltype :: {0}".format( ctype ) )
+    print( cells[ctype] )
+    print()
+
+
+print()
+print( " physical     Number :: for tetra " )
+print()
+print( physical   ["tetra"] )
+print()
+
+print()
+print( " geometrical Number  :: for tetra " )
+print()
+print( geometrical["tetra"] )
+print()

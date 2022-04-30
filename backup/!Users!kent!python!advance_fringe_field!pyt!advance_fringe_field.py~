@@ -1,0 +1,79 @@
+import numpy as np
+
+
+# ========================================================= #
+# ===  advance_fringe_field                             === #
+# ========================================================= #
+
+def advance_fringe_field():
+
+    # ------------------------------------------------- #
+    # --- [0] parameter settings                    --- #
+    # ------------------------------------------------- #
+
+    import nkUtilities.load__constants as lcn
+    inpFile = "dat/parameter.conf"
+    params  = lcn.load__constants( inpFile=inpFile )
+    
+    # ------------------------------------------------- #
+    # --- [1] grid making                           --- #
+    # ------------------------------------------------- #
+
+    import nkUtilities.equiSpaceGrid as esg
+    x1MinMaxNum = [ -0.8, +0.8, 101 ]
+    x2MinMaxNum = [ -0.8, +0.8, 101 ]
+    x3MinMaxNum = [  0.0,  0.0,   1 ]
+    ret         = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                     x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+    radii       = np.sqrt( ret[:,0]**2 + ret[:,1]**2 )
+    xg          = np.copy( ret[:,0] )
+    yg          = np.copy( ret[:,1] )
+    bz          = np.copy( ret[:,2] ) * 0.0
+    
+    # ------------------------------------------------- #
+    # --- [2] ideal aoki main field                 --- #
+    # ------------------------------------------------- #
+    index       = np.where( radii <= params["r_main"] )
+    bz[index]   = 3.950
+    
+    # ------------------------------------------------- #
+    # --- [3] buffer field                          --- #
+    # ------------------------------------------------- #
+    index       = np.where( ( radii > params["r_main"] ) & ( radii < params["r_fringe"] ) )
+    bz[index]   = 3.50
+
+    # ------------------------------------------------- #
+    # --- [4] main fringe field                     --- #
+    # ------------------------------------------------- #
+    index       = np.where( radii >= params["r_fringe"] )
+    radii_h     = radii[index]
+    bz[index]   = mainFringeField( radii_h, params=params ) 
+    bz[index]   = 3.00
+
+    # ------------------------------------------------- #
+    # --- [5] output field                          --- #
+    # ------------------------------------------------- #
+    ret[:,2]    = bz[:]
+    import nkUtilities.cMapTri as cmt
+    cmt.cMapTri( xAxis=ret[:,0], yAxis=ret[:,1], cMap=ret[:,2] )
+    
+    return()
+
+
+
+# ========================================================= #
+# ===  mainFringeField                                  === #
+# ========================================================= #
+
+def mainFringeField( radii, params=None ):
+    ret = ( radii - params["r_fringe"] ) * params["fringe_grad"] + params["fringe_fixed"]
+    return( ret )
+
+
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    advance_fringe_field()

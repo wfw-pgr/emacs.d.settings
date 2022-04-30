@@ -1,0 +1,45 @@
+svd.iterMax               integer                   50
+svd.nDiv_B                integer                   7
+svd.threshold             float                     2.e-4
+svd.resid_convergence     float                     2e-05
+svd.wLaplace              float                     5e-07
+svd.wPicard_init          float                     1.2
+svd.wPicard_last          float                     0.3
+svd.iPicard_iter          integer                   40
+svd.MzConstant            float                     -2.07
+svd.solverType            string                    LSM
+svd.LSM_Engine            string                    CGLS
+svd.modelType             string                    full
+svd.rLim1                 float                     0.0
+svd.rLim2                 float                     1.05
+svd.pLim1                 float                     -180.0
+svd.pLim2                 float                     180.0
+svd.zLim1                 float                     0.03
+svd.zLim2                 float                     0.3
+svd.LI                    integer                   201
+svd.LJ                    integer                   201
+svd.x1Min                 float                     -1.1
+svd.x1Max                 float                     1.1
+svd.x2Min                 float                     -1.1
+svd.x2Max                 float                     1.1
+svd.except_sw             logical                   False
+svd.except_radii1         float                     0.64
+svd.except_radii2         float                     0.78
+svd.except_theta1         float                     260.0
+svd.except_theta2         float                     280.0
+svd.restart_fromSave      logical                   False
+svd.restart_filename      string                    dat/mshape_import.dat
+
+
+geometry.r_pole		  float			    1.05
+geometry.z_gapMin	  float			    0.030
+geometry.z_gapMax	  float			    0.300
+general.side		  string		    +-
+
+svd.weight.mode		  string		    constant
+svd.weight.main		  float			    1.0
+svd.weight.fringe	  float			    0.1
+svd.weight.shape	  float			    0.1
+# weight distribution ver. :: coef == [xc,yc,c1,c2,c3] #
+svd.weight.dist_coef_F	  array			    [0.0,0.0,0.1,0.1,0.1]
+svd.weight.dist_coef_S	  array			    [0.0,0.0,0.1,0.1,0.1]

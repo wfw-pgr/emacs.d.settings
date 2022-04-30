@@ -1,0 +1,6 @@
+import sys
+
+sys.path.append( "pyt/" )
+import generate__regenSample as grs
+
+grs.generate__regenSample()

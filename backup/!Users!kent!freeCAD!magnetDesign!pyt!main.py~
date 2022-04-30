@@ -1,0 +1,7 @@
+import FreeCAD
+import Parts
+import Sketcher
+
+# ========================================================= #
+# ===  Draw 2D backgournd magnet Shape                  === #
+# ========================================================= #

@@ -1,0 +1,78 @@
+import numpy as np
+import os, sys
+import gmsh
+
+gmshlib = os.environ["gmshLibraryPath"]
+sys.path.append( gmshlib )
+import generate__poleParts     as pol
+import generate__bufferParts   as buf
+import generate__coilSlotParts as slt
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.model.add( "model" )
+
+# ------------------------------------------------- #
+# --- [2] initialize settings                   --- #
+# ------------------------------------------------- #
+ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+pts    , line    , surf    , volu     = {}, {}, {}, {}
+ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+lc                                    = 0.1
+x_, y_, z_, lc_, tag_                 = 0, 1, 2, 3, 4
+
+
+# ------------------------------------------------- #
+# --- [3] Modeling                              --- #
+# ------------------------------------------------- #
+
+lc           = 0.1
+nodeFile     = "dat/mesh_mod.nodes"
+elemFile     = "dat/mesh.elements"
+tolerance    = 1.e-5
+radius1      = 1.0
+radius2      = 2.0
+height_tier1 = 0.0
+height_tier3 = 0.5
+height_tier4 = 0.8
+rSlot1       = 1.0
+rSlot2       = 1.2
+rSlot3       = 1.4
+zSlot1       = height_tier1
+zSlot2       = 0.3
+zSlot3       = 0.6
+zSlot4       = height_tier4
+
+# ret = pol.generate__poleParts( lc=lc, tolerance=tolerance, radius=radius1, \
+#                                height_tier1=height_tier1, height_tier3=height_tier3, \
+#                                height_tier4=height_tier4, \
+#                                nodeFile=nodeFile, elemFile=elemFile )
+
+# ret = buf.generate__bufferParts( lc=lc, tolerance=tolerance, radius1=radius1, radius2=radius2, \
+#                                  height1=height_tier1, height2=height_tier4, nodeFile=nodeFile )
+
+ret = slt.generate__coilSlotParts( lc=lc, radius1=rSlot1, radius2=rSlot2, radius3=rSlot3, \
+                                   height_tier1=zSlot1, height_tier2=zSlot2, \
+                                   height_tier3=zSlot3, height_tier4=zSlot4 )
+
+# ------------------------------------------------- #
+# --- [4] Physical Grouping                     --- #
+# ------------------------------------------------- #
+# gmsh.model.occ.synchronize()
+# surfPhys["xxxxx"] = gmsh.model.addPhysicalGroup( surfDim, [ surf["xxx"] ], tag=201 )
+# surfPhys["other"] = gmsh.model.addPhysicalGroup( surfDim, [ 2 ]          , tag=202 )
+# voluPhys["volu1"] = gmsh.model.addPhysicalGroup( voluDim, [ volu["vol"] ], tag=301 )
+
+
+# ------------------------------------------------- #
+# --- [2] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(3)
+gmsh.write( "model.geo_unrolled" )
+gmsh.write( "model.msh" )
+gmsh.finalize()
+

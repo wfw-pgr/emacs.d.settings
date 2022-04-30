@@ -1,0 +1,81 @@
+import numpy as np
+
+# ========================================================= #
+# ===  heal__negativeVolumeElement.py                   === #
+# ========================================================= #
+
+def heal__negativeVolumeElement( mode="reverse", inpFile=None, outFile=None, nodes_format=None ):
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( inpFile      is None ): sys.exit( "[heal__negativeVolumeElement.py] inpFile == ???" )
+    if ( outFile      is None ): sys.exit( "[heal__negativeVolumeElement.py] outFile == ???" )
+    if ( nodes_format is None ): nodes_format == "%15.8e"
+
+    # ------------------------------------------------- #
+    # --- [2] load mesh File                        --- #
+    # ------------------------------------------------- #
+    import nkMeshRoutines.load__meshio as lms
+    # cells, points = lms.load__meshio( mshFile=inpFile, elementType="tetra", \
+    #                                   returnType="cell-point" )
+    import nkMeshRoutines.load__nastranFile as inf
+    points, cells,  = inf.load__nastranFile( inpFile=inpFile )
+    cells    = np.copy( cells[:,2:] )
+
+    # ------------------------------------------------- #
+    # --- [3] calculate volume of elements          --- #
+    # ------------------------------------------------- #
+    import nkMeshRoutines.calculate__tetraVolume as vol
+    volumes    = vol.calculate__tetraVolume( elems=cells, nodes=points )
+    print( volumes )
+    index      = np.where( volumes < 0.0 )
+    nNegative  = len( index[0] )
+    print( "[heal__negativVolumeElement.py] nNegative :: {0} ".format( nNegative ) )
+
+    if ( nNegative == 0 ):
+        print( "[heal__negativVolumeElement.py] No negative volume... [END] " )
+        return()
+    
+    # ------------------------------------------------- #
+    # --- [4] negative volume healing               --- #
+    # ------------------------------------------------- #
+    illegalies = cells[index]
+    volumes    = volumes[index]
+    print( volumes )
+    if   ( mode.lower() == "modify" ):
+        modify__element()
+    elif ( mode.lower() == "reverse" ):
+        reverse__element()
+    
+    # ------------------------------------------------- #
+    # --- [5] save nastran bdf file                 --- #
+    # ------------------------------------------------- #
+    import nkMeshRoutines.save__nastranFile as snf
+    snf.save__nastranFile( points=points, cells=cells, outFile=outFile, \
+                           nodes_format=nodes_format )
+    return()
+
+
+
+# ========================================================= #
+# ===  modify__element                                  === #
+# ========================================================= #
+def modify__element():
+    return()
+
+
+# ========================================================= #
+# ===  reverse__element                                 === #
+# ========================================================= #
+def reverse__element():
+    return()
+
+
+# ========================================================= #
+# ===   Execution of Pragram                            === #
+# ========================================================= #
+if ( __name__=="__main__" ):
+    inpFile = "msh/model.bdf"
+    outFile = "msh/model_mod.bdf"
+    heal__negativeVolumeElement( mode="reverse", inpFile=inpFile, outFile=outFile )

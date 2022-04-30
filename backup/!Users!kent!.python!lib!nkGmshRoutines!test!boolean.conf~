@@ -1,0 +1,3 @@
+# <names>  key  boolean_type   targetKeys      toolKeys
+cut01	   	cut	       [ cube01 ]      [ cube02, cylin01 ]
+cut02		cut	       [ cube02 ]      [ cylin01 ]

@@ -1,0 +1,10 @@
+module matrixMulMod
+contains
+
+  subroutine MatrixMultiply( Amat, Bmat, Cmat, LI, LJ, LK )
+    implicit none
+
+
+    return
+  end subroutine MatrixMultiply
+end module matrixMulMod

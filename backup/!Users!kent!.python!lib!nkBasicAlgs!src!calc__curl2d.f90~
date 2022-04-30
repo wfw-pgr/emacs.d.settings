@@ -1,0 +1,66 @@
+subroutine curlv( u, w, x1, x2, LI, LJ, coordinate )
+  implicit none
+  character(3)    , intent(in)  :: coordinate ! 'xyz' or 'rzt' or 'rtz !'
+  double precision, intent(in)  :: u(LI,LJ,3)
+  double precision, intent(out) :: w(LI,LJ,3)
+  double precision, intent(in)  :: x1(LI), x2(LJ)
+  integer         , intent(in)  :: LI, LJ
+  integer                       :: i, j, r0flag
+  integer                       :: ux_, uy_, uz_, ur_, ut_
+  integer                       :: wx_, wy_, wz_, wr_, wt_
+  double precision              :: dx1, dx2, ddx1Inv, ddx2Inv, rddrInv(LI)
+
+  ! --- [1] Coordinate Settings --- !
+  if ( coordinate.eq.'xyz' ) then
+     ux_=1; uy_=2; uz_=3; wx_=1; wy_=2; wz_=3
+  endif
+  if ( coordinate.eq.'rtz' ) then
+     ur_=1; ut_=2; uz_=3; wr_=1; wt_=2; wz_=3
+  endif
+  if ( coordinate.eq.'rzt' ) then
+     ur_=1; ut_=3; uz_=2; wr_=1; wt_=3; wz_=2
+  endif
+  dx1     = x1(2) - x1(1)
+  dx2     = x2(2) - x2(1)
+  ddx1Inv =  1.d0 / ( 2.d0 * dx1 )
+  ddx2Inv =  1.d0 / ( 2.d0 * dx2 )
+
+  ! --- [2]  curl calculation  --- !
+  !  -- [2-1] curl in Cartesian -- !
+  if ( coordinate.eq.'xyz' ) then
+     do j=2, LJ-1
+        do i=2, LI-1
+           w(i,j,wx_) = + ( u(i,j+1,uz_) - u(i,j-1,uz_) ) * ddx2Inv
+           w(i,j,wy_) = - ( u(i+1,j,uz_) - u(i-1,j,uz_) ) * ddx1Inv
+           w(i,j,wz_) = + ( u(i+1,j,uy_) - u(i-1,j,uy_) ) * ddx1Inv &
+                &       - ( u(i,j+1,ux_) - u(i,j-1,ux_) ) * ddx2Inv
+        enddo
+     enddo
+  end if
+  
+  !  -- [2-2] curl in Cylindrical -- !
+  if ( ( coordinate.eq.'rtz' ).or.( coordinate.eq.'rzt' ) ) then
+     !  - [2-2-1] rddrInv   -   !
+     r0flag = 0
+     do i=2, LI-1
+        if ( x1(i).eq.0.d0  ) then
+           r0flag     = 1
+           rddrInv(i) = 0.d0
+        else
+           rddrInv(i) = 1.d0 / ( x1(i)*dx1*2.d0 )
+        endif
+     enddo
+     if ( r0flag.eq.1 ) write(6,*) '[CAUTION -@fLIB__curlv-] r=0 is Included in x1 ( NotError )'
+     !  - [2-2-1] curl ( Main )  -   !
+     do j=2, LJ-1
+        do i=2, LI-1
+           w(i,j,wr_) = - (         u(i,j+1,ut_) -         u(i,j-1,ut_) ) * ddx2Inv
+           w(i,j,wt_) = + (         u(i,j+1,ur_) -         u(i,j-1,ur_) ) * ddx2Inv &
+                &       - (         u(i+1,j,uz_) -         u(i-1,j,uz_) ) * ddx1Inv
+           w(i,j,wz_) = + ( x1(i+1)*u(i+1,j,ut_) - x1(i-1)*u(i-1,j,ut_) ) * rddrInv(i)
+        enddo
+     enddo
+  end if
+  
+  return
+end subroutine curlv

@@ -1,0 +1,6 @@
+lc		double		0.02
+r1		double		0.6
+r2		double		0.7
+th1		double		280.0
+th2		double		320.0
+zoffset		double		0.0

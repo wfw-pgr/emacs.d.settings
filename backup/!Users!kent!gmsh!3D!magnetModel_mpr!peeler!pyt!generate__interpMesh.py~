@@ -1,0 +1,74 @@
+import os, sys, subprocess
+import numpy         as np
+import gmsh_api.gmsh as gmsh
+
+import nkGmshRoutines.generate__fanShape as fan
+
+# ========================================================= #
+# ===  generate__interpMesh                             === #
+# ========================================================= #
+
+def generate__interpMesh( lc=0.02, r1=0.6, r2=0.7, th1=280.0, th2=320.0, zoffset=0.0 ):
+
+    # ------------------------------------------------- #
+    # --- [1] initialization of the gmsh            --- #
+    # ------------------------------------------------- #
+    gmsh.initialize()
+    gmsh.option.setNumber( "General.Terminal", 1 )
+    gmsh.model.add( "model" )
+    
+    # ------------------------------------------------- #
+    # --- [2] initialize settings                   --- #
+    # ------------------------------------------------- #
+    ptsDim , lineDim , surfDim , voluDim  = 0,  1,  2,  3
+    pts    , line    , surf    , volu     = {}, {}, {}, {}
+    ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+    x_, y_, z_, lc_, tag_                 = 0, 1, 2, 3, 4
+    
+    # ------------------------------------------------- #
+    # --- [3] Modeling                              --- #
+    # ------------------------------------------------- #
+    fanObject   = fan.generate__fanShape( lc=lc, r1=r1, r2=r2, th1=th1, th2=th2, \
+                                          zoffset=zoffset, defineSurf=True )
+    surf["fan"] = fanObject["surf"]["fan"]
+    
+    # ------------------------------------------------- #
+    # --- [4] Physical Grouping                     --- #
+    # ------------------------------------------------- #
+    gmsh.model.occ.synchronize()
+    surfPhys["fan"]   = gmsh.model.addPhysicalGroup( surfDim, [ surf["fan"] ], tag=201 )
+    
+    # ------------------------------------------------- #
+    # --- [5] post process                          --- #
+    # ------------------------------------------------- #
+    gmsh.model.occ.synchronize()
+    gmsh.model.mesh.generate(2)
+    gmsh.write( "msh/model.geo_unrolled" )
+    gmsh.write( "msh/model.msh" )
+    gmsh.finalize()
+    
+    # ------------------------------------------------- #
+    # --- [6] ElmerGrid execution                   --- #
+    # ------------------------------------------------- #
+    cmd = "ElmerGrid 14 2 msh/model.msh"
+    subprocess.call( cmd.split() )
+
+    # ------------------------------------------------- #
+    # --- [7] copy nodes & elements                 --- #
+    # ------------------------------------------------- #
+    nodeFile = "msh/model/mesh.nodes"
+    elemFile = "msh/model/mesh.elements"
+    
+    cmd      = "cp msh/model/mesh.elements dat/regen.elements"
+    print( cmd )
+    subprocess.call( cmd.split() )
+    
+    cmd      = "cp msh/model/mesh.nodes dat/regen.nodes"
+    print( cmd )
+    subprocess.call( cmd.split() )
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    generate__interpMesh()

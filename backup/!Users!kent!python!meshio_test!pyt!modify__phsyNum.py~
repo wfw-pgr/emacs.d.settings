@@ -1,0 +1,56 @@
+import os, sys
+import meshio
+import numpy as np
+
+
+# ========================================================= #
+# ===  modify__physNum.py                               === #
+# ========================================================= #
+
+def modify__physNum( mshFile=None, outFile=None, physNum_from=None, physNum_into=None, \
+                     const=None, cnsFile="dat/parameter.conf" ):
+
+    x_, y_, z_ = 0, 1, 2
+    
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( mshFile      is None ): sys.exit( "[modify__physNum.py] mshFile      == ???" )
+    if ( outFile      is None ): sys.exit( "[modify__physNum.py] outFile      == ???" )
+    if ( physNum_into is None ): sys.exit( "[modify__physNum.py] physNum_into == ???" )
+    
+    # ------------------------------------------------- #
+    # --- [2] Load constants / mesh File            --- #
+    # ------------------------------------------------- #
+    # if ( const is None ):
+    #     import nkUtilities.load__constants as lcn
+    #     const   = lcn.load__constants( inpFile=cnsFile )
+
+    import nkMeshRoutines.load__meshio as lms
+    ret             = lms.load__meshio( mshFile=mshFile, elementType="tetra", returnType="dict" )
+    cells, points   = ret["cells"], ret["points"]
+    cData, pData    = ret["cellData"], ret["pointData"]
+    
+    physNum         = np.copy( cData["gmsh:physical"] )
+    xcenter         = np.sum( points[ cells[:,:], : ], axis=1 ) * 0.25
+    radii           = np.sqrt( xcenter[:,x_]**2 + xcenter[:,y_]**2 )
+    index           = np.where( radii <= 0.5 )
+    physNum[index]  = physNum_into
+    
+    # ------------------------------------------------- #
+    # --- [3] update physical Number                --- #
+    # ------------------------------------------------- #
+    rmesh           = meshio.read( mshFile, file_format="gmsh" )
+    # rmesh.cell_data_dict["gmsh:physical"]["tetra"] = physNum
+    # rmesh.write_points_cells( outFile, rmesh.points, rmesh.cells )
+    rmesh.write( outFile, file_format="gmsh", binary=False )
+    
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    outFile = "msh/model_mod.msh"
+    mshFile = "msh/model.msh"
+    modify__physNum( mshFile=mshFile, physNum_into=304, outFile=outFile )

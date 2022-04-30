@@ -1,0 +1,36 @@
+import numpy as np
+
+
+# ========================================================= #
+# ===  assess__meshQuality                              === #
+# ========================================================= #
+
+def assess__meshQuality( nodes=None, elems=None, inpFile=None ):
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( ( nodes is None ) or ( elems is None ) ):
+        if ( inpFile is not None ):
+            import load__nastranFile as inf
+            nodes, elems = inf.load__nastranFile( inpFile=inpFile )
+        else:
+            sys.exit( "[assess__meshQuality.py] nodes, elems = None, inpFile = None " )
+
+    # ------------------------------------------------- #
+    # --- [2] volume assesment                      --- #
+    # ------------------------------------------------- #
+    import nkMeshRoutines.calculate__tetraVolume as ctv
+    elems_  = np.copy( elems[:,2:] )
+    volumes = ctv.calculate__tetraVolume( elems=elems_, nodes=nodes )
+    
+    return()
+
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+
+    assess__meshQuality( inpFile="msh/model.bdf" )

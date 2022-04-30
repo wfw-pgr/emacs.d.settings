@@ -1,0 +1,195 @@
+# ----------------------------------------------- #
+# --- oh-my-zsh 読み込み                      --- #
+# ----------------------------------------------- #
+source ~/.zshrc_by_ohmyzsh
+
+# ----------------------------------------------- #
+# --- コマンド alias                          --- #
+# ----------------------------------------------- #
+# -- open コマンド -- #
+alias firefox="open -a Firefox"
+alias evince='open'
+alias eom='open'
+# -- grep コマンド -- #
+alias grep="grep --color=auto"
+# --- locate の更新用命令をlinuxと同様に      --- #
+alias updatedb="sudo /usr/libexec/locate.updatedb"
+# --- paraview 起動                           --- #
+alias paraview='/Applications/ParaView-5.8.0.app/Contents/MacOS/paraview'
+
+# ----------------------------------------------- #
+# --- 補完の設定                              --- #
+# ----------------------------------------------- #
+# -- 文字コード指定 -- #
+export LC_ALL=ja_JP.UTF-8
+# -- 補完について -- #
+if [ -e /usr/local/share/zsh-completions ]; then
+    fpath=(/usr/local/share/zsh-completions $fpath)
+fi
+autoload -U compinit
+compinit
+# -- 大文字小文字区別なし補完 -- #
+zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' '+m:{[:upper:]}={[:lower:]}'
+
+# -- Ctrl+Dでログアウトしてしまうことを防ぐ -- #
+setopt IGNOREEOF
+
+# ----------------------------------------------- #
+# --- 外観の設定                               --- #
+# ----------------------------------------------- #
+# -- ls の色 -- #
+# alias ls='gls --color=auto'
+alias ls='ls -G'
+export LSCOLORS=gxfxbxbxdxegedabagacad
+
+# -- プロンプトの色 -- #
+# 色を使用
+autoload -U colors
+colors
+PROMPT_USER="%F{cyan}${USER}"
+PROMPT_HOST="%F{white}@%F{cyan}${HOST%%.*} "
+PROMPT_DIR="%F{magenta}%(5~,%-1~/.../%2~,%~)"
+PROMPT_MARK="%F{white} $ "
+PROMPT=${PROMPT_USER}${PROMPT_HOST}${PROMPT_DIR}${PROMPT_MARK}
+
+# -- dircolors 設定 -- #
+# if [ -f ~/.dircolors ]; then
+#     if type dircolors > /dev/null 2>&1; then
+#         eval $(dircolors ~/.dircolors)
+#     elif type gdircolors > /dev/null 2>&1; then
+#         eval $(gdircolors ~/.dircolors)
+#     fi
+# fi
+
+# ----------------------------------------------- #
+# --- python 設定                             --- #
+# ----------------------------------------------- #
+# -- デフォルト = python3 -- #
+alias python='python3'
+# -- 環境変数 -- #
+export PYTHONPATH=$HOME/.python/lib
+export PYCONFIGFILE=$HOME/.python/default.conf
+export gmshLibraryPath=$HOME/gmsh/pygmshLibrary
+export PYTHONSTARTUP=$HOME/.python/pythonstartup.py
+export PYTHON_ERROR_HANDLING_MODE=wait
+
+# -- setting for tcl-tk ( tkinter ) -- #
+export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
+
+# -- デフォルトセッティングス -- #
+# export PYCONFIGFILE=$HOME/.python/lib/myStyle/default.conf
+
+export PYTHONPATH="/usr/local/lib/python3.8/site-packages/gmsh_api:$PYTHONPATH"
+export PYTHONPATH="/usr/local/lib/python3.8/site-packages/gmsh-4.6.0-MacOSX-sdk/lib:$PYTHONPATH"
+
+# ----------------------------------------------- #
+# ---  WINE  設定                             --- #
+# ----------------------------------------------- #
+# -- bison -- #
+export PATH="/usr/local/opt/bison/bin:$PATH"
+
+# -- X11   -- #
+export DYLD_FALLBACK_LIBRARY_PATH="/usr/x11/lib"
+
+# -- krb5  -- #
+export PATH="/usr/local/opt/krb5/bin:$PATH"
+export PATH="/usr/local/opt/krb5/sbin:$PATH"
+export LDFLAGS="-L/usr/local/opt/krb5/lib"
+export CPPFLAGS="-I/usr/local/opt/krb5/include"
+
+# -- gcc   -- #
+# GCC_PATH=/usr/local/bin/gcc
+# export CPPFLAGS=-I/usr/local/include/c++/4.9.4:$CPPFLAGS
+
+# ----------------------------------------------- #
+# --- Fortran 設定                            --- #
+# ----------------------------------------------- #
+# --- OpenMP の設定 --- #
+export OMP_NUM_THREADS=2
+
+
+# ----------------------------------------------- #
+# --- TeX live 設定                           --- #
+# ----------------------------------------------- #
+export PATH=/usr/local/texlive/2019/bin/x86_64-darwin:$PATH
+
+
+# idl environment parameter setup
+# export IDL_STARTUP="~/.idl/init.pro"
+# export IDL_CONFIG="default.conf"
+# # launch IDL console whenever demo-mode
+# alias idl='idl -quiet -demo '
+# alias idlconnect="python3 ~/.idl/idlconnect.py"
+# alias idlkillusr="python3 ~/.idl/idlkillusr.py"
+
+# bash-completion 補完のやつ
+# if [ -f $(brew --prefix)/etc/bash_completion ]; then
+#   . $(brew --prefix)/etc/bash_completion
+# fi
+
+# ifortでのqopenmp時のエラー( libiomp5.dylib )が見つからない，パスの指定．
+# export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/opt/intel/lib
+
+# --- MPICH3.2の設定 --- #
+# export PATH=$PATH:/opt/mpich2/bin
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/mpich2/lib
+# export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/opt/mpich2/lib
+# export PATH=$PATH:/usr/local/lib
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+# --- OpenMPI3.0.0の設定 --- #
+# export PATH=$PATH:/opt/openmpi/bin
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openmpi/lib
+# export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/opt/openmpi/lib
+
+
+
+# --- AMRVAC 用の設定 --- #
+# export AMRVAC_DIR=$HOME/amrvac
+# export PATH=$PATH:$HOME/amrvac:$HOME/amrvac/tools
+
+# --- vtk ( visual toolkit ) for python 用のパス --- #
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/settings/vtk/VTK-8.0.1/build/bin
+# export DYLD_FALLBACK_LIBRARY_PATH=$HOME/settings/vtk/VTK-8.0.1/build/bin
+# export PYTHONPATH=$PYTHONPATH:$HOME/settings/vtk/VTK-8.0.1/build/bin/
+# export PYTHONPATH=$PYTHONPATH:$HOME/settings/vtk/VTK-8.0.1/Wrapping/Python/
+# export PYTHONPATH=$PYTHONPATH:$HOME/settings/vtk/VTK-8.0.1/Wrapping/PythonCore/
+
+
+
+
+# --------------------------------------------------------- #
+# --- debug c-compiler can't find standard library      --- #
+# --------------------------------------------------------- #
+export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+
+
+# --------------------------------------------------------- #
+# --- elmer 設定                                        --- #
+# --------------------------------------------------------- #
+export ELMER_HOME=$HOME/elmer/install/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ELMER_HOME/lib
+export PATH=$PATH:$ELMER_HOME/bin
+
+
+# --------------------------------------------------------- #
+# --- g++ 設定                                          --- #
+# --------------------------------------------------------- #
+
+# export PATH=$PATH:/usr/local/Cellar/gcc/9.3.0/include/
+
+
+# --------------------------------------------------------- #
+# --- elmer 設定                                        --- #
+# --------------------------------------------------------- #
+export mdtRoot="$HOME/mdt3/"
+
+
+# --------------------------------------------------------- #
+# --- geant4 設定 (qt)                                  --- #
+# --------------------------------------------------------- #
+export PATH=/usr/local/opt/qt/bin:$PATH
+export LDFLAGS="-L/usr/local/opt/qt/lib":$LDFLAGS
+export CPPFLAGS="-I/usr/local/opt/qt/include":$CPPFLAGS
+export PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig:$PKG_CONFIG_PATH
+export PATH=$PATH:/usr/local/Cellar/qt@5/5.15.2/lib/cmake/

@@ -1,0 +1,20 @@
+import nkUtilities.plot1D         as pl1
+import nkUtilities.load__config   as lcf
+import nkUtilities.configSettings as cfs
+
+x_,y_                    = 0, 1
+pngFile                  = "png/frequency.png"
+config                   = lcf.load__config()
+config                   = cfs.configSettings( configType="plot.def", config=config )
+
+config["plt_xAutoRange"] = True
+config["plt_yAutoRange"] = True
+config["plt_xRange"]     = [ -1.2, +1.2 ]
+config["plt_yRange"]     = [ -1.2, +1.2 ]
+
+fig     = pl1.plot1D( config=config, pngFile=pngFile )
+fig.add__plot( xAxis=Data[:,x_], yAxis=Data[:,y_] )
+fig.add__legend()
+fig.set__axis()
+fig.save__figure()
+

@@ -1,0 +1,16 @@
+[INPUT]
+
+	* ../msh/model.msh => model/*
+	* Hshape_magnet3D.sif
+
+[OUTPUT]
+
+	* model/Hshape_model3D_t0001.vtu
+
+[USAGE]
+
+	$ mv ../msh/model.msh msh/
+	$ cd msh
+	$ ElmerGrid 14 2 model.msh
+	$ cd ../
+	$ ElmerSolver Hshape_magnet3D.sif

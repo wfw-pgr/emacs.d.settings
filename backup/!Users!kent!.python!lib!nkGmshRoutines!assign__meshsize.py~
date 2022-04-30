@@ -1,0 +1,29 @@
+import os, sys
+import numpy         as np
+# import gmsh_api.gmsh as gmsh
+import gmsh
+
+
+# ========================================================= #
+# ===  assigne meshsize onto volume Entities            === #
+# ========================================================= #
+def assign__meshsize_on_each_volume( volumetags=None, meshsize=None ):
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+
+    # ------------------------------------------------- #
+    # --- [2] define MathEval Field                 --- #
+    # ------------------------------------------------- #
+    fieldmath = gmsh.model.mesh.field.add( "MathEval" )
+    gmsh.model.mesh.field.setString( fieldmath, "F", "{0}".format( meshsize ) )
+
+    # ------------------------------------------------- #
+    # --- [3] define Restrict Field                 --- #
+    # ------------------------------------------------- #
+    faces = gmsh.model.getBoundary( v_dimtags )
+    edges = gmsh.model.getBoundary( faces, combined=False, oriented=False )
+    faces = [ int( dimtag[1] ) for dimtag in faces ]
+    edges = [ int( dimtag[1] ) for dimtag in edges ]
+    

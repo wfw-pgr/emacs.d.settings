@@ -1,0 +1,48 @@
+import numpy as np
+import os, sys
+import gmsh
+
+gmshlib = os.environ["gmshLibraryPath"]
+sys.path.append( gmshlib )
+import generateRectangularBox as box
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.model.add( "model" )
+
+
+# ------------------------------------------------- #
+# --- [2] initialize settings                   --- #
+# ------------------------------------------------- #
+ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+pts    , line    , surf    , volu     = {}, {}, {}, {}
+ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+lc                           = 10.0
+
+
+# ------------------------------------------------- #
+# --- [3] Modeling                              --- #
+# ------------------------------------------------- #
+
+
+# ------------------------------------------------- #
+# --- [4] Physical Grouping                     --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+surfPhys["xxxxx"] = gmsh.model.addPhysicalGroup( surfDim, [ 1 ], tag=201 )
+surfPhys["other"] = gmsh.model.addPhysicalGroup( surfDim, [ 2 ], tag=202 )
+voluPhys["volu1"] = gmsh.model.addPhysicalGroup( voluDim, [ 1 ], tag=301 )
+
+
+# ------------------------------------------------- #
+# --- [2] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(3)
+gmsh.write( "model.geo_unrolled" )
+gmsh.write( "model.msh" )
+gmsh.finalize()
+

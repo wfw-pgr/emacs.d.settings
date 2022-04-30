@@ -1,0 +1,94 @@
+import numpy as np
+import os, sys
+import gmsh
+
+gmshlib = os.environ["gmshLibraryPath"]
+sys.path.append( gmshlib )
+import generateFanArea as fan
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.model.add( "model" )
+
+# ------------------------------------------------- #
+# --- [2] initialize settings                   --- #
+# ------------------------------------------------- #
+ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+pts    , line    , surf    , volu     = {}, {}, {}, {}
+ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+lc                                    = 0.01
+
+# ------------------------------------------------- #
+# --- [3] Modeling                              --- #
+# ------------------------------------------------- #
+r1      = 0.60
+r2      = 0.70
+z1      = 0.05
+z2      = 0.02
+th1     = 280.0
+th2     = 320.0
+zoffset = 0.0
+origin  = [ 0.0, 0.0 ]
+
+ret     = fan.generateFanArea( r1=r1, r2=r2, th1=th1, th2=th2, \
+                               zoffset=zoffset, origin=origin, lc=lc )
+surf["fan"] = ret["surf"]["fan"]
+
+# ------------------------------------------------- #
+# --- [4] Physical Grouping                     --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+surfPhys["surf"] = gmsh.model.addPhysicalGroup( surfDim, [ surf["fan"] ], tag=201 )
+
+
+# ------------------------------------------------- #
+# --- [5] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(2)
+gmsh.write( "model.geo_unrolled" )
+gmsh.write( "model.msh" )
+gmsh.finalize()
+
+
+# ------------------------------------------------- #
+# --- [6] elmergrid execution ( .msh => elmer ) --- #
+# ------------------------------------------------- #
+
+import subprocess
+
+exe = "ElmerGrid 14 2 model.msh"
+subprocess.call( exe.split() )
+
+
+# ------------------------------------------------- #
+# --- [7] add_3dprofile                         --- #
+# ------------------------------------------------- #
+
+import add__3dprofile_regenShim as ad3
+
+nodeFile = "model/mesh.nodes"
+outFile  = "model/mesh_mod.nodes"
+
+ad3.add__3dprofile_regenShim( r1=r1, r2=r2, z1=z1, z2=z2, \
+                              nodeFile=nodeFile, outFile=outFile )
+
+exe = "mkdir -p view"
+subprocess.call( exe.split() )
+
+exe = "cp -r model/* view/"
+subprocess.call( exe.split() )
+
+# ------------------------------------------------- #
+# --- [8] elmergrid execution ( elmer => .msh ) --- #
+# ------------------------------------------------- #
+
+import subprocess
+
+exe = "ElmerGrid 2 4 view"
+subprocess.call( exe.split() )
+
+

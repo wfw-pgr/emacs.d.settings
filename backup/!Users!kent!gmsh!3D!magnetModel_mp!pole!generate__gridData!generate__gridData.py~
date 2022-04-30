@@ -1,0 +1,31 @@
+import os, sys
+import numpy as np
+
+import nkUtilities.generate__sampleProfile as gsp
+
+# ========================================================= #
+# ===  generate grided Data                             === #
+# ========================================================= #
+
+def generate__gridData( x1MinMaxNum=None, x2MinMaxNum=None, x3MinMaxNum=None, \
+                        outFile    =None, pngFile    =None ):
+    if ( x1MinMaxNum is None ): x1MinMaxNum = [  -1.0, 1.0, 51 ]
+    if ( x2MinMaxNum is None ): x2MinMaxNum = [  -1.0, 1.0, 51 ]
+    if ( x3MinMaxNum is None ): x3MinMaxNum = [  -0.0, 0.0,  1 ]
+    if ( outFile     is None ): outFile     = "dat/gridData.dat"
+    if ( pngFile     is None ): pngFile     = "png/gridData.png"
+    
+    ret = gsp.generate__sampleProfile( outFile=outFile        , x1MinMaxNum=x1MinMaxNum, \
+                                       x2MinMaxNum=x2MinMaxNum, x3MinMaxNum=x3MinMaxNum  )
+    with open( outFile, "r" ) as f:
+        Data = np.loadtxt( f )
+
+    import nkUtilities.cMapTri as cmt
+    cmt.cMapTri( xAxis=Data[:,0], yAxis=Data[:,1], cMap=Data[:,3], pngFile=pngFile )
+
+    
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    generate__gridData()

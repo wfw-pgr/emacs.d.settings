@@ -1,0 +1,56 @@
+import os, sys
+import numpy as np
+
+# ========================================================= #
+# ===  interpolate grided Data on nodes of a Mesh       === #
+# ========================================================= #
+def interpolate__gridData_onto_mesh( gridFile="dat/grid.dat", meshFile="dat/mesh.dat" ):
+
+    x_,y_,bz_ = 0, 1, 5
+    
+    # ------------------------------------------------- #
+    # --- [1] grid & mesh Loading                   --- #
+    # ------------------------------------------------- #
+    #  -- [1-1] grid Data Loading                   --  #
+    import nkUtilities.load__pointFile as lpf
+    gridInfo  = lpf.load__pointFile( inpFile=gridFile, returnType="info"       )
+    gridData  = lpf.load__pointFile( inpFile=gridFile, returnType="structured" )
+    gridData  = gridData[:,:,(x_,y_,bz_)]
+    gridData_ = ( np.reshape( gridData, (-1,3) ) )
+    
+    #  -- [1-2] Mesh Data Loading                   --  #
+    with open( meshFile, "r" ) as f:
+        meshData = np.loadtxt( f )
+    meshData_      = np.zeros( (meshData.shape[0],3) )
+    meshData_[:,0] = meshData[:,2]
+    meshData_[:,1] = meshData[:,3]
+
+    # ------------------------------------------------- #
+    # --- [2] linear Interpolation                  --- #
+    # ------------------------------------------------- #
+    import nkInterpolator.LinearInterp2D as li2
+    ret = li2.LinearInterp2D( gridData=gridData, pointData=meshData_, \
+                              gridDataType="structured" )
+    
+    # ------------------------------------------------- #
+    # --- [3] grid Data contouring                  --- #
+    # ------------------------------------------------- #
+    import nkUtilities.cMapTri    as cmt
+    import nkUtilities.LoadConfig as lcf
+    config = lcf.LoadConfig()
+    config["cmp_xAutoRange"] = False
+    config["cmp_yAutoRange"] = False
+    config["cmp_xRange"]     = [ 0.0,+1.0]
+    config["cmp_yRange"]     = [-1.0,+0.0]
+    cmt.cMapTri( xAxis=gridData_[:,0], yAxis=gridData_[:,1] , cMap=gridData_[:,2], \
+                 pngFile="png/out_onGrid.png", config=config )
+    cmt.cMapTri( xAxis=ret[:,0]      , yAxis=ret[:,1]       , cMap=ret[:,2]      , \
+                 pngFile="png/out_onMesh.png", config=config )
+    return( ret )
+    
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    interpolate__gridData_onto_mesh()

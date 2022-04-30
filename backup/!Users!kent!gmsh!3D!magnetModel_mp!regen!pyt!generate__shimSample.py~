@@ -1,0 +1,85 @@
+import os, sys, subprocess
+import numpy as np
+import gmsh_api.gmsh as gmsh
+
+# ========================================================= #
+# ===  generate shim sample                             === #
+# ========================================================= #
+
+def generate__shimSample():
+
+    # ------------------------------------------------- #
+    # --- [1] Load parameter File                   --- #
+    # ------------------------------------------------- #
+    import nkUtilities.load__constants as lcn
+    cnfFile    = "dat/shim.conf"
+    params     = lcn.load__constants( inpFile=cnfFile )
+    
+    # ------------------------------------------------- #
+    # --- [2] Load source Field File (.cst type)    --- #
+    # ------------------------------------------------- #
+    gridFile = "dat/grid.dat"
+    import generate__shimShapeOnGrid as sog
+    sog.generate__shimShapeOnGrid( r1     =params["r1"]     , r2 =params["r2"] , \
+                                   z1     =params["z1"]     , z2 =params["z2"] , \
+                                   th1    =params["th1"]    , th2=params["th2"], \
+                                   LI     =params["grid_Lx"], LJ =params["grid_Ly"], \
+                                   outFile=gridFile )
+    
+    # ------------------------------------------------- #
+    # --- [3] generate 2D mesh to be interpolated   --- #
+    # ------------------------------------------------- #
+    import generate__interpMesh as gim
+    gim.generate__interpMesh( lc =params["lc_geom"], r1 =params["r1"] , r2     =params["r2"], \
+                              th1=params["th1"], th2=params["th2"], zoffset=params["zoffset"] )
+
+    # ------------------------------------------------- #
+    # --- [4] interp grid Data on Mesh              --- #
+    # ------------------------------------------------- #
+    import interpolate__gridData_onto_mesh as gom
+    meshFile = "dat/shim.nodes"
+    ret1     = gom.interpolate__gridData_onto_mesh( gridFile=gridFile, meshFile=meshFile )
+
+
+    # ------------------------------------------------- #
+    # --- [5] modify 2D node => 3D node             --- #
+    # ------------------------------------------------- #
+
+    cmd = "cp dat/shim.nodes dat/shim_2d.nodes"
+    subprocess.call( cmd.split() )
+
+    cmd = "cp -r msh/model msh/model_2d"
+    subprocess.call( cmd.split() )
+
+    cmd = "mv msh/model msh/model_3d"
+    subprocess.call( cmd.split() )
+
+    import nkMeshRoutines.save__elmerNodeFile as snf
+    nodeFile = "dat/shim_3d.nodes"
+    snf.save__elmerNodeFile( nodes=ret1, nodeFile=nodeFile )
+
+    cmd = "cp dat/shim_3d.nodes msh/model_3d/mesh.nodes"
+    subprocess.call( cmd.split() )
+    
+    os.chdir( "msh" )
+    cmd = "ElmerGrid 2 4 model_3d"
+    subprocess.call( cmd.split() )
+    os.chdir( "../" )
+
+    
+    # ------------------------------------------------- #
+    # --- [6] generate regenerator shim Model       --- #
+    # ------------------------------------------------- #
+
+    import generate__regenShimParts as rsp
+    nodeFile = "dat/shim_3d.nodes"
+    elemFile = "dat/shim.elements"
+    rsp.generate__regenShimParts__execute( lc=params["lc_mesh"], height_tier2=params["z0"], \
+                                           nodeFile=nodeFile   , elemFile    =elemFile      )
+
+    
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    generate__shimSample()

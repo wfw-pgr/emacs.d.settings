@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: npsave-
+# key: npsave-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+with open( outFile, "w" ) as f:
+    names   = [ "x{0}".format(i+1) for i in range( ${1:Data}.shape[1] ) ]
+    f.write( "# " + " ".join( names ) + "\n" )
+    f.write( "# " + " ".join( [ str(i) for i in ${1}.shape[1] ] ) + "\n" )
+    np.savetxt( f, ${1} )
+$0

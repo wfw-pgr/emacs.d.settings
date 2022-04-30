@@ -1,0 +1,65 @@
+
+
+! ====================================================== !
+! === trilinear interpolation                        === !
+! ====================================================== !
+subroutine interpolate__trilinear( gData, pData, xMin, yMin, zMin, dx, dy, dz, LI, LJ, LK, nData, outofrange  )
+  implicit none
+  integer         , intent(in)  :: LI, LJ, nData
+  double precision, intent(in)  :: dx, dy, xMin, yMin
+  double precision, intent(in)  :: gData(LI,LJ)
+  double precision, intent(out) :: pData(3,nData)
+  integer                       :: ip, jp, ii, jj, ir, jr, iData
+  double precision              :: xp, yp, dxInv, dyInv, sum, xMax, yMax
+  double precision              :: sfx(-2:2), sfy(-2:2), sfz(-2:2)
+  integer         , parameter   :: x_=1, y_=2, v_=3
+
+  xMax  = dx*dble(LI-1) + xMin
+  yMax  = dy*dble(LJ-1) + yMin
+  dxInv = 1.d0 / dx
+  dyInv = 1.d0 / dy
+  do iData=1, nData
+     xp   = min( max( pData(x_,iData)-xMin, 0.d0 ), xMax-xMin )
+     yp   = min( max( pData(y_,iData)-yMin, 0.d0 ), yMax-yMin )
+     ip   = nint( xp*dxInv )
+     jp   = nint( yp*dyInv )
+     sfx  = shapef( xp, ip, dxInv )
+     sfy  = shapef( yp, jp, dyInv )
+     sum  = 0.d0
+     do jj=-2, 2
+        do ii=-2, 2
+           ir  = ip+1 + ii
+           jr  = jp+1 + jj
+           ir  = min( max( 1, ir ), LI )
+           jr  = min( max( 1, jr ), LJ )
+           sum = sum + sfx(ii)*sfy(jj) * gData(ir,jr)
+        enddo
+     enddo
+     pData(v_,iData) = sum
+  enddo
+
+  return
+contains
+  
+  ! ====================================================== !
+  ! === shape Function                                 === !
+  ! ====================================================== !
+  function shapef( rp, lp, drInv )
+    implicit none
+    integer         , intent(in) :: lp
+    double precision, intent(in) :: rp, drInv
+    double precision             :: delta
+    double precision             :: shapef(-2:+2)
+
+    delta     = rp*drInv - dble(lp)
+    shapef(-2) = 0.d0
+    shapef(-1) = 0.d0
+    shapef( 0) = 1.d0 - abs( delta )
+    shapef(+1) = 0.d0
+    shapef(+2) = 0.d0
+    shapef( int( sign( 1.d0, delta ) ) ) = abs( delta )
+
+    return
+  end function shapef
+
+end subroutine interpolate__trilinear

@@ -1,0 +1,17 @@
+import os, sys, subprocess
+import gmsh
+import numpy                             as np
+import nkGmshRoutines.generate__fanShape as fan
+
+
+# ========================================================= #
+# ===  generate torus shaped parts                      === #
+# ========================================================= #
+def generate__torusParts( lc=0.2 r1=1.0, r2=2.0, \
+                          z1=0.0, z2=1.0, z3=1.2, z4=1.4, side="+" ):
+    
+    # ------------------------------------------------- #
+    # --- [1] generate pole parts                   --- #
+    # ------------------------------------------------- #
+
+    parts1 = fan.generate__fanShape( lc=lc1, origin=origin, r1=0.0, r2=radius )

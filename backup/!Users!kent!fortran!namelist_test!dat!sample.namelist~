@@ -1,0 +1,19 @@
+& dimen
+LI = 201, 
+LJ = 101, 
+LK = 51,
+/
+
+&delta
+dx = 0.1,
+dy = 0.2, 
+dz = 0.3, 
+/
+
+&sched
+t_start = 0.0
+t_end   = 1.0 
+t_step  = 0.01
+/
+
+

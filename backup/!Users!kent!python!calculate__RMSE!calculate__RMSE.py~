@@ -1,0 +1,24 @@
+import numpy as np
+
+# ========================================================= #
+# ===  calculate RMSE and other statistics              === #
+# ========================================================= #
+
+def calculate__RMSE():
+
+    wData = np.zeros( (num,2) )    
+    for ik in range( num ):
+        with open( inpFile, "r" ) as f:
+            Data = np.loadtxt( f )
+        error = Data[:,2] - Data[:,4]
+        RMSE  = np.sqrt( np.mean( error**2 ) )
+
+        wData[ik,:] = np.array( [ik+1,RMSE] )
+        
+    with open( outFile, "w" ) as f:
+        np.savetxt( f, wData )
+
+    return()
+
+
+

@@ -1,0 +1,75 @@
+import sys
+import numpy            as np
+import numpy.ctypeslib  as Flib
+import ctypes
+import os.path
+
+# ================================================================ #
+# ===  grad2d :: gradiant for 2D Field                         === #
+# ================================================================ #
+def grad2d( dx1=None, dx2=None, Data=None, x1Axis=None, x2Axis=None, difftype='Central__dx2' ):
+    # ------------------------------ #
+    # --- [1]   引数チェック     --- #
+    # ------------------------------ #
+    if ( Data is None   ): sys.exit("[ERROR] -@grad2d- Data ??  [ERROR]" )
+    if ( Data.ndim != 2 ): sys.exit("[ERROR] -@grad2d-  Data dimension is incompatible ( 2D ) [ERROR]" )
+    if ( dx1  is None   ): dx1 = x1Axis[1] - x1Axis[0]
+    if ( dx2  is None   ): dx2 = x2Axis[1] - x2Axis[0]
+    LI, LJ    = Data.shape[1], Data.shape[0]
+    dfdx1_    = np.zeros( (LJ,LI) )
+    dfdx2_    = np.zeros( (LJ,LI) )
+    # if ( Data.flags["F_CONTIGUOUS"] ): Data = np.ascontiguousarray( Data )
+    # ------------------------------ #
+    # --- [2] ライブラリをロード --- #
+    # ------------------------------ #
+    #  -- [2-1] ライブラリを定義 --  #
+    path      = os.path.expanduser('~') + "/.python/lib/vectorRoutines/"
+    pyLIB     = Flib.load_library( 'pylib.so', path )
+    #  -- [2-2] 入出力管理       --  #
+    pyLIB.grad2d_.argtypes = [
+        Flib.ndpointer( dtype=np.float64 ),
+        Flib.ndpointer( dtype=np.float64 ),
+        Flib.ndpointer( dtype=np.float64 ),
+        Flib.ndpointer( dtype=np.float64 ),
+        Flib.ndpointer( dtype=np.float64 ),
+        ctypes.POINTER( ctypes.c_int64   ),
+        ctypes.POINTER( ctypes.c_int64   ),
+        ctypes.c_char_p
+    ]
+    pyLIB.grad2d_.restype = ctypes.c_void_p
+    #  -- [2-3] Fortranサイズへ  --  #
+    func_     = np.array( Data  , dtype=np.float64  )
+    dfdx1_    = np.array( dfdx1_, dtype=np.float64  )
+    dfdx2_    = np.array( dfdx2_, dtype=np.float64  )
+    dx1_      = np.array( dx1   , dtype=np.float64  )
+    dx2_      = np.array( dx2   , dtype=np.float64  )
+    LI_       = ctypes.byref( ctypes.c_int64( LI )  )
+    LJ_       = ctypes.byref( ctypes.c_int64( LJ )  )
+    difftype_ = difftype.encode()
+
+    # ------------------------------ #
+    # --- [3]  関数呼出 / 返却   --- #
+    # ------------------------------ #
+    pyLIB.grad2d_( func_, dfdx1_, dfdx2_, dx1_, dx2_, LI_, LJ_, difftype_  )
+    return( { "dfdx1":dfdx1_,"dfdx2":dfdx2_} )
+
+
+# ================================================================ #
+# ===  実行部                                                  === #
+# ================================================================ #
+if ( __name__=="__main__" ):
+    # ---- テスト用 プロファイル ---- #
+    # -- 座標系 xg, yg -- #
+    xa     = np.linspace( -1.0, 1.0, 101 )
+    ya     = np.linspace( -1.0, 1.0, 201 )
+    xg, yg = np.meshgrid( xa, ya, indexing='xy' )
+    func   = np.exp( - (xg**2 + yg**2) / 0.3 )
+    print( xg.shape, yg.shape )
+
+    dxg    = grad2d( Data=func, x1Axis=xa, x2Axis=ya )
+    import myStyle.cMap2D as cm2
+    fig = cm2.cMap2D( xAxis=xg, yAxis=yg, cMap=func        , FigName='Norm.png' )
+    fig = cm2.cMap2D( xAxis=xg, yAxis=yg, cMap=xg          , FigName='xg.png'   )
+    fig = cm2.cMap2D( xAxis=xg, yAxis=yg, cMap=yg          , FigName='yg.png'   )
+    fig = cm2.cMap2D( xAxis=xg, yAxis=yg, cMap=dxg["dfdx1"], FigName='dxg1.png' )
+    fig = cm2.cMap2D( xAxis=xg, yAxis=yg, cMap=dxg["dfdx2"], FigName='dxg2.png' )

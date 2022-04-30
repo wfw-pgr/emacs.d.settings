@@ -1,0 +1,12 @@
+module xyzLaplacMod
+contains
+
+  ! ====================================================== !
+  ! === xyzLaplacMod                                   === !
+  ! ====================================================== !
+
+  subroutine xyzLaplacMod( Amat, dx, dy, LI, LJ )
+    implicit none
+    
+    return
+  end subroutine xyzLaplacMod

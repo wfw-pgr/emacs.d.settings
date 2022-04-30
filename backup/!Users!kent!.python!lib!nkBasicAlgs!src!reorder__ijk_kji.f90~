@@ -1,0 +1,8 @@
+subroutine reorder__ijk_kji_3d( data, LI, LJ, LK, nData )
+
+  implicit none
+  
+  do 
+  
+  return
+end subroutine reorder__ijk_kji

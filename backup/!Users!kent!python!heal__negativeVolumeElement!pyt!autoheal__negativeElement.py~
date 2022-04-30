@@ -1,0 +1,20 @@
+import numpy as np
+import heal__negativeVolumeElement as hnv
+
+# ========================================================= #
+# ===  autoheal__negativeElement.py                     === #
+# ========================================================= #
+
+def autoheal__negativeElement():
+
+    # ------------------------------------------------- #
+    # --- [1] load constants                        --- #
+    # ------------------------------------------------- #
+    import nkUtilities.load__constants as lcn
+    cnsFile = "dat/unified.conf"
+    const   = lcn.load__constants( inpFile=cnsFile )
+
+    # ------------------------------------------------- #
+    # --- [2]                         --- #
+    # ------------------------------------------------- #
+    

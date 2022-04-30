@@ -1,0 +1,56 @@
+target = ../pylib.so
+object = \
+  curlv.f90 \
+  curlinv.f90 \
+  mhdEnergy.f90 \
+  mhdhelicity.f90 \
+  gridhelicity.f90 \
+  gridenergy.f90 \
+  mhdenergy_detailed.f90 \
+  integral2d.f90 \
+  ftranspose.f90 \
+  calcpsi.f90 \
+  calcavp.f90 \
+  rct2rct.f90 \
+  linearfilter2d.f90 \
+  myderivative.f90 \
+  vdfanalysis.f90 \
+  grad2d.f90 \
+  div2d.f90 \
+  gradinv2d.f90 \
+  ugradv2d.f90 \
+  pyBiCGSTAB.f90 \
+  getxopt.f90 \
+  solvexopt.f90 \
+  mpi2one.f90 \
+  mom2one.f90 \
+  loadbinary.f90 \
+  picJuRho.f90 \
+  vecproduct.f90 \
+  bgrid2rgrid.f90 \
+  p2tconvert.f90 \
+  robustinv1d.f90 \
+  robustinv2d.f90 \
+  unitvector1d.f90 \
+  unitvector2d.f90 \
+  refppdecompose.f90 \
+  mfppdecompose.f90 \
+  mfppunitvector.f90 \
+  ppDecompose.f90 \
+  mfppvector.f90
+
+#FC = ifort
+FC = gfortran
+
+FFLAGS  = -O3
+LDFLAGS =
+PYFLAGS = -shared -fPIC
+
+.SUFFIXES: .so .f90
+$(target): $(object)
+	$(FC) $(PYFLAGS) $(FFLAGS) $(LDFLAGS) -o $(target) $(object)
+
+.PHONY:all clean
+clean:
+	$(RM) $(target) 
+all: clean $(target)

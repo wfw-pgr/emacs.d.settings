@@ -1,0 +1,98 @@
+import sys
+import numpy as np
+
+# ========================================================= #
+# ===  generate sample .cst like vector Field Data      === #
+# ========================================================= #
+def sample__vectorData( r1=0.6, r2=0.7, th1=280.0, th2=320.0, v1=1.0, v2=2.0, \
+                        outFile="dat/bfield_sample.cst" ):
+
+    # ------------------------------------------------- #
+    # --- [1] preparation                           --- #
+    # ------------------------------------------------- #
+    
+    header1 = "x [m] y [m]  z [m] BxRe [T] ByRe [T] BzRe [T]"
+    header2 = "---------------------------------------------"
+
+    if ( th1 > 180.0 ): th1 = th1 - 360.0
+    if ( th2 > 180.0 ): th2 = th2 - 360.0
+    th1_rad  = th1 / 180.0 * np.pi
+    th2_rad  = th2 / 180.0 * np.pi
+
+    # ------------------------------------------------- #
+    # --- [2] grid making                           --- #
+    # ------------------------------------------------- #
+    
+    vertex1  = [ r1*np.cos( th1_rad ), r1*np.sin( th1_rad ) ]
+    vertex2  = [ r1*np.cos( th2_rad ), r1*np.sin( th2_rad ) ]
+    vertex3  = [ r2*np.cos( th2_rad ), r2*np.sin( th2_rad ) ]
+    vertex4  = [ r2*np.cos( th1_rad ), r2*np.sin( th1_rad ) ]
+
+    xMin     = np.min( [ vertex1[0], vertex2[0], vertex3[0], vertex4[0] ] )
+    xMax     = np.max( [ vertex1[0], vertex2[0], vertex3[0], vertex4[0] ] )
+    yMin     = np.min( [ vertex1[1], vertex2[1], vertex3[1], vertex4[1] ] )
+    yMax     = np.max( [ vertex1[1], vertex2[1], vertex3[1], vertex4[1] ] )
+    
+    import nkUtilities.equiSpaceGrid as esg
+    x1MinMaxNum = [ xMin, xMax, LI ]
+    x2MinMaxNum = [ yMin, yMax, LJ ]
+    x3MinMaxNum = [  0.0, 1.0, 11  ]
+    coord       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                     x3MinMaxNum=x3MinMaxNum, returnType = "point", DataOrder="kji" )
+
+    # ------------------------------------------------- #
+    # --- [3] Field info. making                    --- #
+    # ------------------------------------------------- #
+    
+    rhat        = ( ( np.sqrt( coord[:,0]**2 + coord[:,1]**2 ) - r1 ) / ( r2-r1 )  )
+    thhat       = ( np.arctan2( coord[:,1], coord[:,0] ) - th1_rad ) / ( th2_rad - th1_rad )
+    
+    bz          = ( v2-v1 ) * rFunc( rhat ) * thFunc( thhat ) + v1
+    outof       = np.where( ( rhat < 0.0 ) | ( rhat > 1.0 ) | ( thhat < 0.0 ) | ( thhat > 1.0 ) )
+    bz[outof]   = v1
+
+    # ------------------------------------------------- #
+    # --- [4] save in file                          --- #
+    # ------------------------------------------------- #
+    
+    Data        = np.zeros( (coord.shape[0],6) )
+    Data[:,0:3] = coord
+    Data[:,  5] = bz
+
+    with open( outFile, "w" ) as f:
+        f.write( header1 + "\n" )
+        f.write( header2 + "\n" )
+        np.savetxt( f, Data )
+        print( "[sample__vectorData] output :: {0} ".format( outFile ) )
+
+    import nkUtilities.save__pointFile as spf
+    datFile     = "dat/bfield_sample.dat"
+    spf.save__pointFile( outFile=datFile, Data=Data )
+
+    import nkUtilities.cMapTri as cmt
+    pngFile     = "png/bfield_sample.png"
+    cmt.cMapTri( xAxis=Data[:,0], yAxis=Data[:,1], cMap=Data[:,5], pngFile=pngFile )
+    
+
+        
+# ========================================================= #
+# ===  Function of r ( R(r) )                           === #
+# ========================================================= #
+def rFunc( rhat ):
+    ret  = ( np.sin( rhat*np.pi ) )**2
+    return( ret )
+    
+
+# ========================================================= #
+# ===  Function of theta ( THETA(theta) )               === #
+# ========================================================= #
+def thFunc( thhat ):
+    ret  = ( np.sin( thhat*np.pi ) )**2
+    return( ret )
+
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    sample__vectorData()

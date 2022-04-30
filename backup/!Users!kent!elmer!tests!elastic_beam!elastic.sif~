@@ -1,0 +1,80 @@
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "MESHDIR" "model"
+  Include Path ""
+  Results Directory ""
+End
+
+Simulation
+
+  Coordinate System = "Cartesian 3D"
+  Coordinate Mapping(3) = 1 2 3
+
+  Simulation Type = "Steady State"
+  Steady State Max Iterations = 20
+  Output Intervals = 1
+
+  Solver Input File = "elastic.sif"
+  Output File = "Beam.dat"
+  Post File = "Beam.vtu"
+
+End
+
+
+Constants
+  Gravity(4) = 0 0 -1 9.82
+End
+
+
+Body 1
+  Name = "Body1"
+
+  Equation = 1
+  Material = 1
+End
+
+Equation 1
+  Name = "Equation1"
+  Stress Analysis   = True
+  Calculate Stresses = Logical False
+End
+
+
+Solver 1
+  Exec Solver = "Always"
+  Equation = "Stress Analysis"
+  Variable = "Displacement"
+  Variable Dofs = 3
+  Linear System Solver = "Iterative"
+End
+
+
+Material 1
+  Name = "Material1"
+
+  Youngs Modulus = 200e9
+  Poisson Ratio = 0.3
+End
+
+
+Boundary Condition 1
+  Name = "Constraint1"
+  Target Boundaries(1) 201
+
+  Displacement 1 = 0
+  Displacement 2 = 0
+  Displacement 3 = 0
+End
+
+
+Boundary Condition 2
+  Name = "Constraint2"
+  Target Boundaries(1) = 202
+
+  Force 3 Variable Coordinate 3
+  Real
+     1 0
+     2 0
+     3 -1.000e+7
+  End
+End

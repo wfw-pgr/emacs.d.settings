@@ -1,0 +1,35 @@
+[INPUT]
+
+	* dat/pole_ideal_mcoord.dat   ( from biaAnalysis )
+	* dat/peeler_ideal_mcoord.dat ( from biaAnalysis )
+	* dat/ems_pst.field           ( from emsAnalysis )
+	* dat/ems_pel.field           ( from emsAnalysis )
+	* dat/pole_onGrid.dat         ( from axiAnalysis or inheritated )
+	* dat/parameter.conf
+	* dat/weights.conf
+	* dat/weights.dat
+
+	[auto generation]
+	* dat/mshape_input.dat
+	* dat/bfield_input.dat
+
+
+[OUTPUT]
+
+	* out/bfield_resid.dat
+	* out/bfield_****.dat
+	* out/mshape_****.dat
+	* out/spectr_****.dat
+
+[USAGE]
+
+	* prepare [ bfield_ideal_mcoord.dat & ems_pst.field ] ==>> bfield_input.dat
+	* prepare [ pole_shape.dat ]
+	* modify parameter.conf
+	$ make & go
+	$ python pyt/post.py --integer num
+
+	$ python pyt/prepare.py
+	* make & go
+	$ python pyt/post.py --integer num
+

@@ -1,0 +1,4 @@
+# name		int_num	 type		some_array	 some_value
+# string	integer	 string		intarr		 float
+var1		21	 normal		[ 3, 2, 4 ]	 0.6
+var2		31	 default	[ 2, 1 ]  	 0.8

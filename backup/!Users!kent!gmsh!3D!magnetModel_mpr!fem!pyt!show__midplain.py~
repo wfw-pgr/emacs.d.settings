@@ -1,0 +1,143 @@
+import vtk
+import numpy as np
+
+
+# ========================================================= #
+# ===  show__midplain                                   === #
+# ========================================================= #
+
+def show__midplain():
+
+    inpFile = "../dat/Hshape_magnet_t0001.vtu"
+
+    ret     = load__vtuFile( inpFile=inpFile )
+    print( ret ) 
+    
+    return( ret )
+    
+#     # Create the geometry of a point (the coordinate)
+#     points = vtk.vtkPoints()
+#     p = [1.0, 2.0, 3.0]
+
+#     # Create the topology of the point (a vertex)
+#     vertices = vtk.vtkCellArray()
+
+# id = points.InsertNextPoint(p)
+# vertices.InsertNextCell(1)
+# vertices.InsertCellPoint(id)
+
+# # Create a polydata object
+# point = vtk.vtkPolyData()
+
+# # Set the points and vertices we created as the geometry and topology of the polydata
+# point.SetPoints(points)
+# point.SetVerts(vertices)
+
+# # Visualize
+# mapper = vtk.vtkPolyDataMapper()
+# if vtk.VTK_MAJOR_VERSION <= 5:
+#     mapper.SetInput(point)
+# else:
+#     mapper.SetInputData(point)
+
+# actor = vtk.vtkActor()
+# actor.SetMapper(mapper)
+# actor.GetProperty().SetPointSize(20)
+
+# renderer = vtk.vtkRenderer()
+# renderWindow = vtk.vtkRenderWindow()
+# renderWindow.AddRenderer(renderer)
+# renderWindowInteractor = vtk.vtkRenderWindowInteractor()
+# renderWindowInteractor.SetRenderWindow(renderWindow)
+
+# renderer.AddActor(actor)
+
+# renderWindow.Render()
+# renderWindowInteractor.Start()
+
+    
+
+
+# ========================================================= #
+# ===  load__vtuFile                                    === #
+# ========================================================= #
+
+def load__vtuFile( inpFile=None ):
+
+    if ( FileName is None ): sys.exit( "[load__vtuFile] FileName == ???" )
+    
+    reader = vtk.vtkXMLUnstructuredGridReader()
+    reader.SetFileName( FileName )
+    reader.Update()
+
+    Data   = reader.GetOutput()
+    return( Data )
+
+#     # Extracting triangulation information
+#     triangles = data.GetPolys().GetData()
+#     points = data.GetPoints()
+
+#     # Mapping data: cell -> point
+#     mapper = vtk.vtkCellDataToPointData()
+#     mapper.AddInputData(data)
+#     mapper.Update()
+#     mapped_data = mapper.GetOutput()
+
+#     # Extracting interpolate point data
+#     udata = mapped_data.GetPointData().GetArray(0)
+
+#     ntri = triangles.GetNumberOfTuples()/4
+#     npts = points.GetNumberOfPoints()
+#     nvls = udata.GetNumberOfTuples()
+
+#     tri = np.zeros((ntri, 3))
+#     x = np.zeros(npts)
+#     y = np.zeros(npts)
+#     ux = np.zeros(nvls)
+#     uy = np.zeros(nvls)
+
+#     for i in xrange(0, ntri):
+#         tri[i, 0] = triangles.GetTuple(4*i + 1)[0]
+#         tri[i, 1] = triangles.GetTuple(4*i + 2)[0]
+#         tri[i, 2] = triangles.GetTuple(4*i + 3)[0]
+
+#     for i in xrange(npts):
+#         pt = points.GetPoint(i)
+#         x[i] = pt[0]
+#         y[i] = pt[1]
+
+#     for i in xrange(0, nvls):
+#         U = udata.GetTuple(i)
+#         ux[i] = U[0]
+#         uy[i] = U[1]
+
+#     return (x, y, tri, ux, uy)
+
+# plt.clf()
+# x, y, tri, ux, uy = load_velocity('U_test-plane.vtk')
+# plt.tricontour(x, y, tri, ux, 16, linestyles='-',
+#                colors='black', linewidths=0.5)
+# plt.tricontourf(x, y, tri, ux, 16)
+# plt.rc('text', usetex=True)
+# plt.xlim([0, 0.1])
+# plt.ylim([0, 0.1])
+# plt.gca().set_aspect('equal')
+# plt.gca().tick_params(direction='out', which='both')
+# plt.minorticks_on()
+# plt.gca().set_xticklabels([])
+# plt.gca().set_yticklabels([])
+# plt.title('$\mathsf{Cavity\ tutorial,\ u_x}$')
+# plt.savefig("cavity-ux.png", dpi=300, bbox_inches='tight')
+# plt.savefig("cavity-ux.pdf", bbox_inches='tight')
+
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    
+    show__midplain()
+
+
+    

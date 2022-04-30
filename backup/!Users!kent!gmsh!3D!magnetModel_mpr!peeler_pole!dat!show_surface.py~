@@ -1,0 +1,14 @@
+import numpy as np
+
+inpFile = "pole_modified.nodes"
+
+with open( inpFile, "r" ) as f:
+    rData  = np.loadtxt( f )
+Data       = np.zeros( (rData.shape[0],4) )
+Data[:,:3] = rData[:,2:]
+Data[:, 3] = rData[:, 4]
+print( Data.shape )
+
+
+import nkVTKRoutines.vtkDataConverter as vtk
+vtk.vtkDataConverter( Data=Data, tag="sample", vtkFile="out.vtp", DataType="point" )

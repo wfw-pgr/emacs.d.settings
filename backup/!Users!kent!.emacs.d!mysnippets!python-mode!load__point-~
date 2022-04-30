@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: load__point-
+# key: load__point-
+# --
+import nkUtilities.load__pointFile as lpf
+Data = lpf.load__pointFile( inpFile=inpFile, returnType="point" )

@@ -1,0 +1,18 @@
+import sys
+import numpy as np
+
+
+# ========================================================= #
+# ===  feedback__polecs                                 === #
+# ========================================================= #
+
+def feedback__polecs():
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+
+    datFile = "dat/bfield_xAxis.dat"
+    outFile = "dat/pole_cs_fb.dat"
+    pngFile = "png/pole_cs_fb.png"
+    

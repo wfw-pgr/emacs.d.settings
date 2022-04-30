@@ -1,0 +1,6 @@
+import numpy as np
+
+
+with open( "pole.nodes", "r" ) as f:
+    Data = np.loadtxt( f )
+Data = Data[:,2:]

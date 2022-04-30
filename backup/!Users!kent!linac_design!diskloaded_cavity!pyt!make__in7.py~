@@ -1,0 +1,12 @@
+import numpy as np
+
+
+# ========================================================= #
+# ===  make in7 ( input file for sf7 )                  === #
+# ========================================================= #
+
+def make__in7():
+
+    # -- execute this script to generate grided field -- #
+    # -- sf7 : post processor for poisson-superfish   -- #
+    # -- in7 : input file for sf7

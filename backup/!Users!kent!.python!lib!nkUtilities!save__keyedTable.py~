@@ -1,0 +1,39 @@
+import os, sys
+
+# ========================================================= #
+# ===  save__keyedTable.py                              === #
+# ========================================================= #
+
+def save__keyedTable( table=None, names=None, cards=None ):
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( table is None ):
+        sys.exit( "[save__keyedTable.py] table is None. [ERROR] " )
+    if ( cards  is None ):
+        cards = list( table.keys() )
+    if ( len( cards ) == 0 ):
+        sys.exit( "[save__keyedTable.py] table:: empty card. No key for table. [ERROR] " )
+    if ( names is None ):
+        names = list( table[cards[0]].keys() )
+    
+    # ------------------------------------------------- #
+    # --- [2] save__keyedTable                      --- #
+    # ------------------------------------------------- #
+
+
+    return()
+
+
+# ========================================================= #
+# ===   Execution of Pragram                            === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+
+    table = { "key01":{ "r1":1, "r2":2, "r3":3 }, \
+              "key02":{ "r1":1, "r2":2, "r3":3 }, \
+              "key03":{ "r1":1, "r2":2, "r3":3 }  }
+    
+    save__keyedTable( table=table )

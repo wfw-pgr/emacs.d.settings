@@ -1,0 +1,10 @@
+module brycntItpMod
+contains
+
+  subroutine barycentric__interpolate()
+    implicit none
+
+    
+    
+    return
+  end subroutine barycentric__interpolate

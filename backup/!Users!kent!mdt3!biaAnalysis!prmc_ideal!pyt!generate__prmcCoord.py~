@@ -1,0 +1,164 @@
+import numpy as np
+import os, sys, subprocess
+import nkUtilities.load__constants as lcn
+import gmsh
+
+
+# ========================================================= #
+# ===  generate__prmcCoordinate.py                      === #
+# ========================================================= #
+
+def generate__prmcCoord():
+
+    # ------------------------------------------------- #
+    # --- [1] config                                --- #
+    # ------------------------------------------------- #
+    cnsFile = "dat/unified.conf"
+    const   = lcn.load__constants( inpFile=cnsFile )
+
+    generate__plCoord( const=const )
+    generate__mcCoord( const=const )
+    return()
+    
+
+
+# ========================================================= #
+# ===  generate peeler coordinate                       === #
+# ========================================================= #
+
+def generate__plCoord( const=None ):
+
+    surfDim  = 2
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( const is None ): sys.exit( "[generate__plCoord] const == ???" )
+
+    # ------------------------------------------------- #
+    # --- [2] generate peeler coordinate            --- #
+    # ------------------------------------------------- #
+    gmsh.initialize()
+    gmsh.option.setNumber( "General.Terminal", 1 )
+    gmsh.option.setNumber( "Mesh.Algorithm"  , 1 )
+    gmsh.model.add( "model" )
+
+    import nkGmshRoutines.make__roundedFanArea as rfa
+    rfa.make__roundedFanArea( r1      =const["ideal.pl_r1"]      , r2     =const["ideal.pl_r2"], \
+                              theta1  =const["ideal.pl_th1"]     , theta2 =const["ideal.pl_th2"], \
+                              nDiv_th =const["ideal.pl_nDiv_th"] , nDiv_r =const["ideal.pl_nDiv_r"] , \
+                              nSkip_th=const["ideal.pl_nSkip_th"], nSkip_r=const["ideal.pl_nSkip_r"] )
+    gmsh.model.occ.synchronize()
+    dimtags  = gmsh.model.getEntities( dim=surfDim )
+    tags     = [ dimtag[1] for dimtag in dimtags  ]
+    gmsh.model.addPhysicalGroup( surfDim, tags, tag=201 )
+    gmsh.option.setNumber( "Mesh.CharacteristicLengthMin", const["ideal.pl_meshsize"] )
+    gmsh.option.setNumber( "Mesh.CharacteristicLengthMax", const["ideal.pl_meshsize"] )
+    gmsh.model.mesh.generate(2)
+    gmsh.write( "msh/peeler.msh" )
+    gmsh.finalize()
+    
+    # ------------------------------------------------- #
+    # --- [3] convert into .mesh ( elmer-format )   --- #
+    # ------------------------------------------------- #
+    cmd = "ElmerGrid 14 2 msh/peeler.msh"
+    print( cmd )
+    subprocess.call( cmd.split() )
+
+    # ------------------------------------------------- #
+    # --- [4] load & save node point                --- #
+    # ------------------------------------------------- #
+    inpFile = "msh/peeler/mesh.nodes"
+    import nkUtilities.load__pointFile as lpf
+    Data = lpf.load__pointFile( inpFile=inpFile, returnType="point" )
+
+    Data = Data[:,2:]
+    
+    outFile   = "dat/peeler_coord.dat"
+    import nkUtilities.save__pointFile as spf
+    spf.save__pointFile( outFile=outFile, Data=Data )
+
+    return()
+
+
+# ========================================================= #
+# ===  generate coordinate for magnetic channel         === #
+# ========================================================= #
+
+def generate__mcCoord( const=None ):
+
+    surfDim  = 2
+    
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( const is None ): sys.exit( "[generate__mcCoord] const == ???" )
+
+    # ------------------------------------------------- #
+    # --- [2] generate peeler coordinate            --- #
+    # ------------------------------------------------- #
+    gmsh.initialize()
+    gmsh.option.setNumber( "General.Terminal", 1 )
+    gmsh.option.setNumber( "Mesh.Algorithm"  , 1 )
+    gmsh.model.add( "model" )
+
+    import nkGmshRoutines.make__regionAlongLine as ral
+    tvar = np.linspace( 0.0, 0.3, 21 )
+    xvar = tvar
+    yvar = tvar**2
+    zvar = tvar*0.0
+    Data = np.concatenate( [xvar[:,None],yvar[:,None],zvar[:,None]], axis=1 )
+    ral.make__regionAlongLine( Data=Data, \
+                               upper_margin=const["ideal.mc_upperMargin"], \
+                               lower_margin=const["ideal.mc_lowerMargin"]  )
+    gmsh.model.occ.synchronize()
+    dimtags  = gmsh.model.getEntities( dim=surfDim )
+    tags     = [ dimtag[1] for dimtag in dimtags  ]
+    gmsh.model.addPhysicalGroup( surfDim, tags, tag=201 )
+    gmsh.option.setNumber( "Mesh.CharacteristicLengthMin", const["ideal.mc_meshsize"] )
+    gmsh.option.setNumber( "Mesh.CharacteristicLengthMax", const["ideal.mc_meshsize"] )
+    gmsh.model.mesh.generate(2)
+    gmsh.write( "msh/mc.msh" )
+    gmsh.finalize()
+    
+    # ------------------------------------------------- #
+    # --- [3] convert into .mesh ( elmer-format )   --- #
+    # ------------------------------------------------- #
+    cmd = "ElmerGrid 14 2 msh/mc.msh"
+    print( cmd )
+    subprocess.call( cmd.split() )
+
+    # ------------------------------------------------- #
+    # --- [4] load & save node point                --- #
+    # ------------------------------------------------- #
+    inpFile = "msh/mc/mesh.nodes"
+    import nkUtilities.load__pointFile as lpf
+    Data = lpf.load__pointFile( inpFile=inpFile, returnType="point" )
+
+    Data = Data[:,2:]
+    
+    outFile   = "dat/mc_coord.dat"
+    import nkUtilities.save__pointFile as spf
+    spf.save__pointFile( outFile=outFile, Data=Data )
+    
+    return()
+    
+
+
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    generate__prmcCoord()
+
+
+    # import nkUtilities.plot1D       as pl1
+    # import nkUtilities.load__config as lcf
+    # pngFile = "check.png"
+    # config  = lcf.load__config()
+    # fig     = pl1.plot1D( config=config, pngFile=pngFile )
+    # fig.add__plot( xAxis=Data[:,0], yAxis=Data[:,1], marker="o", markersize=0.4, linewidth=0.0 )
+    # fig.set__axis()
+    # fig.save__figure()

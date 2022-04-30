@@ -1,0 +1,24 @@
+import numpy as np
+
+
+
+# ========================================================= #
+# ===  make histogram along energy axis                 === #
+# ========================================================= #
+
+def histogram__energy():
+
+    x_ , y_ , z_  = 0, 1, 2
+    vx_, vy_, vz_ = 3, 4, 5
+
+    # ------------------------------------------------- #
+    # --- [1] load constants & data                 --- #
+    # ------------------------------------------------- #
+
+    import nkUtilities.load__constants as lcn
+    cnsFile  = "dat/parameter.conf"
+    pcnsFile = "dat/particle.conf"
+    const    = lcn.load__constants( inpFile= cnsFile )
+    pconst   = lcn.load__constants( inpFile=pcnsFile )
+
+    

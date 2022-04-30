@@ -1,0 +1,4 @@
+particleFile  		string		dat/particles.dat
+spfFile			string		dat/efield.dat
+outFile			string		dat/efield_pt.dat
+efield_factor		float		10.0

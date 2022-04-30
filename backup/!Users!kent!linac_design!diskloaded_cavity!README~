@@ -1,0 +1,18 @@
+
+
+[INPUT]
+
+	* dat/parameter.conf
+
+
+[RUN]
+
+	* python pyt/make__af.py
+	* python pyt/make__in7.py
+	* open run/diskloaded.af
+	* open run/DISKLOAEDE.T35
+	* open run/diskloaded.in7
+	* python pyt/convert__sf7.py
+	* python pyt/display__sf7.py
+
+

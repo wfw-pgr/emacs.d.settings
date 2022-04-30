@@ -1,0 +1,128 @@
+
+CHECK KEYWORDS "Warn"
+
+Header
+  Mesh DB "." "model"
+  Include Path ""
+  Results Directory ""
+End
+
+Simulation
+  coordinate system           = "Cartesian 3D"
+  Coordinate Mapping(3)       = 1 2 3
+
+  Simulation Type             = "Steady State"
+  Steady State Max Iterations = 30
+  
+  Solver Input File           = "circular_coil.sif"
+  Output File                 = "circular_coil.dat"
+  Post File                   = "circular_coil.vtu"
+End
+
+
+Constants
+  Permeability of Vacuum = 1.2566e-06
+End
+
+Body 1
+  Target Bodies(2) = 301 302
+  Name             = "coil"
+
+  Equation         = 1
+  Material         = 1
+  Body Force       = 1
+End
+
+Body 2
+  Target Bodies(1) = 303
+  Name             = "ROI"
+
+  Equation         = 1
+  Material         = 2
+End
+
+Body 3
+
+  Target Bodies(1) = 304
+  Name             = "sim"
+
+  Equation         = 1
+  Material         = 2
+  
+End
+
+
+Equation 1
+  Name              = "StaticMagneticField"
+  Active Solvers(2) = 1 2
+End
+
+
+Solver 1
+
+  Equation      = "WhitneySolver"
+  Variable      = "AV"
+  Variable Dofs = 1
+  Procedure     = "MagnetoDynamics" "WhitneyAVSolver"
+
+  Fix Input Current Density = True
+  
+  Linear System Solver                     = "Iterative"
+  Linear System Symmetric                  = True
+  Linear System Iterative Method           = "BiCGStab"
+  Linear System Max Iterations             = 300
+  Linear System Convergence Tolerance      = 1.0e-7
+  Linear System Preconditioning            = "None"
+  
+  Nonlinear System Max Iterations          = 1
+  Nonlinear System Convergence Tolerance   = 1.0e-4
+  Nonlinear System Newton After Tolerance  = 1.0e-3
+  Nonlinear System Newton After Iterations = 10
+  Nonlinear System Relaxation Factor       = 1
+  Steady State Convergence Tolerance       = 1.0e-6
+  
+End
+
+Solver 2
+
+  Equation           = "MagneticFieldCalculator"
+  Procedure          = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Potential Variable = "AV"
+
+  Calculate Magnetic Field Strength        = True
+  Calculate Current Density                = True
+  Calculate Maxwell Stress                 = True
+  
+End
+
+
+Material 1
+  Name                  = "Metal"
+  Electric Conductivity = 5.0e4
+  Relative Permittivity = 1.0
+End
+
+Material 2
+  Name                  = "Air"
+  Electric Conductivity = 0.0
+  Relative Permeability = 1.0
+End
+
+Body Force 1
+
+  Name = "Solenoid Current Density"
+
+  Current Density 1 = Variable coordinate 1, 
+  	  Real MATC "-1.211e6*tx"
+  Current Density 2 = Variable coordinate 2,
+          Real MATC "1.211e6*tx"
+  Current Density 3 = 0
+
+End
+
+Boundary Condition 1
+  Name = "Far Boundary"
+  Target Boundaries(1) = 201 202 203
+  AV {e} = 0.0
+End
+

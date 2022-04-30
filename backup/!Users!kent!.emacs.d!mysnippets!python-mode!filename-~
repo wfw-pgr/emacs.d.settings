@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: filename-
+# key: filename-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+${1:`(insert-filename)`}

@@ -1,0 +1,5 @@
+from beamline import blparser
+from beamline import pltutils
+beamlinelist = blparser.madParser('tutorial1.list', 'BL1')
+beamlineplot, xlim, ylim = pltutils.makeBeamline(beamlinelist, startpoint=(5, 5))
+pltutils.plotLattice(beamlineplot, xranges=xlim, yranges=ylim, zoomfac=2.0, fig_size=8, fig_ratio=0.4)

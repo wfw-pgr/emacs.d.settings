@@ -1,0 +1,185 @@
+import os, sys
+import numpy         as np
+import gmsh_api.gmsh as gmsh
+
+# ========================================================= #
+# ===  make__magchannel                                 === #
+# ========================================================= #
+
+def make__magchannel( inpFile="dat/mc_cs.conf", fuse=True, blancket=True ):
+
+    unit_mm = 1.e-3
+    th_,r1_,r2_,z1_,z2_,r3_,r4_,r5_,z3_,z4_,z5_ = 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+    
+    # ------------------------------------------------- #
+    # --- [1] load mc position                      --- #
+    # ------------------------------------------------- #
+    import nkUtilities.load__pointFile as lpf
+    Data       = lpf.load__pointFile( inpFile=inpFile, returnType="point" )
+    Data[:,:2] = Data[:,:2] * unit_mm
+    Data[:, 2] = np.pi * ( Data[:,2] - 90.0 ) / 180.0
+    Data[:,3:] = Data[:,3:] * unit_mm
+    
+    # ------------------------------------------------- #
+    # --- [2] convert (r,z,t) => (x,y,z)            --- #
+    # ------------------------------------------------- #
+    ncs          = Data.shape[0]
+    sinth, costh = np.sin( Data[:,th_] ), np.cos( Data[:,th_] )
+    x1, x2, x3   = Data[:,r1_]*costh, Data[:,r2_]*costh, Data[:,r3_]*costh
+    x4, x5       = Data[:,r4_]*costh, Data[:,r5_]*costh
+    y1, y2, y3   = Data[:,r1_]*sinth, Data[:,r2_]*sinth, Data[:,r3_]*sinth
+    y4, y5       = Data[:,r4_]*sinth, Data[:,r5_]*sinth
+    z1, z2, z3   = Data[:,z1_], Data[:,z2_], Data[:,z3_], 
+    z4, z5       = Data[:,z4_], Data[:,z5_]
+
+    # ------------------------------------------------- #
+    # --- [3] magnetic channel 1 (inner)            --- #
+    # ------------------------------------------------- #
+    xyz1_1       = np.concatenate( [x1[None,:],y1[None,:],z1[None,:]], axis=0 )
+    xyz1_2       = np.concatenate( [x2[None,:],y2[None,:],z1[None,:]], axis=0 )
+    xyz1_3       = np.concatenate( [x1[None,:],y1[None,:],z2[None,:]], axis=0 )
+    xyz1_4       = np.concatenate( [x2[None,:],y2[None,:],z2[None,:]], axis=0 )
+    mc1          = np.concatenate( [xyz1_1[None,:,:],xyz1_2[None,:,:],\
+                                    xyz1_3[None,:,:],xyz1_4[None,:,:],], axis=0 )
+
+    
+    # ------------------------------------------------- #
+    # --- [4] magnetic channel 2 ( outer1 )         --- #
+    # ------------------------------------------------- #
+    xyz2_1       = np.concatenate( [x3[None,:],y3[None,:],z3[None,:]], axis=0 )
+    xyz2_2       = np.concatenate( [x4[None,:],y4[None,:],z3[None,:]], axis=0 )
+    xyz2_3       = np.concatenate( [x3[None,:],y3[None,:],z5[None,:]], axis=0 )
+    xyz2_4       = np.concatenate( [x4[None,:],y4[None,:],z5[None,:]], axis=0 )
+    mc2          = np.concatenate( [xyz2_1[None,:,:],xyz2_2[None,:,:],\
+                                    xyz2_3[None,:,:],xyz2_4[None,:,:],], axis=0 )
+
+    
+    # ------------------------------------------------- #
+    # --- [5] magnetic channel 3 ( outer2 )         --- #
+    # ------------------------------------------------- #
+    xyz3_1       = np.concatenate( [x4[None,:],y4[None,:],z4[None,:]], axis=0 )
+    xyz3_2       = np.concatenate( [x5[None,:],y5[None,:],z4[None,:]], axis=0 )
+    xyz3_3       = np.concatenate( [x4[None,:],y4[None,:],z5[None,:]], axis=0 )
+    xyz3_4       = np.concatenate( [x5[None,:],y5[None,:],z5[None,:]], axis=0 )
+    mc3          = np.concatenate( [xyz3_1[None,:,:],xyz3_2[None,:,:],\
+                                    xyz3_3[None,:,:],xyz3_4[None,:,:],], axis=0 )
+
+    
+    # ------------------------------------------------- #
+    # --- [6] make iron parts                       --- #
+    # ------------------------------------------------- #
+    mc1s,mc2s,mc3s = [], [], []
+    import nkGmshRoutines.generate__hexahedron as ghh
+    for ics in range(ncs-1):
+        vertex1 = np.concatenate( [ mc1[:,:,ics], mc1[:,:,ics+1] ], axis=0 )
+        vertex2 = np.concatenate( [ mc2[:,:,ics], mc2[:,:,ics+1] ], axis=0 )
+        vertex3 = np.concatenate( [ mc3[:,:,ics], mc3[:,:,ics+1] ], axis=0 )
+        ret1    = ghh.generate__hexahedron( vertex=vertex1, defineVolu=True, defineSurf=True )
+        ret2    = ghh.generate__hexahedron( vertex=vertex2, defineVolu=True, defineSurf=True )
+        ret3    = ghh.generate__hexahedron( vertex=vertex3, defineVolu=True, defineSurf=True )
+        mc1s.append( ret1 )
+        mc2s.append( ret2 )
+        mc3s.append( ret3 )
+
+        
+    # ------------------------------------------------- #
+    # --- [7] fuse volume                           --- #
+    # ------------------------------------------------- #
+    if ( fuse ):
+        voluDim  = 3
+        dimtags1 = [ (voluDim,voluNum) for voluNum in mc1s ]
+        dimtags2 = [ (voluDim,voluNum) for voluNum in mc2s ]
+        dimtags3 = [ (voluDim,voluNum) for voluNum in mc3s ]
+        targets1 = [ dimtags1[0] ]
+        targets2 = [ dimtags2[0] ]
+        targets3 = [ dimtags3[0] ]
+        tools1   =   dimtags1[1:]
+        tools2   =   dimtags2[1:]
+        tools3   =   dimtags3[1:]
+        gmsh.model.occ.fuse( targets1, tools1 )
+        gmsh.model.occ.fuse( targets2, tools2 )
+        gmsh.model.occ.fuse( targets3, tools3 )
+
+    # ------------------------------------------------- #
+    # --- [8] make blancket                         --- #
+    # ------------------------------------------------- #
+    if ( blancket ):
+        x_,y_,z_ = 0, 1, 2
+        radii1   = np.sqrt( xyz1_3[x_,:]**2 + xyz1_3[y_,:]**2 )
+        radii2   = np.sqrt( xyz3_4[x_,:]**2 + xyz3_4[y_,:]**2 )
+        theta1   = np.arctan2( xyz1_3[y_,:], xyz1_3[x_,:] )
+        theta2   = np.arctan2( xyz3_4[y_,:], xyz3_4[x_,:] )
+        radius_i = np.min( radii1 )
+        radius_o = np.max( radii2 )
+        theta1   = np.min( theta1 )
+        theta2   = np.max( theta2 )
+        dr       = radius_o - radius_i
+        dth      =   theta2 - theta1
+        radius_i = radius_i - 0.05 * dr
+        radius_o = radius_o + 0.05 * dr
+        theta1   = ( theta1 - 0.05 * dth ) / np.pi * 180.0
+        theta2   = ( theta2 + 0.05 * dth ) / np.pi * 180.0
+        height   = np.max( np.concatenate( [ xyz1_3[z_,:], xyz3_4[z_,:] ] ) )
+        height   = height * 1.0
+        import nkGmshRoutines.generate__fanShape as fan
+        ret = fan.generate__fanShape( r1=radius_i, r2=radius_o, th1=theta1, th2=theta2, \
+                                      zoffset=0.0, height=height, defineVolu=True )
+        gmsh.model.occ.synchronize()
+        gmsh.model.occ.removeAllDuplicates()
+        gmsh.model.occ.synchronize()
+    
+    return()
+
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+
+    # ------------------------------------------------- #
+    # --- [1] initialization of the gmsh            --- #
+    # ------------------------------------------------- #
+    gmsh.initialize()
+    gmsh.option.setNumber( "General.Terminal", 1 )
+    gmsh.option.setNumber( "Mesh.Algorithm"  , 1 )
+    gmsh.option.setNumber( "Mesh.Algorithm3D", 1 )
+    gmsh.option.setNumber( "Geometry.Tolerance", 1e-1 )
+    gmsh.option.setNumber( "Geometry.MatchMeshTolerance", 1e-4 )
+    gmsh.option.setNumber( "Mesh.SubdivisionAlgorithm", 1 )
+    gmsh.model.add( "model" )
+    
+    
+    # ------------------------------------------------- #
+    # --- [2] Modeling                              --- #
+    # ------------------------------------------------- #
+
+    make__magchannel()
+    
+    gmsh.model.occ.synchronize()
+    gmsh.model.occ.removeAllDuplicates()
+    gmsh.model.occ.synchronize()
+
+
+    # ------------------------------------------------- #
+    # --- [3] Mesh settings                         --- #
+    # ------------------------------------------------- #
+    
+    # meshFile = "dat/mesh.conf"
+    # import nkGmshRoutines.assign__meshsize as ams
+    # meshes = ams.assign__meshsize( meshFile=meshFile )
+    
+    gmsh.option.setNumber( "Mesh.CharacteristicLengthMin", 0.005 )
+    gmsh.option.setNumber( "Mesh.CharacteristicLengthMax", 0.005 )
+    
+
+    # ------------------------------------------------- #
+    # --- [4] post process                          --- #
+    # ------------------------------------------------- #
+    gmsh.model.occ.synchronize()
+    gmsh.model.mesh.generate(3)
+    gmsh.write( "msh/model.msh" )
+    gmsh.write( "msh/model.geo_unrolled" )
+    gmsh.finalize()
+    
+

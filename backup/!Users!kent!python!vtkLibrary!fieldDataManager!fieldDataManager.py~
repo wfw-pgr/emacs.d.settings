@@ -1,0 +1,160 @@
+import numpy as np
+
+
+# ========================================================= #
+# ===  fieldDataManager                                 === #
+# ========================================================= #
+class fieldDataManager():
+
+    # ------------------------------------------------- #
+    # --- field Data Manager Initialization         --- #
+    # ------------------------------------------------- #
+    def __init__( self, Data=None, tag=None, DataOrder="ijk", DataType="point" ):
+        
+        self.Data  = {}
+        self.tags  = []
+
+        if ( ( Data is not None ) and ( Data is not None ) ):
+            add_fieldDataStruct( Data=Data, tag=tag, DataOrder=DataOrder, DataType=DataType )
+
+            
+    # ------------------------------------------------- #
+    # --- add field Data structure                  --- #
+    # ------------------------------------------------- #
+    def add__fieldDataStruct( self, Data=None, tag=None, DataOrder="ijk", DataType="point" ):
+
+        self.Data[ tag ] = fieldDataStruct( Data=Data, tag=tag, \
+                                            DataOrder=DataOrder, DataType=DataType )
+        self.tags.append( tag ) 
+
+
+
+# ========================================================= #
+# ===  single field Data Structure                      === #
+# ========================================================= #
+class fieldDataStruct():
+
+    # ------------------------------------------------- #
+    # --- field Data initialize                     --- #
+    # ------------------------------------------------- #
+    def __init__( self,  Data=None, tag=None, DataOrder="ijk", DataType="point", \
+                  ndim=None, nComponents=None, nData=None, size=None, shape=None ):
+        # -- compulsory components   -- #
+        self.Data        = Data
+        self.tag         = tag
+        # -- with prefered default   -- #
+        self.DataType    = DataType
+        self.DataOrder   = DataOrder
+        # -- automatical resolvables -- #
+        self.ndim        = ndim
+        self.nComponents = nComponents
+        self.nData       = nData
+        self.size        = size
+        self.shape       = shape
+
+        # -- if Data is given, set attributes -- #
+        if ( self.Data is not None ):
+            self.resolve__attributes()
+
+            
+    # ------------------------------------------------- #
+    # --- add field Data information                --- #
+    # ------------------------------------------------- #
+    def store__fieldData( self, Data=None, tag=None, DataOrder="ijk", DataType="point" ):
+        # -- compulsory components   -- #
+        self.Data        = Data
+        self.tag         = tag
+        # -- with prefered default   -- #
+        self.DataType    = DataType
+        self.DataOrder   = DataOrder
+
+        
+    # ------------------------------------------------- #
+    # --- set attributes resolved from Data         --- #
+    # ------------------------------------------------- #
+    def resolve__attributes( self ):
+        
+        # -- raise error; if needed data is not given -- #
+        if ( self.Data      is None ):
+            sys.exit( "[set__guessedAttributes-@fieldDataStruct-] self.Data      is None [ERROR]" )
+        if ( self.DataType  is None ):
+            sys.exit( "[set__guessedAttributes-@fieldDataStruct-] self.DataType  is None [ERROR]" )
+        if ( self.DataOrder is None ):
+            sys.exit( "[set__guessedAttributes-@fieldDataStruct-] self.DataOrder is None [ERROR]" )
+
+        # -- resolve ndim -- #
+        if ( self.ndim is None ):
+            self.ndim = self.Data.ndim
+            
+        # -- resolve nComponents -- #
+        if ( self.nComponents is None ):
+            if ( self.ndim == 1 ):
+                self.nComponents = 1
+            else:
+                if ( self.DataType == "image"      ):
+                    self.nComponents = 1
+                if ( self.DataType == "point"      ):
+                    self.nComponents = self.Data.shape[1]
+                    self.nData       = self.Data.shape[0]
+                if ( self.DataType == "structured" ):
+                    if ( self.DataOrder == "ijk" ):
+                        self.nComponents = self.Data.shape[-1]
+                        self.nData       = self.Data.shape[:-1]
+                    if ( self.DataOrder == "kji" ):
+                        self.nComponents = self.Data.shape[ 0]
+                        
+        # -- resolve nData -- #
+        if ( self.nData is None ):
+            if ( self.ndim == 1 ):
+                self.nData = self.Data.size
+            else:
+                if ( self.DataType == "image"      ):
+                    self.nData       = self.Data.size
+                if ( self.DataType == "point"      ):
+                    self.nData       = self.Data.shape[0]
+                if ( self.DataType == "structured" ):
+                    if ( self.DataOrder == "ijk" ):
+                        self.nData       = np.prod( self.Data.shape[:-1] )
+                    if ( self.DataOrder == "kji" ):
+                        self.nComponents = np.prod( self.Data.shape[1: ] )
+            
+        # -- resolve size  -- #
+        if ( self.size  is None ):
+            self.size  = self.Data.shape
+
+        # -- resolve shape -- #
+        if ( self.shape is None ):
+            self.shape = self.Data.shape
+
+    
+    # ------------------------------------------------- #
+    # --- return Data information                   --- #
+    # ------------------------------------------------- #
+    def return__DataInfo( self, Data=None ):
+        ret = { "tag" :self.tag , "DataType":self.DataType, "DataOrder"  :self.DataOrder  , \
+                "ndim":self.ndim, "nData"   :self.nData   , "nComponents":self.nComponents, \
+                "size":self.size, "shape"   :self.shape   }
+        return( ret )
+
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+
+    import nkUtilities.equiSpaceGrid as esg
+    x1MinMaxNum = [ 0.0, 1.0, 11 ]
+    x2MinMaxNum = [ 0.0, 1.0, 11 ]
+    x3MinMaxNum = [ 0.0, 1.0, 11 ]
+    ret1         = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                     x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+    print( ret1.shape )
+
+
+    import nkUtilities.generate__testprofile as gtp
+    x1MinMaxNum = [ 0.0, 1.0, 11 ]
+    x2MinMaxNum = [ 0.0, 1.0, 11 ]
+    x3MinMaxNum = [ 0.0, 1.0, 11 ]
+    ret2        = gtp.generate__testprofile( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+    	                                     x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+    print( ret2.shape )

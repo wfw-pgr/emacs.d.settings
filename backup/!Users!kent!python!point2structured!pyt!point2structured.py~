@@ -1,0 +1,34 @@
+import numpy as np
+
+
+# ========================================================= #
+# ===  point2structured.py                              === #
+# ========================================================= #
+
+def point2structured( Data=None, dim=3 ):
+
+    # ------------------------------------------------- #
+    # --- [1] Argument Check                        --- #
+    # ------------------------------------------------- #
+    if ( Data is None ): sys.exit( "[point2structured] Data == ???" )
+
+    # ------------------------------------------------- #
+    # --- [2] size check                            --- #
+    # ------------------------------------------------- #
+    nPoint = Data.shape[0]
+    nData  = Data.shape[1]
+
+    if   ( dim == 2 ):
+        return()
+        
+    elif ( dim == 3 ):
+        x1 = Data[:,0]
+        x2 = Data[:,1]
+        x3 = Data[:,2]
+        LI = len( set( x1 ) )
+        LJ = len( set( x2 ) )
+        LK = len( set( x3 ) )
+        if ( nData == LI*LJ*LK ):
+            pass
+        else:
+            print( "[point2structured] size incompatible... (LI,LJ,LK) == ({0},{1},{2}) ".format( LI,LJ,LK ) )

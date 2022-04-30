@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: equispacegrid-
+# key: equispacegrid-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+x1MinMaxNum = [ 0.0, 1.0, 11 ]
+x2MinMaxNum = [ 0.0, 1.0, 11 ]
+x3MinMaxNum = [ 0.0, 1.0, 11 ]
+import nkUtilities.equiSpaceGrid3D as esg
+ret         = esg.equiSpaceGrid3D( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+	      			   x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+$0

@@ -1,0 +1,7 @@
+import numpy as np
+
+# ========================================================= #
+# ===  calculation of characteristics of helmholtz coil === #
+# ========================================================= #
+
+def output__helmhortz():

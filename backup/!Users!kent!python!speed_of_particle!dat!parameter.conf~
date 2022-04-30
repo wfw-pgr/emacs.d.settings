@@ -1,0 +1,7 @@
+cv		float		2.99792458
+mp		float		9.11e-31
+qe		float		1.602e-19
+
+EMin		float		100e3
+EMax		float		1000e3
+nE		float		10

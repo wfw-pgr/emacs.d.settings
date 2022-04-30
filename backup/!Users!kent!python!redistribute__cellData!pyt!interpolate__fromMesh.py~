@@ -1,0 +1,67 @@
+import sys
+import numpy                       as np
+import nkUtilities.load__pointFile as lpf
+
+# ========================================================= #
+# ===  interpolate__fromMesh.py                         === #
+# ========================================================= #
+
+def interpolate__fromMesh( nodeData=None, elems=None, nodes=None, points=None ):
+
+    x_ ,y_ ,z_  = 0, 1, 2
+    v1_,v2_,v3_ = 0, 1, 2
+    
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( nodeData is None ): sys.exit( "[interpolate__fromMesh.py] Data   == ???" )
+    if ( elems    is None ): sys.exit( "[interpolate__fromMesh.py] elems  == ???" )
+    if ( nodes    is None ): sys.exit( "[interpolate__fromMesh.py] nodes  == ???" )
+    if ( points   is None ): sys.exit( "[interpolate__fromMesh.py] points == ???" )
+    
+    # ------------------------------------------------- #
+    # --- [2] from Mesh                             --- #
+    # ------------------------------------------------- #
+    vertex  = nodes[ elems[:,:], : ]
+
+    for point in points:
+        v11     = vertex[:,v1_,:] - vertex[:,v3_,:]
+        v12     = point[:]        - vertex[:,v1_,:]
+        v21     = vertex[:,v2_,:] - vertex[:,v1_,:]
+        v22     = point[:]        - vertex[:,v2_,:]
+        v31     = vertex[:,v3_,:] - vertex[:,v2_,:]
+        v32     = point[:]        - vertex[:,v3_,:]
+        
+        ret1    = np.sign( np.cross( v11, v12 ) )
+        ret2    = np.sign( np.cross( v21, v22 ) )
+        ret3    = np.sign( np.cross( v31, v32 ) )
+        ret     = ret1 * ret2 * ret3
+        # index   = np.where( ( ( ret1 > 0 ) & ( ret2 > 0 ) & ( ret3 > 0 ) ) |
+        #                     ( ( ret1 > 0 ) & ( ret2 > 0 ) & ( ret3 > 0 ) ) )
+        print( len( index[0] ) )
+        
+    # ------------------------------------------------- #
+    # --- [3] return                                --- #
+    # ------------------------------------------------- #
+    return()
+    
+
+
+# ========================================================= #
+# ===   Execution of Pragram                            === #
+# ========================================================= #
+if ( __name__=="__main__" ):
+
+    inpFile  = "dat/nodeData.dat"
+    ptsFile  = "dat/nodes.dat"
+    elemFile = "dat/elems.dat"
+    nodeFile = "dat/nodes.dat"
+
+    x_,y_,z_    = 0, 1, 2
+    nodeData    = lpf.load__pointFile( inpFile= inpFile, returnType="point" )
+    nodes       = lpf.load__pointFile( inpFile=nodeFile, returnType="point" )
+    elems       = lpf.load__pointFile( inpFile=elemFile, returnType="point" )
+    points      = lpf.load__pointFile( inpFile= ptsFile, returnType="point" )
+    elems       = np.array( elems, dtype=np.int64 )
+
+    interpolate__fromMesh( nodeData=nodeData, elems=elems, nodes=nodes, points=points )

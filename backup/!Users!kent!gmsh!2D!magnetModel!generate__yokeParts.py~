@@ -1,0 +1,76 @@
+import numpy as np
+import sys
+import gmsh
+
+import generateSectorShape   as sct
+
+# ========================================================= #
+# ===  generate coil, air and yoke Parts                === #
+# ========================================================= #
+def generate__yokeParts( lc=0.2, radius1=1.0, radius2=2.0, radius3=3.0, radius4=4.0, \
+                         height_tier1=0.0, height_tier4=1.0, \
+                         height_tier5=1.1, height_tier6=1.2 ):
+
+    # ------------------------------------------------- #
+    # --- [1] settings                              --- #
+    # ------------------------------------------------- #
+    origin        = [ 0.0, 0.0 ]
+    th1, th2      = -90.0, +90.0
+    
+    # ------------------------------------------------- #
+    # --- [2] add Sector Shape                      --- #
+    # ------------------------------------------------- #
+    
+    yoke1 = sct.generateSectorShape( lc=lc, radius=radius, origin=origin, th1=th1, th2=th2, \
+                                     zoffset=height_tier4, zWidth=delta45, defineVolu=True )
+    yoke1 = sct.generateSectorShape( lc=lc, radius=radius, origin=origin, th1=th1, th2=th2, \
+                                     zoffset=height_tier1, zWidth=delta15, defineVolu=True )
+    
+    yoke2 = sct.generateSectorShape( lc=lc, radius=radius, origin=origin, th1=th1, th2=th2, \
+                                     zoffset=zoffset, zWidth=zWidth, defineVolu=True )
+
+    
+# ------------------------------------------------- #
+# --- [2] each component's length definition    --- #
+# ------------------------------------------------- #
+lc     = 50.0
+rPole  = 670.0
+rGap   = 200.0
+rThick = 200.0
+rWall  = rPole + rGap
+rYoke  = rPole + rGap + rThick
+zGap   = 200.0
+zPole  = 500.0
+zThick = 200.0
+zYoke  = zGap + zPole + zThick
+zRoot  = zGap + zPole
+rBuffC = 50.0
+zBuffC = 220.0
+rCoilW = 80.0
+zCoilH = 300.0
+rCoil1 = rPole + rBuffC
+rCoil2 = rPole + rBuffC + rCoilW
+zCoil1 = zBuffC
+zCoil2 = zBuffC + zCoilH
+
+# ------------------------------------------------- #
+# --- [3] magnet pole / Yoke Volume Definition  --- #
+# ------------------------------------------------- #
+magGap = arc.generateXYplaneArcBox( r1=0.0   , r2=rPole , zWidth=zGap  , zoffset=0.0   , lc=lc )
+pole   = arc.generateXYplaneArcBox( r1=0.0   , r2=rPole , zWidth=zPole , zoffset=zGap  , lc=lc )
+yoke1  = arc.generateXYplaneArcBox( r1=0.0   , r2=rYoke , zWidth=zThick, zoffset=zRoot , lc=lc )
+yoke2  = arc.generateXYplaneArcBox( r1=rWall , r2=rYoke , zWidth=zRoot , zoffset=0.0   , lc=lc )
+coil   = arc.generateXYplaneArcBox( r1=rCoil1, r2=rCoil2, zWidth=zCoilH, zoffset=zCoil1, lc=lc )
+cSlot  = arc.generateXYplaneArcBox( r1=rPole , r2=rWall , zWidth=zRoot , zoffset=0.0   , lc=lc )
+gmsh.model.occ.removeAllDuplicates()
+
+
+# ------------------------------------------------- #
+# --- [2] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(3)
+gmsh.write( "ex5.geo_unrolled" )
+gmsh.write( "ex5.msh" )
+gmsh.write( "ex5.bdf" )
+gmsh.finalize()

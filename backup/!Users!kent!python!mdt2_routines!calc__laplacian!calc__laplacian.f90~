@@ -1,0 +1,5 @@
+subroutine calc__laplacian
+  implicit none
+
+  return
+end subroutine calc__laplacian

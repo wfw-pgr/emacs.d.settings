@@ -1,0 +1,48 @@
+import numpy as np
+import meshio
+
+mshFile   = "msh/model.msh"
+rmesh     = meshio.read( mshFile )
+cells     = rmesh.cells_dict
+nodes     = rmesh.points
+celltypes = list( cells.keys() )
+
+print()
+print( " cell information :: " )
+print()
+for ik,ctype in enumerate( celltypes ):
+    print( " celltype :: {0:10}, shape = {1} ".format( ctype, cells[ctype].shape ) )
+
+
+print()
+print( " node information :: " )
+print()
+print( " nodes's shape == {0}".format( nodes.shape ) )
+
+print()
+print( " cell " )
+print()
+for ik,ctype in enumerate( celltypes ):
+    print()
+    print( " celltype :: {0}".format( ctype ) )
+    print( cells[ctype] )
+    print()
+
+
+# points = [ [0.0, 0.0, 0.0],
+#            [1.0, 0.0, 0.0],
+#            [0.0, 1.0, 0.0],
+#            [1.0, 1.0, 0.0],
+#            [2.0, 0.0, 0.0],
+#            [2.0, 1.0, 0.0] ]
+
+# cells = [
+#     ("triangle", [[0, 1, 2], [1, 3, 2]]),
+#     ("quad", [[1, 4, 5, 3]]),
+# ]
+
+# point_data = { "temperature": np.array( [0.3, -1.2, 0.5, 0.7, 0.0, -3.0] ) }
+# cell_data  = { "density"    : [ [ 0.1, 0.2 ], [ 0.4 ] ] }
+
+# wmesh = meshio.Mesh( points, cells, point_data=point_data, cell_data=cell_data )
+# wmesh.write( "sample.vtu" )

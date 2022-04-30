@@ -1,0 +1,48 @@
+import numpy as np
+import sys
+import gmsh
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.option.setNumber("Mesh.Algorithm", 2)
+gmsh.model.add( "ex4" )
+
+# ------------------------------------------------- #
+# --- [2] point definition                      --- #
+# ------------------------------------------------- #
+lc              = 10.0
+PhysicalLine    = 1
+PhysicalSurface = 2
+PhysicalVolume  = 3
+#  -- [2-1] magnet definition                   --  #
+Hgap    = 100.0
+rPole   = 400.0
+Wslot   = 200.0
+Hslot   = 300.0
+rYoke   = 800.0
+HYoke   = 800.0
+pts     = {}
+pts["magnet1"] = [   0.0      , 0.0, Hgap , lc, 1 ]
+pts["magnet2"] = [ rPole      , 0.0, Hgap , lc, 2 ]
+pts["magnet3"] = [ rPole      , 0.0, Hslot, lc, 3 ]
+pts["magnet4"] = [ rPole+Wslot, 0.0, Hslot, lc, 4 ]
+pts["magnet5"] = [ rPole+Wslot, 0.0, 0.0  , lc, 5 ]
+pts["magnet6"] = [ rYoke      , 0.0, 0.0  , lc, 6 ]
+pts["magnet7"] = [ rYoke      , 0.0, Hslot, lc, 7 ]
+pts["magnet8"] = [ rYoke      , 0.0, HYoke, lc, 8 ]
+pts["magnet9"] = [   0.0      , 0.0, HYoke, lc, 9 ]
+pts_list       = [ "magnet1", "magnet2", "magnet3", "magnet4", "magnet5", "magnet6", \
+                   "magnet7", "magnet8", "magnet9" ]
+for key in pts_list:
+    ret = gmsh.model.geo.addPoint( pts[key][0], pts[key][1], pts[key][2], pts[key][3], pts[key][4] )
+    
+# ------------------------------------------------- #
+# --- [4] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.geo.synchronize()
+# gmsh.model.mesh.generate(3)
+gmsh.write( "ex3.msh" )
+gmsh.finalize()

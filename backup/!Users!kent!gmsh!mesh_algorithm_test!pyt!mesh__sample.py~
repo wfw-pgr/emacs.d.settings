@@ -1,0 +1,65 @@
+import numpy as np
+import os, sys
+import gmsh
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1  )
+gmsh.option.setNumber( "Mesh.Algorithm"  , 6  )
+gmsh.option.setNumber( "Mesh.Algorithm3D", 10 )
+#
+# 2D mesh algorithm
+# (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 5: Delaunay,
+#  6: Frontal-Delaunay, 7: BAMG, 8: Frontal-Delaunay for Quads, 9: Packing of Parallelograms)
+#
+# 3D mesh algorithm
+# (1: Delaunay, 3: Initial mesh only, 4: Frontal, 7: MMG3D, 9: R-tree, 10: HXT)
+
+gmsh.model.add( "model" )
+
+# ------------------------------------------------- #
+# --- [2] initialize settings                   --- #
+# ------------------------------------------------- #
+ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+pts    , line    , surf    , volu     = {}, {}, {}, {}
+ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+lc                                    = 0.1
+x_, y_, z_, lc_, tag_                 = 0, 1, 2, 3, 4
+
+# ------------------------------------------------- #
+# --- [3] Modeling                              --- #
+# ------------------------------------------------- #
+import nkGmshRoutines.generate__sector180 as sec
+ret = sec.generate__sector180( lc=0.05, r1=1.0, r2=2.0, side="+", defineVolu=True, \
+                               recombine=False )
+# box = gmsh.model.occ.addBox( 0.0, -0.1, +0.5, \
+#                              3.0, +0.2, +0.2 )
+
+# target = [ (3,ret[0]["volu"]["sector"]), (3,ret[1]["volu"]["sector"])]
+# tools  = [(3,box)]
+
+# gmsh.model.occ.cut( target, tools,  )
+
+# ------------------------------------------------- #
+# --- [4] Physical Grouping                     --- #
+# ------------------------------------------------- #
+# gmsh.model.mesh.setRecombine( 2, 1 )
+gmsh.model.occ.synchronize()
+gmsh.model.occ.removeAllDuplicates()
+gmsh.model.occ.synchronize()
+
+# ------------------------------------------------- #
+# --- [6] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+# gmsh.model.mesh.recombine()
+# gmsh.model.mesh.generate(2)
+# gmsh.model.mesh.recombine()
+# gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(3)
+gmsh.model.mesh.recombine()
+gmsh.write( "msh/model.msh" )
+gmsh.finalize()
+

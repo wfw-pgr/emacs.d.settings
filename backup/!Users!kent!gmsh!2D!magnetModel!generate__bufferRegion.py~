@@ -1,0 +1,97 @@
+import numpy   as np
+import os, sys
+import gmsh
+
+import generate__sectorShape as arc
+
+# ========================================================= #
+# ===  generate buffer region                           === #
+# ========================================================= #
+def generate__bufferRegion( lc=0.1, radius1=1.0, radius2=2.0, height1=0.0, height2=1.0, \
+                            tolerance=1.e-5, \
+                            nodeFile="dat/mesh_mod.nodes" ):
+    
+    # ------------------------------------------------- #
+    # --- [1] initialize settings                   --- #
+    # ------------------------------------------------- #
+    ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+    pts    , line    , surf    , volu     = {}, {}, {}, {}
+    x_, y_, z_, lc_, tag_                 = 0, 1, 2, 3, 4
+    th1, th2 = -90.0, +90.0
+    origin   = [0.0,0.0]
+
+    
+    # ------------------------------------------------- #
+    # --- [2] Preparation                           --- #
+    # ------------------------------------------------- #
+    
+    #  -- [2-1] Loading mesh / nodes                --  #
+    with open( nodeFile, "r" ) as f:
+        nodes = np.loadtxt( f )
+    nNodes = nodes.shape[0]
+
+    #  -- [2-2] find pole-radius / diameter lines   --  #
+    x_coord     = nodes[:,2+x_]
+    radii       = np.sqrt( nodes[:,2+x_]**2 + nodes[:,2+y_]**2 )
+    #                             -- extract arc and diameter  -- #
+    arc_index   = np.where( ( ( radii > radius1-tolerance ) & ( radii < radius1+tolerance ) ) )
+    pts_on_arc  = np.array( [ i+1 for i in range(nNodes) ], dtype=np.int )[arc_index]
+    #                             -- sort : ascending-order    -- #
+    yval_arc    = np.ravel( nodes[:,2+y_] )[arc_index]
+    pts_on_arc  = pts_on_arc[ np.argsort( yval_arc ) ]
+
+
+    # ------------------------------------------------- #
+    # --- [3] pole-Radius Line                      --- #
+    # ------------------------------------------------- #
+    
+    #  -- [3-1] generate points                     --  #
+    for ik in pts_on_arc:
+        key            = "pts_buff_{0:06}".format( ik )
+        pts[key]       = [ nodes[ik-1,2+x_], nodes[ik-1,2+y_], height1, lc, 0 ]
+        pts[key][tag_] = gmsh.model.occ.addPoint( pts[key][x_], pts[key][y_], pts[key][z_], meshSize=pts[key][lc_] )
+
+    #  -- [3-2] generate arc lines                  --  #
+    nLine_arc          = pts_on_arc.shape[0]
+    buffArcKeys        = []
+    for ik in range( nLine_arc-1 ):
+        pt1 , pt2      = pts_on_arc[ik], pts_on_arc[ik+1]
+        minv, maxv     = min( pt1, pt2 ), max( pt1, pt2 )  # -- for unique naming -- #
+        key1, key2     = "pts_buff_{0:06}".format( pt1 ), "pts_buff_{0:06}".format( pt2 )
+        key            = "line_buff_{0:06}_{1:06}".format( minv, maxv )
+        line[key]      = gmsh.model.occ.addLine( pts[key1][tag_], pts[key2][tag_] )
+        buffArcKeys.append( key )
+
+    #  -- [3-3] radius2 :: cylindrical shell        --  #
+    ret     = arc.generate__sectorShape( radius =radius2, origin=origin, th1=th1, th2=th2, \
+                                         zoffset=height1, lc=lc, side="+" )
+    pts["buff_radius2_y-"]  = ret["pts"]["P1"]
+    pts["buff_radius2_y+"]  = ret["pts"]["P2"]
+    line["buff_radius2_y-"] = ret["line"]["arc1"]
+    line["buff_radius2_y+"] = ret["line"]["arc2"]
+
+    #  -- [3-4] generate end lines                  --  #
+    key1, key2              = "pts_buff_{0:06}".format( pts_on_arc[ 0] ), "buff_radius2_y-"
+    key3, key4              = "pts_buff_{0:06}".format( pts_on_arc[-1] ), "buff_radius2_y+"
+    line["buff_endLine_1"]  = gmsh.model.occ.addLine( pts[key1][tag_], pts[key2][tag_] )
+    line["buff_endLine_2"]  = gmsh.model.occ.addLine( pts[key3][tag_], pts[key4][tag_] )
+
+
+    # ------------------------------------------------- #
+    # --- [4]  generate surface                     --- #
+    # ------------------------------------------------- #
+
+    #  -- [4-1] surface making                      --  #
+    arcLines      = [   line[key] for key in buffArcKeys ]
+    End_Arc_Lines = [ + line["buff_endLine_2"] , - line["buff_radius2_y+"], \
+                      - line["buff_radius2_y-"], - line["buff_endLine_1"]   ]
+    LineLoop      = arcLines + End_Arc_Lines
+    LineLoopGroup = gmsh.model.occ.addCurveLoop( LineLoop )
+    surf["buff"]  = gmsh.model.occ.addPlaneSurface( [LineLoopGroup] )
+
+    
+    # ------------------------------------------------- #
+    # --- [5] generate volume                       --- #
+    # ------------------------------------------------- #
+    delta         = height2 - height1
+    volu["buff"]  = gmsh.model.occ.extrude( [ (surfDim,surf["buff"])], 0.0, 0.0, delta )

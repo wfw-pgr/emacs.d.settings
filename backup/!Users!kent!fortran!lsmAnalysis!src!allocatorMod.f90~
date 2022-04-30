@@ -1,0 +1,15 @@
+module allocatorMod
+contains
+
+  subroutine allocate__variables
+    implicit none
+    return
+  end subroutine allocate__variables
+
+  subroutine deallocate__variables
+    implicit none
+    return
+  end subroutine deallocate__variables
+  
+
+end module allocatorMod

@@ -1,0 +1,16 @@
+import numpy as np
+
+# ========================================================= #
+# ===  show data of nikkei-heikin                       === #
+# ========================================================= #
+
+def show__nikkei():
+
+    # ------------------------------------------------- #
+    # --- [1] load Data                             --- #
+    # ------------------------------------------------- #
+    inpFile = "dat/nikkei_stock_average_daily_jp.csv"
+    with open( inpFile, "r" ) as f:
+        Data = np.loadtxt( f, delimiter="," )
+
+    print( Data.shape )

@@ -1,0 +1,8 @@
+module elem2nodeMod
+contains
+
+  ! ====================================================== !
+  ! === matrix :: element height into node height      === !
+  ! ====================================================== !
+  subroutine elem2nodeMod()
+    implicit none

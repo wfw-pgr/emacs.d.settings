@@ -1,0 +1,54 @@
+import numpy as np
+
+# ========================================================= #
+# ===  rbf test                                         === #
+# ========================================================= #
+
+def rbf_test_1d():
+
+    # ------------------------------------------------- #
+    # --- [1] sample making                         --- #
+    # ------------------------------------------------- #
+
+    def func( xi ):
+        return( xi**2 )
+
+    An = 0.0
+    LI = 1001
+    xd = np.random.rand( LI )
+    yd = func( xd ) + An*( np.random.rand( LI ) - 0.5 )*2.0
+
+    # ------------------------------------------------- #
+    # --- [2] interpolation                         --- #
+    # ------------------------------------------------- #
+
+    xi  = np.linspace( 0.0, 1.0, 51 )
+    from scipy.interpolate import Rbf
+    import scipy.interpolate as itp
+    rbf = itp.Rbf( xd, yd, function="gaussian" )
+    yi  = rbf( xi )
+    yi.shape
+    
+    # ------------------------------------------------- #
+    # --- [3] plot                                  --- #
+    # ------------------------------------------------- #
+
+    import nkUtilities.plot1D       as pl1
+    import nkUtilities.load__config as lcf
+    pngFile = "png/out.png"
+    fig     = pl1.plot1D( pngFile=pngFile )
+    fig.add__plot( xAxis=xd, yAxis=yd, label="data", linewidth=0.0, marker="+", markersize=1.0 )
+    fig.add__plot( xAxis=xi, yAxis=yi, label="interpolated", linewidth=0.7 )
+    fig.add__legend()
+    fig.set__axis()
+    fig.save__figure()
+    
+    return()
+
+
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    rbf_test_1d()

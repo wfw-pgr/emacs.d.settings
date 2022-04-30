@@ -1,0 +1,32 @@
+import os, sys
+import numpy as np
+
+# ========================================================= #
+# ===  save__nastranFile                                === #
+# ========================================================= #
+
+def save__nastranFile( nastranData=None, outFile=None ):
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    # if ( outFile     is None ): sys.exit( "[save__nastranFile.py] outFile     == ???" )
+    # if ( nastranData is None ): sys.exit( "[save__nastranFile.py] nastranData == ???" )
+
+    # ------------------------------------------------- #
+    # --- [2] write nastranData                     --- #
+    # ------------------------------------------------- #
+
+    array = np.array( [ [ "GRID", 1, 2, 1.0, 2.0, 3.0 ],
+                        [ "GRID", 1, 2, 1.0, 2.0, 3.0 ],
+                        [ "GRID", 1, 2, 1.0, 2.0, 3.0 ],
+                        [ "GRID", 1, 2, 1.0, 2.0, 3.0 ] ], dtype=object )
+    with open( outFile, "w" ) as f:
+        np.savetxt( f, array, fmt=",".join( ["%s","%d","%d","%8f","%8f","%8f"] ) )
+        
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    save__nastranFile( outFile="out.dat" )

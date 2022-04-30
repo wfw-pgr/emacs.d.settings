@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: save__point-
+# key: save__point-
+# --
+open(lun,file=trim(outFile),status="replace")
+write(lun,"(a)") "# x_ y_ z_ i_ s_ f_"
+write(lun,"(a,2(i10,1x))") "# ", nlines, ncmp
+write(lun,"(a,4(i10,1x)))") "# ", LK, LJ, LI, ncmp
+do k=1, LK
+   do j=1, LJ
+      do i=1, LI
+         write(lun,"(6(e15.8,1x))") mshape(:,i,j,k)
+      enddo
+   enddo
+enddo
+close(lun)
+

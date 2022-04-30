@@ -1,0 +1,126 @@
+import numpy as np
+import nkUtilities.load__pointFile as lpf
+import nkUtilities.load__constants as lcn
+import nkUtilities.load__config    as lcf
+import nkUtilities.cMapTri         as cmt
+
+# ========================================================= #
+# ===  interpolate__pr2main.py                          === #
+# ========================================================= #
+
+def interpolate__pr2main():
+
+    x_, y_, z_ = 0, 1, 2
+    
+    # ------------------------------------------------- #
+    # --- [1] load cons / file                      --- #
+    # ------------------------------------------------- #
+    cnsFile     = "dat/unified.conf"
+    const       = lcn.load__constants( inpFile=cnsFile )
+
+    gridFile    = "dat/peeler_onGrid.dat"
+    pointFile   = "dat/main_coord.dat"
+    gridData    = lpf.load__pointFile( inpFile= gridFile, returnType="structured" )
+    pointData   = lpf.load__pointFile( inpFile=pointFile, returnType="point"      )
+
+    # ------------------------------------------------- #
+    # --- [2] interpolation area & index            --- #
+    # ------------------------------------------------- #
+    xMin, xMax  = np.min( gridData[0,0,:,x_] ), np.max( gridData[0,0,:,x_] )
+    yMin, yMax  = np.min( gridData[0,:,0,y_] ), np.max( gridData[0,:,0,y_] )
+    index       = np.where( ( pointData[:,x_] >= xMin ) & ( pointData[:,x_] <= xMax ) &\
+                            ( pointData[:,y_] >= yMin ) & ( pointData[:,y_] <= yMax )  )
+    pD          = pointData[index]
+    
+    # ------------------------------------------------- #
+    # --- [2] rearrange gridData / pointData        --- #
+    # ------------------------------------------------- #
+    LK,LJ,LI    = gridData.shape[0], gridData.shape[1], gridData.shape[2]
+    npt         = pointData.shape[0]
+    npt_        = pD.shape[0]
+    gridData_   = np.zeros( (LJ,LI,3) )
+    pointData_  = np.zeros( (npt_,3)   )
+    
+    gridData_ [:,:,0] = gridData[0,:,:,0]
+    gridData_ [:,:,1] = gridData[0,:,:,1]
+    gridData_ [:,:,2] = gridData[0,:,:,5]
+    
+    pointData_[:,0:2] = pD[:,0:2]
+    pointData_[:,  2] = 0.0
+    
+    # ------------------------------------------------- #
+    # --- [3] interpolation                         --- #
+    # ------------------------------------------------- #
+    method      = const["ideal.pl_interpMethod"]
+    dim         = 2
+    import nkInterpolator.interpolate__grid2point as g2p
+    ret         = g2p.interpolate__grid2point( gridData=gridData_, pointData=pointData_, \
+                                               method  =method   , dim      =dim )
+    Data        = np.zeros( (npt,6) )
+    Data[:,0:3] = pointData[:,0:3]
+    store       = np.zeros( (npt,) )
+    store[index]= ret[:,2]
+    Data[:,  5] = np.copy( store )
+ 
+    # ------------------------------------------------- #
+    # --- [4] save in a file                        --- #
+    # ------------------------------------------------- #
+    outFile     = "dat/bfield_ideal_pl.dat"
+    import nkUtilities.save__pointFile as spf
+    spf.save__pointFile( outFile=outFile, Data=Data )
+
+    # ------------------------------------------------- #
+    # --- [5] save as a figure                      --- #
+    # ------------------------------------------------- #
+    config                   = lcf.load__config()
+    pngFile                  = "png/bfield_ideal_pl.png"
+    config["xTitle"]         = "X (m)"
+    config["yTitle"]         = "Y (m)"
+    config["cmp_xAutoRange"] = True
+    config["cmp_yAutoRange"] = True
+    config["cmp_xRange"]     = [-5.0,+5.0]
+    config["cmp_yRange"]     = [-5.0,+5.0]
+    cmt.cMapTri( xAxis=Data[:,0], yAxis=Data[:,1], cMap=Data[:,5], \
+                 pngFile=pngFile, config=config )
+
+
+    
+# ========================================================= #
+# ===   実行部                                          === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+
+    sample_make = False
+    x_,y_,z_    = 0, 1, 2
+    
+    # ------------------------------------------------- #
+    # --- [1] sample profile generation             --- #
+    # ------------------------------------------------- #
+    if ( sample_make ):
+        import nkUtilities.equiSpaceGrid as esg
+        x1MinMaxNum   = [ -1.2, 1.2, 61 ]
+        x2MinMaxNum   = [ -1.2, 1.2, 61 ]
+        x3MinMaxNum   = [  0.0, 0.0,  1 ]
+        coord         = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                           x3MinMaxNum=x3MinMaxNum, returnType = "structured" )
+        field         = np.zeros_like( coord )
+        field[...,z_] = ( coord[...,x_]**2 + coord[...,y_]**2 )
+        Data          = np.concatenate( [ coord, field ], axis=3 )
+        
+        import nkUtilities.save__pointFile as spf
+        outFile       = "dat/peeler_onGrid.dat"
+        spf.save__pointFile( outFile=outFile, Data=Data )
+
+    # ------------------------------------------------- #
+    # --- [2] execution                             --- #
+    # ------------------------------------------------- #
+    interpolate__pr2main()
+
+
+
+
+
+
+
+    

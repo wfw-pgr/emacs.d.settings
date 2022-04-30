@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: open_pointFile-
+# key: open_pointFile-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+open(lun,file=trim(${1:inpFile}),status="old")
+read(lun,*)
+read(lun,*) cmt, nlines, ncmp
+read(lun,*) cmt, LK, LJ, LI, ncmp
+allocate( ${2:data}(ncmp,LI,LJ,LK) )
+do k=1, LK
+   do j=1, LJ
+      do i=1, LI
+        read(lun,*) $2(:,i,j,k)
+      enddo
+   enddo
+enddo
+close(lun)
+

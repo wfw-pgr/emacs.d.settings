@@ -1,0 +1,38 @@
+import numpy as np
+import sys
+import gmsh
+
+import generate__fanShape   as fan
+
+# ========================================================= #
+# ===  generate regenerator Shim Model                  === #
+# ========================================================= #
+def generate__regenShimParts( lc=0.1, radius1=1.0, radius2=1.2, th1=280.0, th2=320.0, \
+                              height_tier1=0.01, height_tier2=0.04 ):
+
+    # ------------------------------------------------- #
+    # --- [1] settings                              --- #
+    # ------------------------------------------------- #
+    ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+    pts    , line    , surf    , volu     = {}, {}, {}, {}
+    ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+    x_, y_, z_, lc_, tag_                 = 0, 1, 2, 3, 4
+
+    origin        = [ 0.0, 0.0 ]
+    delta_12      = height_tier2 - height_tier1
+    
+    # ------------------------------------------------- #
+    # --- [2] add Sector Shape                      --- #
+    # ------------------------------------------------- #
+
+    
+    
+    
+    volu["regenShim"] = regenShim["volu"]["fan"]
+    
+    # ------------------------------------------------- #
+    # --- [3] return                                --- #
+    # ------------------------------------------------- #
+    ret        = { "pts":pts, "line":line, "surf":surf, "volu":volu }
+    return( ret )
+

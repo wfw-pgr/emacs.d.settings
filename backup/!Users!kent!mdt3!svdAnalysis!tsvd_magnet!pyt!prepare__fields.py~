@@ -1,0 +1,79 @@
+import numpy as np
+
+# ===================================================== #
+# ===  prepare__fields                              === #
+# ===================================================== #
+def prepare__fields():
+    
+    # ------------------------------------------------- #
+    # --- [1] Load Data                             --- #
+    # ------------------------------------------------- #
+    #  -- [1-1] parameter File                      --  #
+    import nkUtilities.load__constants as lcn
+    cnfFile  = "dat/parameter.conf"
+    const    = lcn.load__constants( inpFile=cnfFile )
+    
+    #  -- [1-2] field File                          --  #
+    inpFile1  = "dat/ems_pst.field"
+    inpFile2  = "dat/pole_ideal_mcoord.dat"
+    with open( inpFile1, "r" ) as f:
+        rData1 = np.loadtxt( f )
+    with open( inpFile2, "r" ) as f:
+        rData2 = np.loadtxt( f )
+    print( "rData1 ( {0} ) 's shape :: {1}".format( inpFile1, rData1.shape ) )
+    print( "rData2 ( {0} ) 's shape :: {1}".format( inpFile2, rData2.shape ) )
+
+    # ------------------------------------------------- #
+    # --- [2] check & store Data                    --- #
+    # ------------------------------------------------- #
+    x_,y_,z_,i_,b_ = 0, 1, 2, 3, 4
+    nData          = rData2.shape[0]
+    wData          = np.zeros( (nData,5) )
+    wData[:, x_]   = rData2[:,0]
+    wData[:, y_]   = rData2[:,1]
+    wData[:, z_]   = 0.0
+    wData[:, i_]   = rData2[:,5]
+    wData[:, b_]   = rData1[:,5]
+
+    # # ------------------------------------------------- #
+    # # --- [3] clip BField                           --- #
+    # # ------------------------------------------------- #
+    # # -- [3-1] normalized value -- #
+    # radii          = np.sqrt( wData[:,x_]**2 + wData[:,y_]**2 )
+    # phi            = np.arctan2( wData[:,y_], wData[:,x_] ) / np.pi * 180.0
+    # phi[ np.where( phi < 0.0 ) ] = phi[ np.where( phi < 0.0 ) ] + 360.0
+    # # -- [3-2] normalized value -- #
+    # rhat           = ( radii - const["Bia_r1"] ) / ( const["Bia_r2"] - const["Bia_r1"] )
+    # phat           = ( phi   - const["Bia_p1"] ) / ( const["Bia_p2"] - const["Bia_p1"] )
+    # # -- [3-3] judge in/out     -- #
+    # idx            = np.where( ( rhat > 0.0 ) & ( rhat < 1.0 ) & ( phat > 0.0 ) & ( phat < 1.0 ) )
+    # wData          = wData[idx]
+    
+    # ------------------------------------------------- #
+    # --- [4] save in Files                         --- #
+    # ------------------------------------------------- #
+    outFile       = "dat/bfield_input.dat"
+    names         = ["xp", "yp", "zp", "bi", "bg"]
+    import nkUtilities.save__pointFile as spf
+    spf.save__pointFile( Data=wData, outFile=outFile, names=names )
+
+    # ------------------------------------------------- #
+    # --- [5] output figures                        --- #
+    # ------------------------------------------------- #
+    import nkUtilities.cMapTri as cmt
+    x_,y_,e_       = 0, 1, 2
+    error          = np.zeros( (wData.shape[0],5) )
+    error[:, x_]   = wData[:,0]
+    error[:, y_]   = wData[:,1]
+    error[:, e_]   = wData[:,3] - wData[:,4]
+    pngFile        = "png/bfield_input_{0}.png"
+    cmt.cMapTri( xAxis=wData[:,x_], yAxis=wData[:,y_], cMap=wData[:,i_], pngFile=pngFile.format( "ideal" ) )
+    cmt.cMapTri( xAxis=wData[:,x_], yAxis=wData[:,y_], cMap=wData[:,b_], pngFile=pngFile.format( "backg" ) )
+    cmt.cMapTri( xAxis=error[:,x_], yAxis=error[:,y_], cMap=error[:,e_], pngFile=pngFile.format( "error" ) )
+    
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    prepare__fields()

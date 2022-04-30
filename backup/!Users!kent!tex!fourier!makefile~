@@ -1,0 +1,70 @@
+# ========================== #
+# ===  MakeFile for TeX  === #
+# ========================== #
+# -----     TARGET     ----- #
+TARGET  = main
+
+# ----  AUXILIARY FILE  ---- #
+AUXFILE = 
+BBLFILE = 
+DVIFILE = aux/$(TARGET).dvi
+PDFFILE = $(TARGET).pdf
+BIBFILE = 
+
+# -----   PROCESSING   ----- #
+LATEX   = uplatex
+DVIPDFM = dvipdfmx
+BIBTEX  = upbibtex
+EVINCE  = open
+PDFTK   = pdftk
+
+# -----  FLAG SETTING  ----- #
+AUXDIR  = aux
+TEXLAG  = -halt-on-error -interaction=nonstopmode -file-line-error
+AUXOUT  = -output-directory=$(AUXDIR)
+
+# -----  SETTING  END  ----- #
+
+
+# -------------------------- #
+# ----  MakeFile Start  ---- #
+# -------------------------- #
+
+.SUFFIXES: .tex .dvi .pdf
+
+.PHONY:clean all
+
+pdf: $(TARGET).pdf
+
+$(BIBFILE):
+	python utl/refmaker.py
+
+$(AUXFILE): tex/$(TARGET).tex
+	$(LATEX) $(TEXLAG) $(AUXOUT) tex/$(TARGET)
+	$(LATEX) $(TEXLAG) $(AUXOUT) tex/$(TARGET)
+
+$(BBLFILE): $(AUXFILE)
+	upbibtex $(AUXFILE)
+
+$(DVIFILE): $(AUXFILE) $(BBLFILE)
+	$(LATEX) $(TEXLAG) $(AUXOUT) tex/$(TARGET)
+	$(LATEX) $(TEXLAG) $(AUXOUT) tex/$(TARGET)
+
+$(PDFFILE): $(DVIFILE)
+	$(DVIPDFM) $<
+
+all: clean makebib pdf title
+
+run: $(TARGET).pdf
+	$(EVINCE) $(TARGET).pdf &
+
+title:
+	$(PDFTK) main.pdf cat 2-end output main_.pdf
+	$(PDFTK) utl/hyoushi.pdf main_.pdf cat output main.pdf
+	rm main_.pdf
+
+makebib: $(BIBFILE)
+	python utl/refmaker.py
+
+clean:
+	rm -f $(AUXDIR)/* $(TARGET).pdf $(BIBFILE) *~

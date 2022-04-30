@@ -1,0 +1,15 @@
+# -- cavity geometry -- #
+
+frequencty  	     	double		2.856e9         # frequencty of RF
+cell_Length		double		0.200           # Length of the pillbox-cell
+
+
+# -- SF settings      -- #
+meshsize	      	double		1.0             # meshsize
+beta			double		0.999           # phase velocity
+xy_drive		array		[0.0,0.1]       # drive point of RF
+unit_conversion		double		0.1             # [cm] => [mm]
+
+
+# -- output File      -- #
+outFile	    	      	string		run/pillbox.af

@@ -1,0 +1,95 @@
+import numpy as np
+
+# ========================================================= #
+# ===  generate 3D profile of shim shape on Grid        === #
+# ========================================================= #
+def generate__shimShapeOnGrid( r1=0.6, r2=0.7, z1=0.05, z2=0.02, th1=280.0, th2=320.0, LI=101, LJ=101 ):
+
+    # ------------------------------------------------- #
+    # --- [1] grid making                           --- #
+    # ------------------------------------------------- #
+    if ( th1 > 180.0 ): th1 = th1 - 360.0
+    if ( th2 > 180.0 ): th2 = th2 - 360.0
+    
+    th1_rad  = th1 / 180.0 * np.pi
+    th2_rad  = th2 / 180.0 * np.pi
+    
+    vertex1  = [ r1*np.cos( th1_rad ), r1*np.sin( th1_rad ) ]
+    vertex2  = [ r1*np.cos( th2_rad ), r1*np.sin( th2_rad ) ]
+    vertex3  = [ r2*np.cos( th2_rad ), r2*np.sin( th2_rad ) ]
+    vertex4  = [ r2*np.cos( th1_rad ), r2*np.sin( th1_rad ) ]
+
+    xMin     = np.min( [ vertex1[0], vertex2[0], vertex3[0], vertex4[0] ] )
+    xMax     = np.max( [ vertex1[0], vertex2[0], vertex3[0], vertex4[0] ] )
+    yMin     = np.min( [ vertex1[1], vertex2[1], vertex3[1], vertex4[1] ] )
+    yMax     = np.max( [ vertex1[1], vertex2[1], vertex3[1], vertex4[1] ] )
+    
+    import nkUtilities.equiSpaceGrid as esg
+    x1MinMaxNum = [ xMin, xMax, LI ]
+    x2MinMaxNum = [ yMin, yMax, LJ ]
+    x3MinMaxNum = [  0.0,  0.0,  1 ]
+    coord       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                     x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+
+    # ------------------------------------------------- #
+    # --- [2] generate shimShape on Grid            --- #
+    # ------------------------------------------------- #
+    rhat        = ( ( np.sqrt( coord[:,0]**2 + coord[:,1]**2 ) - r1 ) / ( r2-r1 )  )
+    thhat       = ( np.arctan2( coord[:,1], coord[:,0] ) - th1_rad ) / ( th2_rad - th1_rad )
+    
+    coord[:,2]  = ( z2-z1 ) * rFunc( rhat ) * thFunc( thhat ) + z1
+    nouse_index = np.where( ( rhat < 0.0 ) | ( rhat > 1.0 ) | ( thhat < 0.0 ) | ( thhat > 1.0 ) )
+    ( coord[:,2] )[nouse_index] = z1
+
+    # ------------------------------------------------- #
+    # --- [3] output text File                      --- #
+    # ------------------------------------------------- #
+    import nkUtilities.save__pointFile as spf
+    outFile   = "dat/grid.dat"
+    spf.save__pointFile( outFile=outFile, Data=coord, names=["x","y","z"] )
+    
+    # ------------------------------------------------- #
+    # --- [4] output figure                         --- #
+    # ------------------------------------------------- #
+    import nkUtilities.cMapTri    as cmt
+    import nkUtilities.LoadConfig as lcf
+    config = lcf.LoadConfig()
+    config["cmp_xAutoRange"] = True
+    config["cmp_yAutoRange"] = True
+    config["cmp_xRange"]     = [ 0.0, 1.0]
+    config["cmp_yRange"]     = [-1.0, 0.0]
+    config["cmp_AutoLevel"]  = False
+    config["cmp_MaxMin"]     = [0.010, 0.060]
+    fig    = cmt.cMapTri( pngFile="png/grid.png", config=config )
+    fig.add__cMap( xAxis=coord[:,0], yAxis=coord[:,1], cMap=coord[:,2] )
+    peri_x = [ vertex1[0], vertex2[0], vertex3[0], vertex4[0], vertex1[0] ]
+    peri_y = [ vertex1[1], vertex2[1], vertex3[1], vertex4[1], vertex1[1] ]
+    fig.add__plot( xAxis=peri_x, yAxis=peri_y, linestyle="--", color="Green" )
+    fig.set__colorBar()
+    fig.save__figure()
+
+
+    
+# ========================================================= #
+# ===  Function of r ( R(r) )                           === #
+# ========================================================= #
+def rFunc( rhat ):
+    # coef = [ 0.0, -1.0, +1.0, +0.75 ]
+    # ret  = coef[0]*rhat**3 + coef[1]*rhat**2 + coef[2]*rhat + coef[3]
+    ret  = ( np.sin( rhat*np.pi ) )**2
+    return( ret )
+    
+
+# ========================================================= #
+# ===  Function of theta ( THETA(theta) )               === #
+# ========================================================= #
+def thFunc( thhat ):
+    ret  = ( np.sin( thhat*np.pi ) )**2
+    return( ret )
+    
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    generate__shimShapeOnGrid()

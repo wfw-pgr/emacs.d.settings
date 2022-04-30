@@ -1,0 +1,34 @@
+import numpy as np
+
+
+# ========================================================= #
+# ===  add 3D profile to regenerator Shim 2D mesh       === #
+# ========================================================= #
+def add__3dprofile_regenShim():
+
+    r1       = 0.6
+    r2       = 0.7
+    z1       = 0.03
+    z2       = 0.05
+    
+    nodeFile = "model/mesh.nodes"
+    outFile  = "model/mesh_mod.nodes"
+    fmt      = "%d %d %15.8e %15.8e %15.8e"
+    
+    with open( nodeFile, "r" ) as f:
+        Data = np.loadtxt( f )
+
+    rhat      = ( ( np.sqrt( Data[:,2]**2 + Data[:,3]**2 ) - r1 ) / ( r2-r1 )  )
+    Data[:,4] = z1 + ( z1-z2 ) * rhat**2
+
+    with open( outFile , "w" ) as f:
+        np.savetxt( f, Data, fmt=fmt )
+
+    return()
+
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    add__3dprofile_regenShim()

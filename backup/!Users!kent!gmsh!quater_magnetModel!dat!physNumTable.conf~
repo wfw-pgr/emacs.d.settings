@@ -1,0 +1,13 @@
+# key		type		EntityNum		PhysicalNum
+gap		volu		1			301
+pole		volu		2			302
+slot_inn	volu		3			303
+slot_bot	volu		4			303
+slot_top	volu		6			303
+slot_out	volu		7			303
+coil		volu		5			304
+yoke_h		volu		8			305
+yoke_v		volu		9			305
+yoke_c		volu		10			305
+outAir_h	volu		11			306
+outAir_v	volu		12			306

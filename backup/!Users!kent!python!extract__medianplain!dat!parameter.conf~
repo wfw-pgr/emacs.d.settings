@@ -1,0 +1,5 @@
+inpFile			string		dat/inp.dat
+outFile			string		dat/out.dat
+ref_			integer		2
+value			float		0.0
+epsilon			float		1.e-10

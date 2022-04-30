@@ -1,0 +1,18 @@
+# lattice file for linac test
+D1: drift, l = 0.5
+B1: rbend, l = 0.5, angle = +30
+D2: drift, l = 0.5
+B2: rbend, l = 0.5, angle = +30
+D3: drift, l = 0.5
+B3: rbend, l = 0.5, angle = +30
+D4: drift, l = 0.5
+Q1: quad, k1= 20, l = 0.4, angle = 75
+Q2: quad, k1=-20, l = 0.4, angle = 75
+Q3: quad, k1= 20, l = 0.4, angle = 75
+Q4: quad, k1=-20, l = 0.4, angle = 75
+Q5: quad, k1= 20, l = 0.4, angle = 75
+Q6: quad, k1=-20, l = 0.4, angle = 75
+Q7: quad, k1= 20, l = 0.4, angle = 75
+Q8: quad, k1=-20, l = 0.4, angle = 75
+
+BL1: line = (D1, B1, D1, B2, D1, B3, D1, B4, D1, Q1, D1, U1, D1, Q2, D1, U1)

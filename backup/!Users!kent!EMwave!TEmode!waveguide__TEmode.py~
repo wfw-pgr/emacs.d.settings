@@ -1,0 +1,91 @@
+import numpy                     as np
+import nkUtilities.equiSpaceGrid as esg
+
+# ------------------------------------------------- #
+# --- [1] parameters                            --- #
+# ------------------------------------------------- #
+
+mmode       = 0
+nmode       = 1
+wg_a        = 0.2
+wg_b        = 0.1
+wg_c        = 1.0
+tMax        = 10.0
+LI          = 51
+LJ          = 51
+LK          =  1
+LT          = 101
+omega       = 2.856e8 * 2.0 * np.pi
+mu          = 4.0*np.pi*1e-7
+cv          = 3.0e8
+Hmn         = 1.0
+
+
+# ------------------------------------------------- #
+# --- [2] grid making                           --- #
+# ------------------------------------------------- #
+
+x1MinMaxNum = [ 0.0, wg_a, LI ]
+x2MinMaxNum = [ 0.0, wg_b, LJ ]
+x3MinMaxNum = [ 0.0, wg_c, LK ]
+grid        = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                 x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+xg          = grid[:,0]
+yg          = grid[:,1]
+zg          = grid[:,2]
+time        = np.linspace( 0.0, tMax, LT )
+
+kx          = mmode * np.pi / wg_a
+ky          = nmode * np.pi / wg_b
+kc          = kx**2 + ky**2
+gamma       = np.sqrt( kc**2 - omega**2 / cv**2 )
+
+wt          = omega * time
+kxx         = kx * xg
+kyy         = ky * yg
+expiwt_Re   = np.cos( wt )
+expiwt_Im   = np.sin( wt )
+expgmz      = np.exp( - gamma * zg )
+
+# ------------------------------------------------- #
+# --- [3] TE mode wave                          --- #
+# ------------------------------------------------- #
+
+Ez_Amp      = 0.0
+Hz_Amp      =                           Hmn * np.cos( kxx ) * np.cos( kyy ) * expgmz
+
+Ex_Amp      = omega * ky * mu / kc**2 * Hmn * np.cos( kxx ) * np.sin( kyy ) * expgmz
+Ey_Amp      = omega * kx * mu / kc**2 * Hmn * np.sin( kxx ) * np.cos( kyy ) * expgmz
+Hx_Amp      = gamma * kx      / kc**2 * Hmn * np.sin( kxx ) * np.cos( kyy ) * expgmz
+Hy_Amp      = gamma * ky      / kc**2 * Hmn * np.cos( kxx ) * np.sin( kyy ) * expgmz
+
+
+for ik in range( LT ):
+    sinwt       = np.sin( wt[ik] )
+    coswt       = np.cos( wt[ik] )
+    Ex_Re       = - Ex_Amp * sinwt
+    Ex_Im       = + Ex_Amp * coswt
+    Ey_Re       = + Ey_Amp * sinwt
+    Ey_Im       = - Ey_Amp * coswt
+    
+    Hx_Re       =   Hx_Amp * coswt
+    Hx_Im       =   Hx_Amp * sinwt
+    Hy_Re       =   Hy_Amp * coswt
+    Hy_Im       =   Hy_Amp * sinwt
+    
+    Ez_Re       =   Ez_Amp * coswt
+    Ez_Im       =   Ez_Amp * sinwt
+    Hz_Re       =   Hz_Amp * coswt
+    Hz_Im       =   Hz_Amp * sinwt
+
+
+# ------------------------------------------------- #
+# --- [4] colormap of the Amplitude             --- #
+# ------------------------------------------------- #
+
+import nkUtilities.cMapTri as cmt
+cmt.cMapTri( xAxis=xg, yAxis=yg, cMap=Hz_Amp, pngFile="Hz_Amp.png" )
+cmt.cMapTri( xAxis=xg, yAxis=yg, cMap=Ex_Amp, pngFile="Ex_Amp.png" )
+cmt.cMapTri( xAxis=xg, yAxis=yg, cMap=Ey_Amp, pngFile="Ey_Amp.png" )
+cmt.cMapTri( xAxis=xg, yAxis=yg, cMap=Hx_Amp, pngFile="Hx_Amp.png" )
+cmt.cMapTri( xAxis=xg, yAxis=yg, cMap=Hy_Amp, pngFile="Hy_Amp.png" )

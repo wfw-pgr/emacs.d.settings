@@ -1,0 +1,2 @@
+import nkUtilities.cMapTri as cmt
+cmt.cMapTri( xAxis=Data[:,0], yAxis=Data[:,1], cMap=Data[:,5], pngFile="out.png" )

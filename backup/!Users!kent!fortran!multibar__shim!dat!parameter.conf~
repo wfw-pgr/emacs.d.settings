@@ -1,0 +1,24 @@
+
+bfield_xMin		float		0.0
+bfield_xMax		float		0.4
+bfield_LI		long		30
+bfield_yMin		float		-0.4
+bfield_yMax		float		 0.0
+bfield_LJ		long		30
+bfield_zMin		float		0.0
+bfield_zMax		float		0.0
+bfield_LK		long		1
+
+shim_LI			long		31
+shim_LJ			long		31
+shim_LK			long		31
+shim_r1			float		0.60
+shim_r2			float		0.70
+shim_p1			float		280
+shim_p2			float		300
+shim_z1			float		0.060
+shim_z2			float		0.080
+shim_mx			float 		0.0
+shim_my			float 		0.0
+shim_mz			float 		-2.07
+shim_phiUnit		string		degree

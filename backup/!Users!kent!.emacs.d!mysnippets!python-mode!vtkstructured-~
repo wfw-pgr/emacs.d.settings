@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: vtkstructured-
+# key: vtkstructured-
+# --
+
+import nkVTKRoutines.convert__vtkStructuredGrid as vts
+outFile  = "png/out.vts"
+names    = ["${1:data}"]
+vts.convert__vtkStructuredGrid( Data=Data, outFile=outFile, names=names )
+$0

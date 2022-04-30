@@ -1,0 +1,31 @@
+module utilitiesMod
+contains
+
+  subroutine show__logo
+    implicit none
+
+    frame = "====================================================="
+    line1 = "===            _____ ____  _  ___  _              ==="
+    line2 = "===           |_   _|  _ \| |/ / || |             ==="
+    line3 = "===             | | | |_) | ' /| || |_            ==="
+    line4 = "===             | | |  _ <| . \|__   _|           ==="
+    line5 = "===             |_| |_| \_\_|\_\  |_|             ==="
+    frame = "====================================================="
+
+    write(6,*)
+    write(6,*)
+    write(6,*) frame
+    write(6,*) line1
+    write(6,*) line2
+    write(6,*) line3
+    write(6,*) line4
+    write(6,*) line5
+    write(6,*) frame
+    write(6,*)
+    write(6,*)
+
+    return
+  end subroutine show__logo
+
+
+end module utilitiesMod

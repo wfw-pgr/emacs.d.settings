@@ -1,0 +1,157 @@
+import numpy as np
+import os, sys
+import gmsh
+
+gmshlib = os.environ["gmshLibraryPath"]
+sys.path.append( gmshlib )
+import generateRectangularBox as box
+
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.model.add( "model" )
+
+
+# ------------------------------------------------- #
+# --- [2] initialize settings                   --- #
+# ------------------------------------------------- #
+ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+pts    , line    , surf    , volu     = {}, {}, {}, {}
+ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+lc                                    = 0.1
+x_, y_, z_, lc_, tag_                 = 0, 1, 2, 3, 4
+
+
+# ------------------------------------------------- #
+# --- [3] Preparation                           --- #
+# ------------------------------------------------- #
+tolerance   = 1.e-5
+radius      = 1.0
+xCenter     = 0.0
+
+#  -- [3-1] Loading mesh / nodes                --  #
+nodeFile = "dat/mesh_mod.nodes"
+elemFile = "dat/mesh.elements"
+with open( nodeFile, "r" ) as f:
+    nodes = np.loadtxt( f )
+with open( elemFile, "r" ) as f:
+    elems = np.loadtxt( f )
+nElems = elems.shape[0]
+nNodes = nodes.shape[0]
+
+#  -- [3-2] find pole-radius / diameter lines   --  #
+x_coord     = nodes[:,2+x_]
+radii       = np.sqrt( nodes[:,2+x_]**2 + nodes[:,2+y_]**2 )
+#                             -- extract arc and diameter  -- #
+arc_index   = np.where( ( (   radii >  radius-tolerance ) & (   radii <  radius+tolerance ) ) )
+dia_index   = np.where( ( ( x_coord > xCenter-tolerance ) & ( x_coord < xCenter+tolerance ) ) )
+pts_on_arc  = np.array( [ i+1 for i in range(nNodes) ], dtype=np.int )[arc_index]
+pts_on_dia  = np.array( [ i+1 for i in range(nNodes) ], dtype=np.int )[dia_index]
+#                             -- sort : ascending-order    -- #
+yval_arc    = np.ravel( nodes[:,2+y_] )[arc_index]
+yval_dia    = np.ravel( nodes[:,2+y_] )[dia_index]
+pts_on_arc  = pts_on_arc[ np.argsort( yval_arc ) ]
+pts_on_dia  = pts_on_dia[ np.argsort( yval_dia ) ]
+
+
+# ------------------------------------------------- #
+# --- [4] tier 1 Making                         --- #
+# ------------------------------------------------- #
+height_tier1       = 0.0
+
+#  -- [4-1] generate points                     --  #
+for ik in pts_on_arc:
+    key            = "pts_tier1_{0:06}".format( ik )
+    pts[key]       = [ nodes[ik-1,2+x_], nodes[ik-1,2+y_], height_tier1, lc, 0 ]
+    pts[key][tag_] = gmsh.model.occ.addPoint( pts[key][x_], pts[key][y_], pts[key][z_], meshSize=pts[key][lc_] )
+for ik in pts_on_dia:
+    key            = "pts_tier1_{0:06}".format( ik )
+    pts[key]       = [ nodes[ik-1,2+x_], nodes[ik-1,2+y_], height_tier1, lc, 0 ]
+    pts[key][tag_] = gmsh.model.occ.addPoint( pts[key][x_], pts[key][y_], pts[key][z_], meshSize=pts[key][lc_] )
+
+#  -- [4-2] generate arc lines                  --  #
+nLine_arc          = pts_on_arc.shape[0]
+tier1ArcKeys       = []
+for ik in range( nLine_arc-1 ):
+    pt1 , pt2      = pts_on_arc[ik], pts_on_arc[ik+1]
+    minv, maxv     = min( pt1, pt2 ), max( pt1, pt2 )  # -- for unique naming -- #
+    key1, key2     = "pts_tier1_{0:06}".format( pt1 ), "pts_tier1_{0:06}".format( pt2 )
+    key            = "line_tier1_{0:06}_{1:06}".format( minv, maxv )
+    line[key]      = gmsh.model.occ.addLine( pts[key1][tag_], pts[key2][tag_] )
+    tier1ArcKeys.append( key )
+
+#  -- [4-3] generate diameter lines             --  #
+nLine_dia          = pts_on_dia.shape[0]
+tier1DiaKeys       = []
+for ik in range( nLine_dia-1 ):
+    pt1 , pt2      = pts_on_dia[ik], pts_on_dia[ik+1]
+    minv, maxv     = min( pt1, pt2 ), max( pt1, pt2 )  # -- for unique naming -- #
+    key1, key2     = "pts_tier1_{0:06}".format( pt1 ), "pts_tier1_{0:06}".format( pt2 )
+    key            = "line_tier1_{0:06}_{1:06}".format( minv, maxv )
+    line[key]      = gmsh.model.occ.addLine( pts[key1][tag_], pts[key2][tag_] )
+    tier1DiaKeys.append( key )
+#  -- [4-4] surface making                      --  #
+arcLines      = [   line[key] for key in tier1ArcKeys       ]
+diaLines      = [ - line[key] for key in tier1DiaKeys[::-1] ]
+LineLoop      = arcLines + diaLines
+LineLoopGroup = gmsh.model.occ.addCurveLoop( LineLoop )
+surf["tier1"] = gmsh.model.occ.addPlaneSurface( [LineLoopGroup] )
+
+
+# ------------------------------------------------- #
+# --- [5] tier 2 Making                         --- #
+# ------------------------------------------------- #
+
+#  -- [5-1] generate points                     --  #
+for ik in range( nNodes ):
+    key            = "pts_tier2_{0:06}".format( ik+1 )
+    pts[key]       = [ nodes[ik,2+x_], nodes[ik,2+y_], nodes[ik,2+z_], lc, 0 ]
+    pts[key][tag_] = gmsh.model.occ.addPoint( pts[key][x_], pts[key][y_], pts[key][z_], meshSize=pts[key][lc_] )
+#  -- [5-2] generate lines                      --  #
+roll_index = [ 3, 4, 5, 3 ]   # -- for triangular elements -- #
+elem_lines = {}
+for ik in range( nElems ):
+    elem_key             = "elem_{0:06}".format( ik+1 )
+    helem                = elems[ik,:]
+    elem_lines[elem_key] = [ 0, 0, 0 ]  # -- initialize -- #
+    #  -- for every vertex combination -- #
+    for ir in range(3):
+        pt1, pt2   = int( helem[roll_index[ir]] ), int( helem[roll_index[ir+1]] )
+        minv, maxv = min( pt1, pt2 ), max( pt1, pt2 )  # -- for unique naming -- #
+        key        = "line_tier2_{0:06}_{1:06}".format( minv, maxv )
+        if ( key in line ):   #  -- if exists, obtain tag #.       -- #
+            elem_lines[elem_key][ir] = line[key]
+        else:                 #  -- if does not exist, define line -- #
+            key1, key2               = "pts_tier2_{0:06}".format( pt1 ), "pts_tier2_{0:06}".format( pt2 )
+            line[key]                = gmsh.model.occ.addLine( pts[key1][tag_], pts[key2][tag_] )
+            elem_lines[elem_key][ir] = line[key]
+#  -- [5-3] generate surface                    --  #
+for ik in range( nElems ):
+    elem_key       = "elem_{0:06}".format( ik+1 )
+    hLineLoop      = [ elem_lines[elem_key][0], elem_lines[elem_key][1], elem_lines[elem_key][2] ]
+    hLineLoopGroup = gmsh.model.occ.addCurveLoop( hLineLoop )
+    surf[elem_key] = gmsh.model.occ.addPlaneSurface( [hLineLoopGroup] )
+
+
+# ------------------------------------------------- #
+# --- [4] Physical Grouping                     --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+# surfPhys["xxxxx"] = gmsh.model.addPhysicalGroup( surfDim, [ surf["xxx"] ], tag=201 )
+# surfPhys["other"] = gmsh.model.addPhysicalGroup( surfDim, [ 2 ]          , tag=202 )
+# voluPhys["volu1"] = gmsh.model.addPhysicalGroup( voluDim, [ volu["vol"] ], tag=301 )
+
+
+# ------------------------------------------------- #
+# --- [2] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(2)
+gmsh.write( "model.geo_unrolled" )
+gmsh.write( "model.msh" )
+gmsh.finalize()
+
+

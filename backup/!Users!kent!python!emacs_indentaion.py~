@@ -1,0 +1,9 @@
+import os, sys, subprocess
+
+
+# ========================================================= #
+# ===  execute emacs indentation                        === #
+# ========================================================= #
+def emacs_indentation( inpFile=None ):
+    if ( inpFile is None ): sys.exit( "[emacs_indentation] inpFile == ???" )
+    cmd = "emacs -batch {0} -l ~/bin/emacs-format-file -f emacs-format-function".format( inpFile )

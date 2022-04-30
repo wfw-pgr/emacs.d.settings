@@ -1,0 +1,33 @@
+PROGRAM MAIN
+  implicit none
+  integer i
+  
+  do i=1,100
+     if(mod(i,5).eq.0)then
+        call printProgressBar(i,100)
+        call sleep(1)
+     endif
+  enddo
+  
+END PROGRAM MAIN
+
+subroutine printProgressBar(loopindex,loopmax)
+  implicit none
+  integer,parameter::ndigit=50
+  integer loopindex,loopmax
+  integer j
+  
+  print'(a,$)',' ['
+  do j=1,loopindex*ndigit/loopmax
+     print'(a,$)','='
+  enddo
+  print'(a,$)','>'
+  
+  do j=loopindex*ndigit/loopmax+1,ndigit
+     print'(a,$)',' '
+  enddo
+  print'(a,$)',']'
+  print'(f6.1,a,a,$)',100d0*loopindex/loopmax,'%',char(13)
+  ! finalize
+  if(loopindex.eq.loopmax)print*,''
+end subroutine printProgressBar

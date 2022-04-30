@@ -1,0 +1,44 @@
+import numpy as np
+import sys
+import gmsh
+
+gmshlib = "/Users/kent/gmsh/pygmshLibrary/"
+sys.path.append( gmshlib )
+import generateRectangularBox as box
+
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.model.add( "model" )
+
+# ------------------------------------------------- #
+# --- [2] rectangular box model                 --- #
+# ------------------------------------------------- #
+surfaceNumber=2
+surf = {}
+lc  = 10.0
+v0  = [ 0.0,  0.0, 0.0]
+v1  = [50.0,  0.0, 0.0]
+v2  = [ 0.0,300.0, 0.0]
+v3  = [ 0.0,  0.0,20.0]
+box = box.generateRectangularBox( origin=v0, v1=v1, v2=v2, v3=v3, lc=lc )
+surf["bottom"] = gmsh.model.addPhysicalGroup( 2, [1] )
+surf["bottom"] = gmsh.model.addPhysicalGroup( 2, [2] )
+surf["bottom"] = gmsh.model.addPhysicalGroup( 2, [3] )
+surf["bottom"] = gmsh.model.addPhysicalGroup( 2, [4] )
+surf["bottom"] = gmsh.model.addPhysicalGroup( 2, [5] )
+surf["bottom"] = gmsh.model.addPhysicalGroup( 2, [6] )
+
+
+# ------------------------------------------------- #
+# --- [3] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(3)
+gmsh.write( "model.geo_unrolled" )
+gmsh.write( "model.msh" )
+gmsh.finalize()
+

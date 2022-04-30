@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: load__config-
+# key: load__config-
+# --
+import nkUtilities.load__config as lcf
+config = lcf.load__config()

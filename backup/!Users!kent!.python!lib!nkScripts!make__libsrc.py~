@@ -1,0 +1,10 @@
+import sys, os, subprocess
+
+targets = ["nkBasicAlgs", "nkVTKRoutines"]
+srcDir  = "{0}/src/"
+bckDir  = "../../"
+
+for target in targets:
+    os.chdir( srcDir )
+    subprocess.call( "make all".split() )
+    os.chdir( bckDir )

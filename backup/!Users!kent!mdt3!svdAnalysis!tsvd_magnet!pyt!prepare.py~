@@ -1,0 +1,85 @@
+import os, sys, subprocess, time
+sys.path.append( "pyt/" )
+
+import synthesize__peelerField as syn
+import prepare__shape          as shp
+import prepare__weight         as wei
+import prepare__fields         as prp
+import prepare__parameter      as par
+
+
+# ========================================================= #
+# ===  prepare.py                                       === #
+# ========================================================= #
+
+def prepare( cleanup=None ):
+    
+    # ------------------------------------------------- #
+    # --- [1] mode definition                       --- #
+    # ------------------------------------------------- #
+    import nkMDTRoutines.get__jobinfo as gji
+    info    = gji.get__jobinfo()
+    mode    = info["args"]["mode"]
+    
+    # ------------------------------------------------- #
+    # --- [2] clean up result directories           --- #
+    # ------------------------------------------------- #
+    if ( cleanup is None ):
+        print( "[prepare.py] clean up out/ png/ Directories.... ok???  (y/n)  >>> ", end="" )
+        cleanup = str( input() )
+
+    if ( cleanup.lower() == "y" ):
+        cmd1 = "rm ./png/*.png"
+        cmd2 = "rm ./out/*.dat"
+        print( cmd1 )
+        print( cmd2 )
+        print()
+        subprocess.call( cmd1, shell=True )
+        subprocess.call( cmd2, shell=True )
+    else:
+        print( "[prepare.py] no deleted files." )
+        print()
+    time.sleep( 1 )
+        
+    # ------------------------------------------------- #
+    # --- [2] copy files                            --- #
+    # ------------------------------------------------- #
+    cmd1 = "cp {0}dat/{1} dat/{1}".format( info["jobDir"], "pole_ideal_mcoord.dat"   )
+    cmd2 = "cp {0}dat/{1} dat/{1}".format( info["jobDir"], "peeler_ideal_mcoord.dat" )
+    cmd3 = "cp {0}dat/{1} dat/{1}".format( info["jobDir"], "ems_pst.field"           )
+    cmd4 = "cp {0}dat/{1} dat/{1}".format( info["jobDir"], "ems_pel.field"           )
+    cmd5 = "cp {0}dat/{1} dat/{1}".format( info["jobDir"], "mshape_svd.dat"          )
+    print( cmd1 )
+    print( cmd2 )
+    print( cmd3 )
+    print( cmd4 )
+    print( cmd5 )
+    subprocess.call( cmd1.split() )
+    subprocess.call( cmd2.split() )
+    subprocess.call( cmd3.split() )
+    subprocess.call( cmd4.split() )
+    subprocess.call( cmd5.split() )
+    time.sleep( 1 )
+
+    # ------------------------------------------------- #
+    # --- [3] prepare parameters                    --- #
+    # ------------------------------------------------- #
+    par.prepare__parameter()
+    time.sleep( 1 )
+
+    # ------------------------------------------------- #
+    # --- [4] prepare input files                   --- #
+    # ------------------------------------------------- #
+    shp.prepare__shape()
+    prp.prepare__fields()
+    wei.prepare__weight()
+    time.sleep( 1 )
+
+
+
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    prepare()

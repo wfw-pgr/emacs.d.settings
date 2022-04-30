@@ -1,0 +1,54 @@
+import os, sys
+import numpy as np
+
+# ========================================================= #
+# ===  interpolate grided Data on line                  === #
+# ========================================================= #
+def interpolate__gridData_onto_line( gridFile="dat/grid.dat", lineFile="dat/line.dat" ):
+
+    x_,y_,bz_ = 0, 1, 5
+    
+    # ------------------------------------------------- #
+    # --- [1] grid & line Loading                   --- #
+    # ------------------------------------------------- #
+    #  -- [1-1] grid Data Loading                   --  #
+    import nkUtilities.load__pointFile as lpf
+    gridInfo  = lpf.load__pointFile( inpFile=gridFile, returnType="info"       )
+    gridData  = lpf.load__pointFile( inpFile=gridFile, returnType="structured" )
+    gridData  = gridData[:,:,(x_,y_,bz_)]
+    gridData_ = ( np.reshape( gridData, (-1,3) ) )
+    
+    #  -- [1-2] line Data Loading                   --  #
+    import generate__line1d as lin
+    lineData  = lin.generate__line1d( rStart=0.55, rEnd=0.75, angle=300, nDiv=51, \
+                                      origin=[0.0,0.444921274] )
+    
+    lineData_        = np.zeros( (lineData.shape[0],3) )
+    lineData_[:,0:2] = np.copy( lineData[:,0:2] )
+    
+    # ------------------------------------------------- #
+    # --- [2] linear Interpolation                  --- #
+    # ------------------------------------------------- #
+    import nkInterpolator.LinearInterp2D as li2
+    ret = li2.LinearInterp2D( gridData    =gridData, pointData=lineData_, \
+                              gridDataType="structured" )
+    
+    # ------------------------------------------------- #
+    # --- [3] grid Data contouring                  --- #
+    # ------------------------------------------------- #
+    import nkUtilities.plot1D     as pl1
+    import nkUtilities.LoadConfig as lcf
+    config = lcf.LoadConfig()
+    config["plt_xAutoRange"] = True
+    config["plt_yAutoRange"] = True
+    config["plt_xRange"]     = [ 0.0,+1.0]
+    config["plt_yRange"]     = [-1.0,+0.0]
+    pl1.plot1D( xAxis=ret[:,0], yAxis=ret[:,2], pngFile="png/out_onLine.png", config=config )
+    return( ret )
+    
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    interpolate__gridData_onto_line()

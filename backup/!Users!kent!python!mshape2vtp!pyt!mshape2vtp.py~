@@ -1,0 +1,50 @@
+import numpy as np
+
+
+# ========================================================= #
+# ===  mshape => vtp surface file convertor             === #
+# ========================================================= #
+
+def mshape2vtp( inpFile=None ):
+
+    if ( inpFile is None ): inpFile = "mshape_0001.dat"
+
+    with open( inpFile, "r" ) as f:
+        Data = np.loadtxt( f )
+
+    print( Data.shape )
+
+    import nkVTKRoutines.vtkDataConverter as cvt
+    cvt.vtkDataConverter( vtkFile="out.vtp", Data=Data, tag="sample", DataType="point" )
+
+
+# ======================================== #
+# ===  実行部                          === #
+# ======================================== #
+if ( __name__=="__main__" ):
+    import nkUtilities.genArgs as gar
+    args    = gar.genArgs()
+
+    # inpFile = "mshape_{0:04}.dat".format( args["integer"] )
+    inpFile = "mshape_0001.dat"
+
+    generate__testprofile = True
+    if ( generate__testprofile ):
+
+        import nkUtilities.equiSpaceGrid as esg
+        x1MinMaxNum = [ 0.0, 1.0, 11 ]
+        x2MinMaxNum = [ 0.0, 1.0, 11 ]
+        ret         = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                         returnType = "point" )
+        Data        = np.zeros( (ret.shape[0],6) )
+        Data[:,2]   = np.sqrt( ret[:,0]**2 + ret[:,1]**2 )
+        index       = np.where( Data[:,2] < 1.0 )
+        ( Data[:,5] )[index] = 1.0
+
+        with open( inpFile, "w" ) as f:
+            names   = [ "x{0}".format(i+1) for i in range( Data.shape[1] ) ]
+            f.write( "# " + " ".join( names ) + "\n" )
+            f.write( "# " + " ".join( [ str(i) for i in range( Data.shape[1] ) ] ) + "\n" )
+            np.savetxt( f, Data )
+
+    mshape2vtp( inpFile=inpFile )

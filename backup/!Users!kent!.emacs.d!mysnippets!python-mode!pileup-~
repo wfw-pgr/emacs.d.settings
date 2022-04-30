@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: pileup-
+# key: pileup-
+# --
+np.concatenate( [ arr[np.newaxis,:] for arr in ${1:arrs} ], axis=${2:0} )$0

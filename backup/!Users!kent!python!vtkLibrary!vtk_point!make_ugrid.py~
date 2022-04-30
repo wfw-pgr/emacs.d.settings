@@ -1,0 +1,35 @@
+import numpy as np
+
+def Gen_uGrid(new_pt, new_fc):
+    """ Generates a vtk unstructured grid given points and triangular faces"""    
+    ints = np.ones(len(new_fc), 'int')*3
+    cells = np.hstack((ints.reshape(-1, 1), np.vstack(new_fc)))
+              
+    # Generate vtk mesh
+    
+    # Convert points to vtkfloat object
+    points = np.vstack(new_pt)
+    vtkArray = VN.numpy_to_vtk(np.ascontiguousarray(points), deep=True)#, deep=True) 
+    points = vtk.vtkPoints()
+    points.SetData(vtkArray) 
+                
+    # Convert to vtk arrays
+    tritype = vtk.vtkTriangle().GetCellType()*np.ones(len(new_fc), 'int')
+    cell_type = np.ascontiguousarray(tritype).astype('uint8')
+    cell_type = VN.numpy_to_vtk(cell_type, deep=True)
+    
+    offset = np.cumsum(np.hstack(ints + 1))
+    offset = np.ascontiguousarray(np.delete(np.insert(offset, 0, 0), -1)).astype('int64')  # shift
+    offset = VN.numpy_to_vtkIdTypeArray(offset, deep=True)
+    
+    cells = np.ascontiguousarray(np.hstack(cells).astype('int64'))
+    vtkcells = vtk.vtkCellArray()
+    vtkcells.SetCells(cells.shape[0], VN.numpy_to_vtkIdTypeArray(cells, deep=True))
+    
+    
+    # Create unstructured grid
+    uGrid = vtk.vtkUnstructuredGrid()
+    uGrid.SetPoints(points)
+    uGrid.SetCells(cell_type, offset, vtkcells)
+    
+    return uGrid

@@ -1,0 +1,35 @@
+
+
+# ========================================================= #
+# ===  open__fileDialogBox                              === #
+# ========================================================= #
+
+def file_dialog(self, event=None, filetypes=["","*"] ):
+    
+    # ------------------------------------------------- #
+    # --- [1] arguments                             --- #
+    # ------------------------------------------------- #
+    if   ( type( filetypes ) is str ):
+        filetypes = [ filetypes ]
+    elif ( type( filetypes ) is list ):
+        pass
+    else:
+        filetypes = ["","*"]
+
+    # ------------------------------------------------- #
+    # --- [2] call file dialog box                  --- #
+    # ------------------------------------------------- #
+    initialdir = os.path.abspath( os.path.dirname( __file__ ) )
+    file_name  = tk.filedialog.askopenfilename( filetypes=filetypes, initialdir=initialdir )
+    if len( file_name ) == 0:
+        self.file_name.set( "No file selection :: cancelled...." )
+    else:
+        self.file_name.set( file_name )
+        
+def folder_dialog(self, event):
+    iDir = os.path.abspath(os.path.dirname(__file__))
+    folder_name = tk.filedialog.askdirectory(initialdir=iDir)
+    if len(folder_name) == 0:
+        self.folder_name.set('選択をキャンセルしました')
+    else:
+        self.folder_name.set(folder_name)

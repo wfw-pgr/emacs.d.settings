@@ -1,0 +1,21 @@
+program main
+  implicit none
+
+  open(lun,file=trim(inpFile),status="old")
+  read(lun,*)
+  read(lun,*) cmt, nlines, ncmp
+  read(lun,*) cmt, LK, LJ, LI, ncmp
+  allocate( data(ncmp,LI,LJ,LK) )
+  do k=1, LK
+     do j=1, LJ
+        do i=1, LI
+          read(lun,*) data(:,i,j,k)
+        enddo
+     enddo
+  enddo
+  close(lun)
+
+
+  
+  
+end program main

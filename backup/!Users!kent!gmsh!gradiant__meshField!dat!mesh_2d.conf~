@@ -1,0 +1,2 @@
+# key		physNum		meshtype	resolution1	resolution2	evaluation
+circle1		201		direct-math	0.01		0.20		(0.20-0.01)*sqrt(x^2+y^2)+0.01

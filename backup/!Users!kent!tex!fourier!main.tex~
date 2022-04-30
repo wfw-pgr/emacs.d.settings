@@ -1,0 +1,144 @@
+%% ========================================================= %%
+%% ========            + Use Packages +             ======== %%
+%% ========================================================= %%
+\documentclass[a4j,11pt,uplatex]{jsbook}
+\usepackage[top=32truemm,bottom=30truemm,left=27truemm,right=27truemm]{geometry}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{cite}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage[font=small]{caption}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{fancybox}
+\usepackage{tabularx}
+\usepackage{ascmac}
+\usepackage{newtxtext,newtxmath}
+%%% === 製本用 === %%%
+%% \usepackage[dvipdfmx]{hyperref}
+%% \usepackage{pxjahyper}
+%%% ============== %%%
+
+%% ========================================================= %%
+%% ========           + Title & Includes +          ======== %%
+%% ========================================================= %%
+%% --     Title        -- %
+\input{tex/utl/title}
+%% -- Include Settings -- %
+\input{tex/utl/preset}
+%% -- Footer / Header  -- %
+\input{tex/utl/hdrftr}
+
+%% ========================================================= %%
+%% ========               +   Main   +              ======== %%
+%% ========================================================= %%
+\begin{document}
+\maketitle
+\input{tex/abstract/abstract}
+\tableofcontents
+\listoffigures
+\listoftables
+
+%% ------------------------------- %%
+%% --- [1] 序論                --- %%
+%% ------------------------------- %%
+\chapter{序論}
+\input{tex/intro/fusion}
+\clearpage
+\input{tex/intro/frc}
+\clearpage
+\input{tex/intro/plasmaMerg}
+\input{tex/intro/MagneticReconnection}
+\input{tex/intro/SweetParker}
+\input{tex/intro/kineticReconnection}
+\input{tex/intro/mergingSimulation}
+\input{tex/intro/eqEnergy}
+\input{tex/intro/objectives}
+
+%% ------------------------------- %%
+%% --- [2] MHD                 --- %%
+%% ------------------------------- %%
+\chapter{磁束管合体のMHDシミュレーション}
+\input{tex/mhdcode/mhdeq}
+\input{tex/GSsolver/GSsolver}
+\input{tex/mhdsim/rztCtrO}
+\clearpage
+\input{tex/mhdsim/rztCoHx}
+\clearpage
+\input{tex/mhdsim/ohmslaw}
+\input{tex/amrvac/RmScan}
+\input{tex/amrvac/0DAnalysis}
+\input{tex/mhdsim/EdJAnalysis}
+\input{tex/mhdsim/xyzvsrtz}
+\input{tex/mhdsim/shockAnalysis}
+\input{tex/mhdsim/summary}
+%% --- 
+%% %% \input{tex/amrvac/xyz}
+%% %% \input{tex/amrvac/xyzCoHlx}
+%% \input{tex/amrvac/energy}
+%% \input{tex/amrvac/MergRecRate}
+%% --- 
+
+%% ------------------------------- %%
+%% --- [3] APR-PIC             --- %%
+%% ------------------------------- %%
+\chapter{適合粒子細分化法を用いたParticle-In-Cellコードの開発}
+\input{tex/picCode/physQuantity}
+\input{tex/picCode/FundamentalEqs}
+\input{tex/pic/picOverview}
+\input{tex/pic/picBoris}
+\input{tex/pic/picFDTD}
+\input{tex/pic/picCurrent}
+\input{tex/pic/picInterpolation}
+\input{tex/apr/aprIntro}
+\input{tex/apr/aprAssous}
+\input{tex/apr/conservation}
+\input{tex/apr/phaseSpaceResample}
+\input{tex/apr/DDD.tex}
+\input{tex/wave/EMOmode}
+\input{tex/wave/EPWmode}
+\input{tex/picCode/summary}
+
+%% ------------------------------- %%
+%% --- [4] CHSM by PIC         --- %%
+%% ------------------------------- %%
+\chapter{磁束管合体のParticle-In-Cellシミュレーション}
+\input{tex/picOverview/overview}
+\input{tex/picOverview/counterHelicity}
+\input{tex/picOverview/coHelicity}
+\input{tex/picOverview/caseIO}
+\input{tex/picOverview/CoCtrAfterMerg}
+\input{tex/picEconvert/EdotJ2D}
+\clearpage
+\input{tex/picEconvert/potential}
+\input{tex/picEconvert/tracking}
+\input{tex/picEconvert/flux1D}
+\input{tex/picEnergy/EnergyPartition}
+\input{tex/picEnergy/EdJdecompose}
+\input{tex/picEnergy/eInventory}
+\input{tex/picOverview/summary}
+%% ---
+%% \input{tex/picFRC/rotation}
+%% \input{tex/conversion/conversion}
+
+%% ------------------------------- %%
+%% --- [5] Summary             --- %%
+%% ------------------------------- %%
+\chapter{結論}
+\input{tex/epilogue/conclusion}
+\input{tex/epilogue/futurework}
+
+
+\pagestyle{plain}
+\small
+\chapter*{謝辞}
+\setcounter{page}{1}
+\input{tex/epilogue/acknowledgement}
+
+\bibliographystyle{unsrt}
+\bibliography{bib/bibref}
+
+\chapter*{発表文献}
+\input{tex/epilogue/publicationlist}
+
+\end{document}

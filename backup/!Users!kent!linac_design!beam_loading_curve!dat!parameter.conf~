@@ -1,0 +1,3 @@
+P0_RF_input		double		8.0e6
+tau_attenuation		double		0.5659
+length_cavity		double		2.834

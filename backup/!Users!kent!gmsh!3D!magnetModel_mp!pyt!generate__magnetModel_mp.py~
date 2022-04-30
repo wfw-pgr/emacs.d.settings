@@ -1,0 +1,165 @@
+import numpy   as np
+import os, sys
+import gmsh
+
+import generate__poleParts      as pol
+import generate__bufferParts    as buf
+import generate__coilSlotParts  as slt
+import generate__yokeParts      as yok
+import generate__outAirParts    as air
+import generate__regenShimParts as reg
+import load__constants          as lcn
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.model.add( "model" )
+
+# ------------------------------------------------- #
+# --- [2] initialize settings                   --- #
+# ------------------------------------------------- #
+ptsDim , lineDim , surfDim , voluDim  =  0,  1,  2,  3
+pts    , line    , surf    , volu     = {}, {}, {}, {}
+ptsPhys, linePhys, surfPhys, voluPhys = {}, {}, {}, {}
+x_, y_, z_, lc_, tag_                 = 0, 1, 2, 3, 4
+
+
+# ------------------------------------------------- #
+# --- [3] Parameter Settings                    --- #
+# ------------------------------------------------- #
+
+poleNodeFile = "dat/pole.nodes"
+poleElemFile = "dat/pole.elements"
+regNodeFile  = "dat/regen.nodes"
+regElemFile  = "dat/regen.elements"
+tolerance    = 1.e-5
+const        = lcn.load__constants( inpFile="dat/magnet.conf" )
+mesh_conf    = lcn.load__constants( inpFile="dat/mesh.conf"   )
+
+lc1          = mesh_conf["volu1_mesh"]
+lc4          = mesh_conf["volu4_mesh"]
+lc5          = mesh_conf["volu5_mesh"]
+lc6          = mesh_conf["volu6_mesh"]
+lc7          = mesh_conf["volu7_mesh"]
+lc8          = mesh_conf["volu8_mesh"]
+
+const["z_slotDepth"] = const["z_medianPlane"] + const["z_airGap1"] + const["z_coilWidth"] + const["z_airGap2"]
+
+rPole1       = const["r_poleRadius"]
+zPole1       = const["z_medianPlane"]
+zPole3       = const["z_poleGapMax"]
+zPole4       = const["z_slotDepth"]
+
+rBuff1       = const["r_poleRadius"]
+rBuff2       = const["r_poleRadius"]  + const["r_airGap1"]
+zBuff1       = const["z_medianPlane"]
+zBuff2       = const["z_slotDepth"]
+
+rCoil1       = const["r_poleRadius"]  + const["r_airGap1"]
+rCoil2       = const["r_poleRadius"]  + const["r_airGap1"] + const["r_coilWidth"]
+rCoil3       = const["r_poleRadius"]  + const["r_airGap1"] + const["r_coilWidth"] + const["r_airGap2"]
+zCoil1       = const["z_medianPlane"]
+zCoil2       = const["z_medianPlane"] + const["z_airGap1"]
+zCoil3       = const["z_medianPlane"] + const["z_airGap1"] + const["z_coilWidth"]
+zCoil4       = const["z_medianPlane"] + const["z_airGap1"] + const["z_coilWidth"] + const["z_airGap2"]
+
+rYoke1       = const["r_poleRadius"]  + const["r_airGap1"] + const["r_coilWidth"] + const["r_airGap2"]
+rYoke2       = rYoke1 + const["r_yokeWidth"] - const["r_yokeCorner"]
+rYoke3       = rYoke1 + const["r_yokeWidth"]
+zYoke1       = const["z_medianPlane"]
+zYoke2       = const["z_slotDepth"]
+zYoke3       = const["z_slotDepth"] + const["z_yokeWidth"] - const["z_yokeCorner"]
+zYoke4       = const["z_slotDepth"] + const["z_yokeWidth"]
+
+rAir1        = rYoke1 + const["r_yokeWidth"] - const["r_yokeCorner"]
+rAir2        = rYoke1 + const["r_yokeWidth"]
+rAir3        = rYoke1 + const["r_yokeWidth"] + const["r_outAirWidth"]
+zAir1        = const["z_medianPlane"]
+zAir2        = const["z_slotDepth"] + const["z_yokeWidth"] - const["z_yokeCorner"]
+zAir3        = const["z_slotDepth"] + const["z_yokeWidth"]
+zAir4        = const["z_slotDepth"] + const["z_yokeWidth"] + const["z_outAirWidth"]
+
+zRegen       = const["z_regenCeil"]
+
+# ------------------------------------------------- #
+# --- [4] Modeling                              --- #
+# ------------------------------------------------- #
+
+ret1 = pol.generate__poleParts     ( lc=lc1, tolerance=tolerance, radius=rPole1, \
+                                     height_tier1=zPole1, height_tier3=zPole3,
+                                     height_tier4=zPole4, \
+                                     nodeFile=poleNodeFile, elemFile=poleElemFile )
+
+ret2 = buf.generate__bufferParts   ( lc=lc4, tolerance=tolerance, radius1=rBuff1, radius2=rBuff2, \
+                                     height_tier1=zBuff1, height_tier2=zBuff2, nodeFile=poleNodeFile )
+
+ret3 = slt.generate__coilSlotParts ( lc=lc5, radius1=rCoil1, radius2=rCoil2, radius3=rCoil3, \
+                                     height_tier1=zCoil1, height_tier2=zCoil2, \
+                                     height_tier3=zCoil3, height_tier4=zCoil4 )
+
+ret4 = yok.generate__yokeParts     ( lc=lc6, radius1=rYoke1, radius2=rYoke2, radius3=rYoke3, \
+                                     height_tier1=zYoke1, height_tier2=zYoke2, \
+                                     height_tier3=zYoke3, height_tier4=zYoke4 )
+
+ret5 = air.generate__outAirParts   ( lc=lc7, radius1=rAir1, radius2=rAir2, radius3=rAir3, \
+                                     height_tier1=zAir1, height_tier2=zAir2, \
+                                     height_tier3=zAir3, height_tier4=zAir4  )
+ret6 = reg.generate__regenShimParts( lc=lc8, height_tier2=zRegen, nodeFile=regNodeFile, \
+                                     elemFile=regElemFile )
+
+
+# ------------------------------------------------- #
+# --- [5] remove Duplicates / Re-numbering      --- #
+# ------------------------------------------------- #
+
+gmsh.model.occ.removeAllDuplicates()
+ret1["volu"]["tier12"]     = 14
+ret6["volu"]["shim"]       = 15
+ret2["volu"]["airGap_inn"] = 16
+volu["shim_outcut"]        = 17
+
+volu["poleGap"]      = ret1["volu"]["tier12"]
+volu["poleTip"]      = ret1["volu"]["tier23"]
+volu["poleBody"]     = ret1["volu"]["tier34"]
+volu["airGap_inn"]   = ret2["volu"]["airGap_inn"]
+volu["airGap_bot"]   = ret3["volu"]["airGap_bot"]
+volu["airGap_out"]   = ret3["volu"]["airGap_out"]
+volu["airGap_upr"]   = ret3["volu"]["airGap_upr"]
+volu["coil"]         = ret3["volu"]["coil"]
+volu["yoke1"]        = ret4["volu"]["yoke1"]
+volu["yoke2"]        = ret4["volu"]["yoke2"]
+volu["yoke3"]        = ret4["volu"]["yoke3"]
+volu["air1"]         = ret5["volu"]["air1"]
+volu["air2"]         = ret5["volu"]["air2"]
+volu["shim_incut"]   = ret6["volu"]["shim"]
+
+
+# ------------------------------------------------- #
+# --- [5] Physical Grouping                     --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+voluPhys["poleGap"]    = gmsh.model.addPhysicalGroup( voluDim, [ volu["poleGap"] ] , tag=301 )
+voluPhys["poleTip"]    = gmsh.model.addPhysicalGroup( voluDim, [ volu["poleTip"] ] , tag=302 )
+voluPhys["poleBody"]   = gmsh.model.addPhysicalGroup( voluDim, [ volu["poleBody"] ], tag=303 )
+voluPhys["coilAirGap"] = gmsh.model.addPhysicalGroup( voluDim, [ volu["airGap_inn"], volu["airGap_bot"], \
+                                                                 volu["airGap_out"], volu["airGap_upr"]  ], tag=304 )
+voluPhys["coil"]       = gmsh.model.addPhysicalGroup( voluDim, [ volu["coil"] ]    , tag=305 )
+voluPhys["yoke"]       = gmsh.model.addPhysicalGroup( voluDim, [ volu["yoke1"], volu["yoke2"], volu["yoke3"] ], tag=306 )
+voluPhys["outsideAir"] = gmsh.model.addPhysicalGroup( voluDim, [ volu["air1"], volu["air2"] ], tag=307 )
+voluPhys["regenShim"]  = gmsh.model.addPhysicalGroup( voluDim, [ volu["shim_incut"], volu["shim_outcut"] ], tag=308 )
+
+
+# ------------------------------------------------- #
+# --- [6] post process                          --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(3)
+gmsh.write( "model.geo_unrolled" )
+gmsh.option.setNumber( "Mesh.BdfFieldFormat", 0 )
+gmsh.option.setNumber( "Mesh.SaveElementTagType", 2 )
+gmsh.write( "model.bdf" )
+gmsh.write( "model.msh" )
+gmsh.finalize()
+

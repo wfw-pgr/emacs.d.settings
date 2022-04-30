@@ -1,0 +1,55 @@
+import numpy as np
+import sys
+import gmsh
+
+gmshlib = "/Users/kent/gmsh/pygmshLibrary/"
+sys.path.append( gmshlib )
+import generateRectangularBox as box
+
+
+# ------------------------------------------------- #
+# --- [1] initialization of the gmsh            --- #
+# ------------------------------------------------- #
+gmsh.initialize()
+gmsh.option.setNumber( "General.Terminal", 1 )
+gmsh.model.add( "model" )
+
+# ------------------------------------------------- #
+# --- [2] rectangular box model                 --- #
+# ------------------------------------------------- #
+surfDim  = 2
+voluDim  = 3
+surf     = {}
+surfPhys = {}
+voluPhys = {}
+lc   = 10.0
+v0   = [ 0.0,  0.0, 0.0]
+v1   = [50.0,  0.0, 0.0]
+v2   = [ 0.0,300.0, 0.0]
+v3   = [ 0.0,  0.0,20.0]
+box1 = box.generateRectangularBox( origin=v0, v1=v1, v2=v2, v3=v3, lc=lc )
+# ------------------------------------------------- #
+# --- [3] Physical Grouping                     --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+surfPhys["left"]  = gmsh.model.addPhysicalGroup( surfDim, [ box1["surfs"]["side1"]  ], tag=201 )
+surfPhys["right"] = gmsh.model.addPhysicalGroup( surfDim, [ box1["surfs"]["side3"]  ], tag=202 )
+surfPhys["other"] = gmsh.model.addPhysicalGroup( surfDim, [ box1["surfs"]["side2"], \
+                                                            box1["surfs"]["side4"], \
+                                                            box1["surfs"]["top"]  , \
+                                                            box1["surfs"]["bottom"] ], tag=203 )
+voluPhys["box"]   = gmsh.model.addPhysicalGroup( voluDim, [ box1["volus"]["box"]    ], tag=301 )
+print( " physical surfaces :: ", gmsh.model.getPhysicalGroups( dim=surfDim ) )
+print( " physical volumes  :: ", gmsh.model.getPhysicalGroups( dim=voluDim ) )
+
+
+# ------------------------------------------------- #
+# --- [4] meshing & save file                   --- #
+# ------------------------------------------------- #
+gmsh.model.occ.synchronize()
+gmsh.model.mesh.generate(3)
+gmsh.write( "model.geo_unrolled" )
+gmsh.write( "model.msh" )
+gmsh.write( "model.unv" )
+gmsh.finalize()
+

@@ -1,0 +1,54 @@
+import numpy as np
+import os, sys
+import gmsh
+
+# ========================================================= #
+# ===  convert__meshFormat                              === #
+# ========================================================= #
+
+def convert__meshFormat( inpFile="msh/model.stp", outFile="msh/model.msh", logFile="dat/entities.log" ):
+
+    # ------------------------------------------------- #
+    # --- [1] initialization of the gmsh            --- #
+    # ------------------------------------------------- #
+    gmsh.initialize()
+    gmsh.option.setNumber( "General.Terminal", 1 )
+    gmsh.model.add( "model" )
+    
+    # ------------------------------------------------- #
+    # --- [2] Modeling                              --- #
+    # ------------------------------------------------- #
+    gmsh.model.occ.importShapes( inpFile )
+    gmsh.model.occ.synchronize()
+
+    # ------------------------------------------------- #
+    # --- [3] delete unnecessaries                  --- #
+    # ------------------------------------------------- #
+    entities = gmsh.model.getEntities(3)
+    with open( logFile, "w" ) as f:
+        f.write( "[before]\n" )
+        f.write( entities )
+
+    dimtags  = [ (3,ent) for ent in entities ]
+    gmsh.model.occ.remove( dimtags )
+    gmsh.model.occ.synchronize()
+    entities = gmsh.model.getEntities(3)
+    
+    with open( logFile, "a" ) as f:
+        f.write( "[after]\n" )
+        f.write( entities )
+    
+    # ------------------------------------------------- #
+    # --- [3] post process                          --- #
+    # ------------------------------------------------- #
+    gmsh.model.occ.synchronize()
+    gmsh.write( outFile )
+    gmsh.finalize()
+    
+    
+# ========================================================= #
+# ===   Execution of Pragram                            === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    convert__meshFormat()

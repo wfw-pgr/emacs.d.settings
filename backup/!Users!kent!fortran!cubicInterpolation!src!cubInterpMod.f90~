@@ -1,0 +1,4 @@
+module cubInterpMod
+contains
+
+  subroutine cubicInterpolation( xg, yg, xi, yi, nRef, nItp )

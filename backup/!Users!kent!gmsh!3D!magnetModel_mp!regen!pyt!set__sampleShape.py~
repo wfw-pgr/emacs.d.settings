@@ -1,0 +1,12 @@
+import numpy as np
+import scipy.optimize as opt
+
+# ========================================================= #
+# ===  set__sampleShape                                 === #
+# ========================================================= #
+
+def set__sampleShape():
+
+    inpFile = "input.dat"
+    
+    

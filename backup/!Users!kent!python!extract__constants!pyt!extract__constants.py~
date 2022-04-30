@@ -1,0 +1,24 @@
+import os, sys
+import nkUtilities.load__constants as lcn
+
+# ========================================================= #
+# ===  extract__constants.py                            === #
+# ========================================================= #
+
+def extract__constants( inpFile=None, outFile=None, keys=None ):
+
+    # ------------------------------------------------- #
+    # --- [1] Arguments                             --- #
+    # ------------------------------------------------- #
+    if ( inpFile is None ): sys.exit( "[extract__constants.py] inpFile == ???" )
+    if ( outFile is None ): sys.exit( "[extract__constants.py] outFile == ???" )
+
+    # ------------------------------------------------- #
+    # --- [2] load constants                        --- #
+    # ------------------------------------------------- #
+    const   = lcn.load__constants( inpFile=inpFile )
+
+    # ------------------------------------------------- #
+    # --- [3] save in outFile                       --- #
+    # ------------------------------------------------- #
+    

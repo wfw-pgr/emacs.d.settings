@@ -1,0 +1,134 @@
+host	bernoulli
+	HostName	koala.t.u-tokyo.ac.jp
+	User		nishida
+	AddKeysToAgent	yes
+	UseKeychain	yes
+	IdentityFile	~/.ssh/id_rsa_maxwell
+	Port		31415
+	ServerAliveInterval	30
+	# 133.11.94.233
+
+host	gauss-out
+	HostName	192.168.1.129
+	User		kent
+	IdentityFile	~/.ssh/id_rsa_maxwell
+	AddKeysToAgent	yes
+	UseKeychain	yes
+	ProxyCommand	ssh -W %h:%p bernoulli
+	ServerAliveInterval	30
+
+host	teeth
+	HostName	157.82.247.79
+	User		nishida
+	AddKeysToAgent	yes
+	UseKeychain	yes
+	IdentityFile	~/.ssh/id_rsa_maxwell
+	ServerAliveInterval	30
+
+host	pf-bernoulli
+	HostName	koala.t.u-tokyo.ac.jp
+	User		nishida
+	Port		31415
+	DynamicForward	10080
+# ( $ ssh -N -f pf-bernoulli        )  #
+
+# host	tora
+# 	HostName	133.11.94.205
+# 	User		idlmanager
+# 	ProxyCommand	ssh -W %h:%p bernoulli
+# 	ServerAliveInterval 30
+	
+
+# host	gauss
+# 	HostName	192.168.1.129
+# 	User		kent
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	ServerAliveInterval	30
+
+# host	melon-out
+# 	HostName	melon
+# 	User		kent
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	ProxyCommand	ssh -W %h:%p bernoulli
+# 	ServerAliveInterval 30
+
+# host	reedbush
+# 	HostName	reedbush-u.cc.u-tokyo.ac.jp
+# 	User		i00062
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	ServerAliveInterval	30
+
+# host	france
+# 	HostName	172.16.102.40
+# 	User		nishida
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	IdentityFile	~/.ssh/id_rsa
+# 	ProxyCommand	ssh -W %h:%p teeth
+# 	ServerAliveInterval	30
+
+# host	evans
+# 	HostName	evans
+# 	User		nishida
+# 	IdentityFile	~/.ssh/id_rsa
+# 	ServerAliveInterval	30
+
+# host	evans-out
+# 	HostName	evans
+# 	User		nishida
+# 	IdentityFile	~/.ssh/id_rsa_mac2
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	ProxyCommand	ssh -W %h:%p bernoulli
+# 	ServerAliveInterval	30
+
+# host	nifs-ps
+# 	HostName	gw.ps.nifs.ac.jp
+# 	User		nishidak
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	ServerAliveInterval	30
+
+# host	kolmo
+# 	HostName	192.168.1.132
+# 	User		kolmogorov
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	ServerAliveInterval	30
+
+# host	kolmo-out
+# 	HostName	192.168.1.132
+# 	User		kolmogorov
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	ProxyCommand	ssh -W %h:%p bernoulli
+# 	ServerAliveInterval	30
+
+# host	panda
+# 	HostName	172.16.102.50
+# 	User		nishida
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	ProxyCommand	ssh -W %h:%p teeth
+# 	ServerAliveInterval	30
+
+# host	paschen
+# 	HostName	192.168.1.134
+# 	User		paschen
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	ServerAliveInterval	30
+
+# host	paschen-out
+# 	HostName	192.168.1.134
+# 	User		paschen
+# 	IdentityFile	~/.ssh/id_rsa_mac3
+# 	AddKeysToAgent	yes
+# 	UseKeychain	yes
+# 	ProxyCommand	ssh -W %h:%p bernoulli
+# 	ServerAliveInterval	30

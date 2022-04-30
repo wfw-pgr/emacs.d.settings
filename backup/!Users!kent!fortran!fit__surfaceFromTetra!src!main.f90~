@@ -1,0 +1,176 @@
+program main
+  implicit none
+  integer            :: it
+  integer, parameter :: cLen = 300
+  integer, parameter :: lun  = 50
+  double precision   :: tetra(3,4), coef(6)
+  character(cLen)    :: inpFile="dat/tetra.dat"
+  character(cLen)    :: outFile="dat/coef.dat"
+  
+  ! ------------------------------------------------------ !
+  ! --- [1] main                                       --- !
+  ! ------------------------------------------------------ !
+  open (lun,file=trim(inpFile),status="old")
+  do it=1, 4
+     read (lun,*) tetra(1:3,it)
+  enddo
+  close(lun)
+  
+  ! ------------------------------------------------------ !
+  ! --- [2] calculate coefficient                      --- !
+  ! ------------------------------------------------------ !
+  call calculate__coefficient( tetra, coef )
+
+  ! ------------------------------------------------------ !
+  ! --- [3] return                                     --- !
+  ! ------------------------------------------------------ !
+  open (lun,file=trim(outFile),status="replace")
+  do it=1, 6
+     write(lun,*) coef(it)
+  enddo
+  close(lun)
+
+contains
+
+  
+  ! ====================================================== !
+  ! === calculate coefficient                          === !
+  ! ====================================================== !
+  subroutine calculate__coefficient( tetra, coef )
+    implicit none
+    double precision, intent(in)  :: tetra(3,4)
+    double precision, intent(out) :: coef (6)
+    integer                       :: i, j
+    double precision              :: Amat(6,6), bvec(6)
+    integer         , parameter   :: xx_=1, yy_=2, xy_=3, xm_=4, ym_=5, cm_=6
+    integer         , parameter   :: x_=1, y_=2, z_=3, iG_=1
+
+    
+    ! ------------------------------------------------------ !
+    ! --- [1] setting of coefficient matrix              --- !
+    ! ------------------------------------------------------ !
+    !  -- [1-1]  Fix points                              --  !
+    Amat(:,:) = 0.d0
+    do i=1, 4
+       Amat(i,xx_) = tetra(x_,i)**2
+       Amat(i,yy_) = tetra(y_,i)**2
+       Amat(i,xy_) = tetra(x_,i)*tetra(y_,i)
+       Amat(i,xm_) = tetra(x_,i)
+       Amat(i,ym_) = tetra(y_,i)
+       Amat(i,cm_) = 1.d0
+    enddo
+    !  -- [1-2]  gradiant = 0  @ top                     --  !
+    Amat(5,xx_) = 2.d0 * tetra(x_,iG_)
+    Amat(5,xy_) =        tetra(y_,iG_)
+    Amat(5,xm_) = 1.d0
+    Amat(6,yy_) = 2.d0 * tetra(y_,iG_)
+    Amat(6,xy_) =        tetra(x_,iG_)
+    Amat(6,ym_) = 1.d0
+
+    ! ------------------------------------------------------ !
+    ! --- [2] setting of the right hand side             --- !
+    ! ------------------------------------------------------ !
+    bvec(:) = 0.d0
+    do i=1, 4
+       bvec(i) = tetra(z_,i)
+    enddo
+    bvec(5:6)  = 0.d0
+
+    ! ------------------------------------------------------ !
+    ! --- [3] solve equation                             --- !
+    ! ------------------------------------------------------ !
+    coef(:) = 0.d0
+    call solve__gaussElimin( Amat, coef, bvec, 6 )
+    
+    return
+  end subroutine calculate__coefficient
+
+
+  ! ========================================================== !
+  ! === Gauss Elimination Solver                           === !
+  ! ========================================================== !
+  subroutine solve__gaussElimin( Amat, xvec, bvec, nSize )
+    implicit none
+    integer         , intent(in)  :: nSize
+    double precision, intent(in)  :: Amat(nSize,nSize)
+    double precision, intent(in)  :: bvec(nSize)
+    double precision, intent(out) :: xvec(nSize)
+    integer                       :: i, j, k, ipivot
+    double precision              :: Dinv, buff, vpivot
+    double precision, parameter   :: eps = 1.d-10
+    double precision, allocatable :: Umat(:,:), vvec(:,:)
+
+    ! ----------------------------------------- !
+    ! --- [1] Preparation                   --- !
+    ! ----------------------------------------- !
+    !  -- [1-1] allocate Umat               --  !
+    allocate( Umat(nSize,nSize) )
+    !  -- [1-2] Copy AMat & bvec            --  !
+    Umat(:,:) = Amat(:,:)
+    xvec(:)   = bvec(:)
+    
+    ! ----------------------------------------- !
+    ! --- [2] Forward Ellimination          --- !
+    ! ----------------------------------------- !
+    do k=1, nSize
+
+       !  -- [2-1] Pivoting                 --  !
+       vpivot = abs( Umat(k,k) )
+       ipivot = k
+       do j=k+1, nSize
+          if ( abs( Umat(j,k) ).gt.vpivot ) then
+             vpivot = abs( Umat(j,k) )
+             ipivot = j
+          endif
+       end do
+       if ( ipivot.ne.k ) then
+          do j=k, nSize
+             buff           = Umat(ipivot,j)
+             Umat(ipivot,j) = Umat(k     ,j)
+             Umat(k     ,j) = buff
+          enddo
+          buff         = xvec(ipivot)
+          xvec(ipivot) = xvec(k)
+          xvec(k)      = buff
+       end if
+       if ( abs( Umat(k,k) ).lt.eps ) then
+          write(6,*) '[gaussElimin] Amat :: Singular Matrix :: No Solution End :: @ k= ', k
+          stop
+       endif
+       !  -- [2-2] Diagonal Component       --  !
+       Dinv      = 1.d0 / Umat(k,k)
+       Umat(k,k) = 1.d0
+
+       !  -- [2-3] Non-Diagonal Component   --  !
+       if ( k.eq.nSize ) then
+          ! -- [    Last Row :: k == nSize ] -- !
+          xvec(k) = Dinv * xvec(k)
+       else
+          ! -- [Not Last Row :: k != nSize ] -- !
+          !  - Division    -  !
+          Umat(k,k+1:nSize) = Dinv * Umat(k,k+1:nSize)
+          xvec(k)           = Dinv * xvec(k)
+          !  - subtraction -  !
+          do j=k+1,nSize
+             Umat(j,k+1:nSize) = Umat(j,k+1:nSize) - Umat(j,k) * Umat(k,k+1:nSize)
+             xvec(j)           = xvec(j)           - Umat(j,k) * xvec(k)
+             Umat(j,k)         = 0.d0
+          enddo
+       endif
+       
+    end do
+
+    ! ----------------------------------------- !
+    ! --- [3] Backward Substituition        --- !
+    ! ----------------------------------------- !
+    do k=nSize-1, 1, -1
+       do i=nSize, k+1, -1
+          xvec(k) = xvec(k) - Umat(k,i)*xvec(i)
+       enddo
+    enddo
+
+    return
+  end subroutine solve__gaussElimin
+
+    
+end program main
