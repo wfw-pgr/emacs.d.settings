@@ -24,8 +24,9 @@
 (setq kw_list '("set" "surface" "Surface" "Title" "title" "Parameters" "parameters"
 		"Source" "source" "Material" "material" "MatNameColor" "matnamecolor"
 		"Transform" "transform" "cell" "Cell" "importance" "Importance"
-		"T-Gshow" "t-gshow" "T-Track" "t-track" "END" "End" "end"
-		"photon" "electron" "proton" "neutron", "Multipiler", "multiplier", \
-		"T-DChain", "T-Dchain", "T-DCHAIN", "t-dchain", "Volume", "volume" ))
+		"Volume" "volume" "Multipiler" "multiplier" "END" "End" "end" 
+		"photon" "electron" "proton" "neutron" "T-Deposit" "t-deposit" "T-Point" "t-point" 
+		"T-Gshow" "t-gshow" "T-Track" "t-track" "T-Product" "t-product" "T-Cross" "t-cross"
+		"T-DChain" "T-Dchain" "T-DCHAIN" "t-dchain" ))
 
 (provide 'phits-mode)

@@ -1,12 +1,8 @@
 ##############################################################
-file upload
+file upload page
 ##############################################################
 
 * no uplloading files right now.
 
-
   
-..
-   :download:`radiations <../files/Radiation.tar.gz>`
-   :download:`egun <../files/EGun.tar.gz>`
-   :download:`linac <../files/LINAC.tar.gz>`
+:download:`radiations_tar <../files/01_RadiationalShieldings.tar.gz>`

@@ -1,0 +1,82 @@
+import numpy            as np
+
+
+# ========================================================= #
+# ===  analyze wine Data                                === #
+# ========================================================= #
+
+class analyze__wineData:
+
+    # ------------------------------------------------- #
+    # --- Constructor                               --- #
+    # ------------------------------------------------- #
+    def __init__(self):
+        
+
+
+# ========================================================= #
+# ===  Wine Data Analysis                               === #
+# ========================================================= #
+
+def showDetails__wineData():
+
+    # ------------------------------------------------- #
+    # --- [1] load datasets                         --- #
+    # ------------------------------------------------- #
+    import sklearn.datasets as dst
+    wines     = dst.load_wine()
+    wineData  = wines.data
+    wineRank  = wines.target
+    labels    = wines.feature_names
+    rankNames = wines.target_names
+
+    print()
+    print( "[DicisionTree.py] wine Data from scikit learn" )
+    print( "[DicisionTree.py] wine Data's shape :: {} ".format( wineData.shape ) )
+    print( "[DicisionTree.py] wine Rank's shape :: {} ".format( wineRank.shape ) )
+    print()
+    print( "[DicisionTree.py] wine's labels     :: >>> " )
+    for ik,label in enumerate( labels ):
+        print( "[analyze__wineData.py] {0:2}. {1:14} ".format( ik+1, label ) )
+    print()
+    print( "[DicisionTree.py] wine's ranks      :: >>> " )
+    for ik,rank in enumerate( rankNames ):
+        print( "[analyze__wineData.py] {0:2}. {1:14} ".format( ik+1, rank ) )
+    print()
+
+    # ------------------------------------------------- #
+    # --- [2] performance of the wine Data          --- #
+    # ------------------------------------------------- #
+
+    lformat = " {0:3}. {1:30} ||  {2:>8}   {3:>8}   {4:>8}   {5:>8}"
+    dformat = " {0:3}. {1:30} ||  {2:8.4f}   {3:8.4f}   {4:8.4f}   {5:8.4f}"
+    print()
+    print( "[analyze__wineData.py] each features.... " )
+    print()
+    print( "---"*28 )
+    print( lformat.format( "#.", "feature_names", "min.", "max.", "avg.", "std."  ) )
+    print( "---"*28 )
+    
+    for ik,label in enumerate( labels ):
+
+        dmin, dmax = np.min ( wineData[:,ik] ), np.min( wineData[:,ik] )
+        dave, dstd = np.mean( wineData[:,ik] ), np.std( wineData[:,ik] )
+        print( dformat.format( ik, label, dmin, dmax, dave, dstd ) )
+    print( "---"*28 )
+    print()
+    
+
+# ========================================================= #
+# ===  plotting by each feature                         === #
+# ========================================================= #
+
+
+
+
+
+# ========================================================= #
+# ===   Execution of Pragram                            === #
+# ========================================================= #
+
+if ( __name__=="__main__" ):
+    showDetails__wineData()

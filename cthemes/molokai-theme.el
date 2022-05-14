@@ -22,10 +22,10 @@
  '(hl-line ((t (:background "#293739"))))
 
  ;; 関数名
- '(font-lock-function-name-face ((t (:foreground "#FFFFFF"))))
+ '(font-lock-function-name-face ((t (:foreground "Green"))))
 
  ;; 変数名・変数の内容
- '(font-lock-variable-name-face ((t (:foreground "#FFFFFF"))))
+ '(font-lock-variable-name-face ((t (:foreground "White"))))
  '(font-lock-string-face ((t (:foreground "Magenta"))))
 
  ;; 特定キーワード
