@@ -1,6 +1,0 @@
-import serial
-
-serialCommand = "test"
-writeSer      = serial.Serial('/dev/tty.Bluetooth-Incoming-Port',9600, timeout=3)
-writeSer.write( serialCommand.encode() )
-writeSer.close()

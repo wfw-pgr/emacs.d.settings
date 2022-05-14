@@ -1,7 +1,0 @@
-program main
-  implicit none
-
-  open(lun,file="eq.dat",form="formatted")
-  read(lun,*)  
-  
-  

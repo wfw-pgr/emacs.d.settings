@@ -1,8 +1,0 @@
-program main
-  implicit none
-
-  double precision, allocatable :: Data(:,:,:,:)
-  
-
-  return
-end program main

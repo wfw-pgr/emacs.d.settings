@@ -1,7 +1,0 @@
-import numpy as np
-
-# ========================================================= #
-# ===  display__radialplot_from2DGrid.py                === #
-# ========================================================= #
-
-def display__radialplot_from2DGrid():

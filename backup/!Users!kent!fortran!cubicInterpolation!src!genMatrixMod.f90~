@@ -1,9 +1,0 @@
-module genMatrixMod
-contains
-
-  subroutine genBandDMatrix
-    implicit none
-
-
-    return
-  end subroutine genBandDMatrix

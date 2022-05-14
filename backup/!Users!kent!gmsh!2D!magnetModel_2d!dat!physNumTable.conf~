@@ -1,6 +1,0 @@
-# key		type		entityNum	physicalNum
-pole		surf		1		201
-yoke		surf		2		201
-coil		surf		3		202
-airIn		surf		4		203
-airOut		surf		5		204

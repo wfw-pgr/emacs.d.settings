@@ -1,6 +1,0 @@
-x1MinMaxNum		array		[-1.0,+1.0,21]
-x2MinMaxNum		array		[-1.0,+1.0,21]
-x3MinMaxNum		array		[-1.0,+1.0,21]
-coil_center		array		[0.0,0.0,1.2]
-I0			float		1.0
-ntheta			integer		201

@@ -1,7 +1,0 @@
-# key		type		entity		physNum
-coil.upper	surf		1		201
-coil.lower	surf		2		201
-iron.upper	surf		3		202
-iron.lower	surf		4		202
-air.near	surf		5		203
-air.far		surf		6		204

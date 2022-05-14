@@ -1,6 +1,0 @@
-import sys
-
-sys.path.append( "pyt/" )
-import generate__shimSample as gss
-
-gss.generate__shimSample()

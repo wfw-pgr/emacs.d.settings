@@ -1,9 +1,0 @@
-import os, sys, subprocess
-import numpy                       as np
-
-
-# ========================================================= #
-# ===  generate__mainCoordinate.py                      === #
-# ========================================================= #
-
-def generate__mainCoordinate():

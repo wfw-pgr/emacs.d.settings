@@ -1,7 +1,0 @@
-program main
-  implicit none
-
-  barycentric__interpolate(  )
-  
-
-end program main

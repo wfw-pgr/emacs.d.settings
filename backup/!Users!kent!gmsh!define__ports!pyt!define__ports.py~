@@ -1,4 +1,0 @@
-import os, sys
-import numpy as np
-import gmsh
-import gmsh_api.gmsh as gmsh

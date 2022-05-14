@@ -1,5 +1,0 @@
-r_main		double		0.59
-r_fringe	double		0.70
-fringe_grad	double		+3.0
-fringe_fixed	double		-3.6
-r_delta		double		1.e-3

@@ -1,5 +1,0 @@
-
-
-
-
-sys.exit( "[`(file-name-nondirectory (buffer-file-name) )`] ${1:error} [ERROR] " )

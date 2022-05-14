@@ -1,8 +1,0 @@
-program main
-  use genMatrixMod
-  implicit none
-
-  
-  
-  return
-end program main

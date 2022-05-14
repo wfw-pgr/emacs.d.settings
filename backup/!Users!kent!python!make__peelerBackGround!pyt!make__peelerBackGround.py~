@@ -1,7 +1,0 @@
-import numpy as np
-
-# ========================================================= #
-# ===  prepare peelerBackGround Field                   === #
-# ========================================================= #
-
-def prepare__peelerBackGround():
