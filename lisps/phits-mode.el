@@ -24,7 +24,7 @@
 (setq kw_list '("set" "surface" "Surface" "Title" "title" "Parameters" "parameters"
 		"Source" "source" "Material" "material" "MatNameColor" "matnamecolor"
 		"Transform" "transform" "cell" "Cell" "importance" "Importance"
-		"Volume" "volume" "Multipiler" "multiplier" "END" "End" "end" 
+		"Volume" "volume" "Multiplier" "multiplier" "END" "End" "end" 
 		"photon" "electron" "proton" "neutron" "T-Deposit" "t-deposit" "T-Point" "t-point" 
 		"T-Gshow" "t-gshow" "T-Track" "t-track" "T-Product" "t-product" "T-Cross" "t-cross"
 		"T-DChain" "T-Dchain" "T-DCHAIN" "t-dchain" ))
