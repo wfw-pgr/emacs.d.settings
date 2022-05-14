@@ -25,6 +25,7 @@
 		"Source" "source" "Material" "material" "MatNameColor" "matnamecolor"
 		"Transform" "transform" "cell" "Cell" "importance" "Importance"
 		"T-Gshow" "t-gshow" "T-Track" "t-track" "END" "End" "end"
-		"photon" "electron" "proton" "neutron" ))
+		"photon" "electron" "proton" "neutron", "Multipiler", "multiplier", \
+		"T-DChain", "T-Dchain", "T-DCHAIN", "t-dchain", "Volume", "volume" ))
 
 (provide 'phits-mode)
