@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: code-block-
+# key: code-block-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+.. code-block:: ${1:python}
+   :emphasize-lines: ${2:1}
+   :caption: ${3:caption}
+
+   #include <cstdio>
+   
+   int main(void)
+   {
+     printf( "Hello World!!\n" )
+   }
+$0

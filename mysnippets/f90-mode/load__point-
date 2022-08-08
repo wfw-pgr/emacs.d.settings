@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: load__point-
+# key: load__point-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+integer, parameter            :: lun  = 50
+integer, parameter            :: cLen = 300
+integer                       :: iL, nLines, nCmp
+character(cLen)               :: cmt
+character(cLen)               :: inpFile = "${1:dat/input.dat}"
+double precision, allocatable :: $2(:,:)
+
+open(lun,file=trim(inpFile),status="old")
+read(lun,*)
+read(lun,*) cmt, nLines, nCmp
+read(lun,*) cmt, nLines, nCmp
+allocate( $2(nCmp,nLines) )
+do iL=1, nLines
+   read(lun,*) ${2:Data}(:,iL)
+enddo
+close(lun)
+
+$0

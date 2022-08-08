@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: tabular-env
+# key: tabular-env
+# --
+\begin{table}[tb]
+\small
+\centering
+\caption{}
+\label{tbl:}
+\begin{tabular}{cc}\bhline{1.2pt}
+& \\\\ \hline\hline
+& \\\\
+& \\\\ \bhline{1.2pt}
+\end{tabular}
+\end{table}

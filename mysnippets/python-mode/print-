@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: print-
+# key: print-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+print( "[`(file-name-nondirectory (buffer-file-name) )`] ${1:contents} " )

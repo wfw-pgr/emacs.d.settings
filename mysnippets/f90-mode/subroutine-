@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: subroutine-
+# key: subroutine-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+subroutine ${1:subroutine}()
+  implicit none
+  return
+end subroutine $1
+$0

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: literalinclude-
+# key: literalinclude-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+.. literalinclude:: ${1:../code/main.f90}
+   :caption: ${2:caption}
+   :language: ${3:fortran}
+
+$0

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: load__constants-
+# key: load__constants-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+import nkUtilities.load__constants as lcn
+cnsFile = "${1:dat/parameter.conf}"
+const   = lcn.load__constants( inpFile=cnsFile )
+$0

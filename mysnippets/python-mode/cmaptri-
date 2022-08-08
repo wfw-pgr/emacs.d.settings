@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: cmaptri-
+# key: cmaptri-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+import nkUtilities.load__config   as lcf
+import nkUtilities.cMapTri        as cmt
+
+config                   = lcf.load__config()
+pngFile                  = "png/out.png"
+
+config["FigSize"]        = [6,6]
+config["cmp_position"]   = [0.16,0.16,0.90,0.86]
+config["xTitle"]         = "X (m)"
+config["yTitle"]         = "Y (m)"
+config["cmp_xAutoRange"] = True
+config["cmp_yAutoRange"] = True
+config["cmp_xRange"]     = [-1.0,+1.0]
+config["cmp_yRange"]     = [-1.0,+1.0]
+
+cmt.cMapTri( xAxis=Data[:,x_], yAxis=Data[:,y_], cMap=Data[:,z_], \
+	     pngFile=pngFile, config=config )
+$0
