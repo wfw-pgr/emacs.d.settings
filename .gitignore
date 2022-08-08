@@ -2,3 +2,4 @@ backup/*
 default_snippets/*
 elpa/*
 plugins_git/*
+auto-save-list/*
