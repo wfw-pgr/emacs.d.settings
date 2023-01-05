@@ -3,33 +3,37 @@
 ;;;   def-mode       to edit .def parameter variables definition file         ;;;
 ;;; ------------------------------------------------------------------------- ;;;
 
-(require 'generic-x) ;; we need this
+;; ------------------------------------- ;;
+;; --- [1]   call generic-x mode.    --- ;;
+;; ------------------------------------- ;;
+(require 'generic-x)
 
-(defface font-lock-operator
-  '((t (:foreground "cyan1")))
-  "face of volume in MML for PMD")
+;; ------------------------------------- ;;
+;; --- [2]   define font-lock face   --- ;;
+;; ------------------------------------- ;;
+(defface font-lock-operator1
+  '((t (:foreground "cyan1"))) "Comment:: Font faces for marks" )
 
 (defface font-lock-operator2
-  '((t (:foreground "green")))
-  "face of volume in MML for PMD")
+  '((t (:foreground "green"))) "Comment:: Font faces for ()"    )
 
-(define-generic-mode 
-    'def-mode                       ;; name of the mode to create
+(define-generic-mode 'def-mode      ;; name of the mode to create
   '("$$")                           ;; comments start with '!!'
-  kw_list                           ;; some keywords
-  '(("=" . 'font-lock-operator)     ;; '=' is an operator
-    ("#" . 'font-lock-operator)
-    ("@" . 'font-lock-operator)
-    ("$" . 'font-lock-operator)
-    ("(" . 'font-lock-operator2)
-    (")" . 'font-lock-operator2)
-    
-    )                               ;; ';' is a built-in 
+  kw_list_def_mode                  ;; defined as below ( must be unique name. )
+  '(("="   . 'font-lock-operator1)  ;; '=' is an operator
+    ("#"   . 'font-lock-operator1)
+    ("@"   . 'font-lock-operator1)
+    ("("   . 'font-lock-operator2)
+    (")"   . 'font-lock-operator2)
+    ("\\$" . 'font-lock-operator1)  ;;  use \\ for escape sequence
+    ("\\[" . 'font-lock-operator2)
+    ("\\]" . 'font-lock-operator2)
+    )  ;; ';' is a built-in 
   '("\\.def$")                      ;; files for which to activate this mode 
   (setq-default tab-width 4 indent-tabs-mode nil) ;; other functions to call
   "A mode for .dev files"           ;; doc string for this mode
   )
 
-(setq kw_list '( "<define>" "<include>" "<postProcess>" ))
+(setq kw_list_def_mode '( "<define>" "<include>" "<postProcess>" "filepath" ))
 
 (provide 'def-mode)
