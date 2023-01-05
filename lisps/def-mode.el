@@ -20,6 +20,7 @@
   '(("=" . 'font-lock-operator)     ;; '=' is an operator
     ("#" . 'font-lock-operator)
     ("@" . 'font-lock-operator)
+    ("$" . 'font-lock-operator)
     ("(" . 'font-lock-operator2)
     (")" . 'font-lock-operator2)
     

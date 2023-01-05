@@ -9,14 +9,23 @@
   '((t (:foreground "cyan1")))
   "face of volume in MML for PMD")
 
+(defface font-lock-operator2
+  '((t (:foreground "green")))
+  "font color for parencess")
+
 (define-generic-mode 
-    'phits-mode                     ;; name of the mode to create
-  '("$")                            ;; comments start with '!!'
-  kw_list                           ;; some keywords
-  '(("=" . 'font-lock-operator) ;; '=' is an operator
+    'phits-mode                       ;; name of the mode to create
+  '("$$")                             ;; comments start with '!!'
+  kw_list                             ;; some keywords
+  '(("=" . 'font-lock-operator)       ;; '=' is an operator
     ("#" . 'font-lock-operator)
-    )                               ;; ';' is a built-in 
-  '("_phits\\.inp$")                ;; files for which to activate this mode 
+    ("@" . 'font-lock-operator)
+    ("$" . 'font-lock-operator)
+    ("(" . 'font-lock-operator2)
+    (")" . 'font-lock-operator2)
+
+    )                                 ;; ';' is a built-in 
+  '("_phits\\.inp$")                  ;; files for which to activate this mode 
   (setq-default tab-width 4 indent-tabs-mode nil) ;; other functions to call
   "A mode for PHITS files"          ;; doc string for this mode
   )
