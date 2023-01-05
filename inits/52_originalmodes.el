@@ -7,3 +7,4 @@
 (add-to-list 'load-path "~/.emacs.d/lisps/")
 
 (require 'phits-mode)
+(require 'def-mode)
