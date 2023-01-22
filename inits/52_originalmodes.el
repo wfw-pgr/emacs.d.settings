@@ -8,3 +8,4 @@
 
 (require 'def-mode)
 (require 'phits-mode)
+(require 'elmer-mode)

@@ -40,6 +40,21 @@
                            (toggle-frame-maximized)))
 
 
+;; --------------------------------------- ;;
+;; --- [4] 整列コマンド (align-regexp) --- ;;
+;; --------------------------------------- ;;
+;; 空白でスペース
+;; Align with spaces only
+(defadvice align-regexp (around align-regexp-with-spaces)
+  "Never use tabs for alignment."
+  (let ((indent-tabs-mode nil))
+    ad-do-it))
+(ad-activate 'align-regexp)
+(global-set-key "\C-xt" 'align-regexp)
+
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; insert file name at point                                              ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -40,7 +40,7 @@
   '("Header" "Constants" "Material" "End" "Solver" "Boundary Condition"
     "Simulation" "Body" "Body Force" "Initial Condition" "Equation" "Component")
   ;; 3. 詳細な区別でハイライトするキーワード群   -- ;;
-  `( ("\sw"
+  '( ("\sw"
       . font-lock-string-face)
      (,sif-variables-type-operators
       . font-lock-type-face)
