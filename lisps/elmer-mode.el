@@ -54,8 +54,8 @@
 (defvar elmer-section-keywords01
   (apply 'concat (list-interleave
                   '("^[Ee][Nn][Dd]" "^[Hh]eader" "^[Ss]imulation" "^[Cc]onstants"
-                    "^[Ss]olver" "^[Bb]ody" "^[Ee]quation" "^[Mm]aterial"
-                    "^[Bb]oundary [Cc]ondition" "^[Ii]nitial Condition" "^[Bb]ody [Ff]orce"
+                    "^[Ss]olver" "^[Bb]ody [Ff]orce" "^[Bb]ody" "^[Ee]quation" "^[Mm]aterial"
+                    "^[Bb]oundary [Cc]ondition" "^[Ii]nitial Condition"
                     )
                   '() "\\|")))
 

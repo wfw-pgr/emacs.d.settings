@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: csv-table-
-# key: csv-table-
+# name: table-
+# key: table-
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
 

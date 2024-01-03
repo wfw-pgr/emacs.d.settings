@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: argparse-
+# key: argparse-
+# --
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument( "--inpFile"    , help="input  file name." )
+parser.add_argument( "--outFile"    , help="output file name." )
+args   = parser.parse_args()
+

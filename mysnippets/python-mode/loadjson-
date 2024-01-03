@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: loadjson-
+# key: loadjson-
+# --
+import json, re
+inpFile = "${1:dat/parameters.json}"
+with open( inpFile, "r" ) as f:
+    text   = re.sub(r'/\*[\s\S]*?\*/|//.*', '', f.read() )
+    params = json.loads( text )
+$0
