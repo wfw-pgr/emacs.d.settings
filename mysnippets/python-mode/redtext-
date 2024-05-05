@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: redtext-
-# key: redtext-
-# --
-"\033[31m" + "$1" + "\033[0m"$0

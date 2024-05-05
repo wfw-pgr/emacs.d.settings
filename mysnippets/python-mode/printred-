@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: printred-
+# key: printred-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+print( "\033[31m" + "[`(file-name-nondirectory (buffer-file-name) )`] ${1} " + "\033[0m")$0

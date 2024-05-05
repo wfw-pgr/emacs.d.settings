@@ -9,4 +9,4 @@
 (require 'def-mode)
 (require 'phits-mode)
 (require 'elmer-mode)
-(require 'json-mode)
+;; (require 'json-mode)
