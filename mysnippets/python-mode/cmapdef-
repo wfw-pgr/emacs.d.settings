@@ -3,13 +3,10 @@
 # key: cmapdef-
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
-
-import sys
 import numpy                      as np
-import nkUtilities.load__config   as lcf
 import nkUtilities.cMapTri        as cmt
+import nkUtilities.load__config   as lcf
 import nkUtilities.configSettings as cfs
-
 
 # ========================================================= #
 # ===  display                                          === #
@@ -23,7 +20,7 @@ def display():
     # ------------------------------------------------- #
     config  = lcf.load__config()
     datFile = "dat/${1:out}.dat"
-    pngFile = "dat/${1:out}.png"
+    pngFile = "png/${1:out}.png"
 
     # ------------------------------------------------- #
     # --- [2] Fetch Data                            --- #
@@ -34,15 +31,25 @@ def display():
     # ------------------------------------------------- #
     # --- [3] config Settings                       --- #
     # ------------------------------------------------- #
-    cfs.configSettings( configType="cMap_def", config=config )
-    config["FigSize"]        = (5,5)
-    config["cmp_position"]   = [0.16,0.12,0.97,0.88]
-    config["xTitle"]         = "X (m)"
-    config["yTitle"]         = "Y (m)"
+    x_,y_,z_                 = 0, 1, 2
+    pngFile                  = "${1:out.png}"
+    config                   = lcf.load__config()
+    config                   = cfs.configSettings( configType="cmap.def", config=config )
+    config["FigSize"]        = (4.5,4.5)
+    config["cmp_position"]   = [0.14,0.14,0.84,0.84]
+    config["cmp_AutoLevel"]  = True
+    config["cmp_nLevels"]    = 255
+    config["cmp_MaxMin"]     = [0.0, 100.0]
+    config["cmp_ColorTable"] = "jet"
     config["cmp_xAutoRange"] = True
     config["cmp_yAutoRange"] = True
-    config["cmp_xRange"]     = [-5.0,+5.0]
-    config["cmp_yRange"]     = [-5.0,+5.0]
+    config["cmp_xRange"]     = [ -1.2, +1.2 ]
+    config["cmp_yRange"]     = [ -1.2, +1.2 ]
+    config["xMajor_Nticks"]  = 11
+    config["yMajor_Nticks"]  = 11
+    config["xTitle"]         = "x (m)"
+    config["yTitle"]         = "y (m)"
+
 
     # ------------------------------------------------- #
     # --- [4] plot Figure                           --- #

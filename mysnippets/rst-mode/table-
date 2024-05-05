@@ -7,7 +7,7 @@
 .. csv-table:: **${1:title}**
    :header: "", "", ""
    :widths: 10, 15, 30
-   :width:  800px
+   :width:  700px
    
    "$2", "", ""
    

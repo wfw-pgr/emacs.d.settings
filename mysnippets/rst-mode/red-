@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: red-
 # key: red-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
  :red:\`$1\` $0

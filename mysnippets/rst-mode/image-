@@ -4,9 +4,7 @@
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
 
-.. image:: ../image/${1:xxx}.png
-   :height: ${2:400}px
-   :width:  ${3:800}px
-   :scale:  ${4:50}%
+.. image:: ${1:x.png}
+   :width:  ${3:600}px
    :align:  center
 $0

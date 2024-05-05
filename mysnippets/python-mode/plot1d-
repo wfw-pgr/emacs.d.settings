@@ -6,8 +6,9 @@
 import nkUtilities.plot1D         as pl1
 import nkUtilities.load__config   as lcf
 import nkUtilities.configSettings as cfs
+
 x_,y_                    = 0, 1
-pngFile                  = "${1:png/out.png}"
+pngFile                  = "${1:out.png}"
 config                   = lcf.load__config()
 config                   = cfs.configSettings( configType="plot.def", config=config )
 config["FigSize"]        = (4.5,4.5)
