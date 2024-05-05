@@ -1,10 +1,14 @@
 # -*- mode: snippet -*-
 # name: argparse-
 # key: argparse-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument( "--inpFile"    , help="input  file name." )
-parser.add_argument( "--outFile"    , help="output file name." )
+parser.add_argument( "inpFile"        , help="input  file name." )        ## actual
+parser.add_argument( "--outFile"      , help="output file name." )        ## optional
+parser.add_argument( "-c", "--compile", help="convert without exceute", \ ## flag
+                     default=True, action="store_true" )
 args   = parser.parse_args()
-
+if ( args.inpFile is None ):
+    print( "[`(file-name-nondirectory (buffer-file-name) )`] inpFile == ???" )

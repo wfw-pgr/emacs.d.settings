@@ -21,7 +21,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ein-mumamo ein yasnippet-snippets init-loader flymake-python-pyflakes flymake-cursor flycheck-cstyle))))
+    (json-mode ein-mumamo ein yasnippet-snippets init-loader flymake-python-pyflakes flymake-cursor flycheck-cstyle))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

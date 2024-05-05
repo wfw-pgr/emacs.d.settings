@@ -38,6 +38,6 @@
 			   "t-deposit" "T-Point" "t-point" "T-Gshow" "t-gshow"
 			   "T-Track" "t-track" "T-Product" "t-product" "T-Cross" "t-cross"
 			   "T-DChain" "T-Dchain" "T-DCHAIN" "t-dchain"
-			   "<define>" "<include>" "<postProcess>" "filepath" ))
+			   "<define>" "<include>" "<postProcess>" "<loadJSON>" "filepath" ))
 
 (provide 'phits-mode)
