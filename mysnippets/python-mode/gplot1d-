@@ -3,6 +3,9 @@
 # key: gplot1d-
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
+import nkUtilities.load__config   as lcf
+import nkUtilities.gplot1D        as gpl
+
 config   = lcf.load__config()
 config_  = {
     "figure.size"        : [4.5,4.5],
