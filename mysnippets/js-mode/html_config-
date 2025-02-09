@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: html_config-
+# key: html_config-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+{
+
+    "settings":{
+	"title"      : "title", 
+	"cssFile"    : "dat/style.css",
+	"paramsFile" : "dat/parameters.json",
+	"htmlFile"   : "${1:html/results.html}",
+    },
+    
+    "images":{
+	
+	"image1"   :{
+	    filepath   : "png/image1.png",
+	    width      : "800px",
+	    line_break : true, 
+	},
+	
+    },
+}

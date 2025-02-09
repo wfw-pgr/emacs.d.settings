@@ -4,7 +4,16 @@
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
 
+---------------------------------------------------------
+${2:title}
+---------------------------------------------------------
+
+|
+
 .. image:: ${1:x.png}
    :width:  ${3:600}px
    :align:  center
+
+|
+
 $0

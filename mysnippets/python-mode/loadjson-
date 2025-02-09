@@ -5,5 +5,5 @@
 import json5
 inpFile = "${1:dat/parameters.json}"
 with open( inpFile, "r" ) as f:
-    params = json.load( f )
+    params = json5.load( f )
 $0
