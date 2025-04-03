@@ -17,10 +17,10 @@ config_  = {
     "ax1.x.label"        : "x",
     "ax1.y.label"        : "y",
     "ax1.x.minor.nticks" : 1,
-    "cmp.level"          : { "auto":true, "min": 0.0, "max":1.0, "num":11 },
+    "cmp.level"          : { "auto":True, "min": 0.0, "max":1.0, "num":11 },
     "cmp.colortable"     : "jet",
 }
 config = { **config, **config_ }
 
-gp2.gplot2D( xAxis=Data[:,x_], yAxis=Data[:,y_], cMap=Data[:,z_], \
-	     config=config )
+fig    = gp2.gplot2D( xAxis=Data[:,x_], yAxis=Data[:,y_], cMap=Data[:,z_], \
+	 	      config=config )

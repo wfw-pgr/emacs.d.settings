@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: figure
-# key: figure-
+# key: figure
 # --
 \begin{figure}[htb]
   \centering
