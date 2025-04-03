@@ -12,8 +12,9 @@
   "Major mode for editing JSON5 files with comments and @var highlighting."
   (setq-local indent-tabs-mode nil)
   (highlight-at-variables-in-json)
-  (highlight-strings-in-json)
   (highlight-numbers-in-json)
+  (highlight-numbers-inside-strings-in-json)
+  (highlight-strings-in-json)
   )
 
 ;; ---------------------------------------- ;;
@@ -31,6 +32,20 @@
       (0 'at-variables-face-in-json prepend)))))
 
 ;; ---------------------------------------- ;;
+;;        文字列 ハイライト                 ;;
+;; ---------------------------------------- ;;
+(defface strings-face-in-json
+  '((t (:foreground "BurlyWood" :weight normal)))
+  "Custom face for strings in json5-mode")
+
+(defun highlight-strings-in-json ()
+  "Highlight strings in JSON5 with custom face."
+  (font-lock-add-keywords
+   nil
+   '(("\"\\([^\"\\]\\|\\\\.\\)*\""
+      (0 'strings-face-in-json prepend)))))
+
+;; ---------------------------------------- ;;
 ;;           数字  ハイライト               ;;
 ;; ---------------------------------------- ;;
 (defface numbers-face-in-json
@@ -44,19 +59,12 @@
    '(("\\(?:^\\|[^a-zA-Z0-9_.]\\)\\(-?[0-9]+\\(?:\\.[0-9]+\\)?\\(?:[eE][-+]?[0-9]+\\)?\\)"
       (1 'numbers-face-in-json prepend)))))
 
-;; ---------------------------------------- ;;
-;;        文字列 ハイライト                 ;;
-;; ---------------------------------------- ;;
-(defface strings-face-in-json
-  '((t (:foreground "BurlyWood" :weight normal)))
-  "Custom face for strings in json5-mode")
-
-(defun highlight-strings-in-json ()
-  "Highlight strings in JSON5 with custom face."
+(defun highlight-numbers-inside-strings-in-json ()
+  "Highlight numbers even inside strings."
   (font-lock-add-keywords
    nil
-   '(("\"\\([^\"\\]\\|\\\\.\\)*\""
-      (0 'strings-face-in-json prepend)))))
+   '(("\"[^\"]*?\\([0-9]+\\(?:\\.[0-9]+\\)?\\(?:[eE][-+]?[0-9]+\\)?\\)[^\"]*?\""
+      (1 'numbers-face-in-json prepend)))))
 
 ;; ---------------------------------------- ;;
 ;;         拡張子 へ 割当                   ;;
