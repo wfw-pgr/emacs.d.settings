@@ -23,6 +23,7 @@
 ;;  --  Ricty  Fonts --  ;;
 (set-frame-font "ricty-14" nil t)
 (set-fontset-font t 'japanese-jisx0208 "Ricty")
+;;
 
 
 ;; ------------------------------------ ;;
