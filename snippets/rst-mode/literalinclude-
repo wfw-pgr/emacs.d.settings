@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: literalinclude-
+# key: literalinclude-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+.. literalinclude:: ../code/${1:main.py}
+   		    :caption:  ${2:caption}
+   		    :language: ${3:python}
+   		    :emphasize-lines: 1,2-3
+
+$0

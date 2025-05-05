@@ -1,0 +1,34 @@
+# -*- mode: snippet -*-
+# name: plot1d-
+# key: plot1d-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+import nkUtilities.plot1D         as pl1
+import nkUtilities.load__config   as lcf
+import nkUtilities.configSettings as cfs
+
+x_,y_                    = 0, 1
+pngFile                  = "${1:out.png}"
+config                   = lcf.load__config()
+config                   = cfs.configSettings( configType="plot.def", config=config )
+config["FigSize"]        = (4.5,4.5)
+config["plt_position"]   = [ 0.16, 0.16, 0.94, 0.94 ]
+config["plt_xAutoRange"] = True
+config["plt_yAutoRange"] = True
+config["plt_xRange"]     = [ -1.2, +1.2 ]
+config["plt_yRange"]     = [ -1.2, +1.2 ]
+config["xMajor_Nticks"]  = 11
+config["yMajor_Nticks"]  = 11
+config["plt_marker"]     = "o"
+config["plt_markersize"] = 3.0
+config["plt_linestyle"]  = "-"
+config["plt_linewidth"]  = 2.0
+config["xTitle"]         = "x"
+config["yTitle"]         = "y"
+
+fig     = pl1.plot1D( config=config, pngFile=pngFile )
+fig.add__plot( xAxis=Data[:,x_], yAxis=Data[:,y_], label="" )
+fig.add__legend()
+fig.set__axis()
+fig.save__figure()
+

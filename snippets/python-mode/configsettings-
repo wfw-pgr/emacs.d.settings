@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: configsettings-
+# key: configsettings-
+# --
+import nkUtilities.configSettings as cfs
+config = cfs.configSettings( configType="${1:plot.def}", config=config )
+$0

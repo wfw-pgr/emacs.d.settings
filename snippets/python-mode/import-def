@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: import-def
+# key: import-def
+# --
+import sys
+import numpy                  as np
+import myStyle.LoadConfig     as lcf
+import mPICsee.FetchPIC       as fpc
+import myStyle.plot1D         as pl1
+import myStyle.cMap2D         as clm
+import myStyle.configSettings as cfs

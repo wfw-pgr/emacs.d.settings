@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: minipagefigure-
+# key: minipagefigure-
+# --
+\begin{figure}[htb]
+  \centering
+  \begin{minipage}[c]{0.45\hsize}
+    \centering
+    \includegraphics[width=cm,clip]{fig/}
+    \subcaption{}
+  \end{minipage}
+  \begin{minipage}[c]{0.45\hsize}
+    \centering
+    \includegraphics[width=cm,clip]{fig/}
+    \subcaption{}
+  \end{minipage}
+  \begin{minipage}[c]{1.0\hsize}
+    \centering
+    \includegraphics[width=cm,clip]{fig/}
+    \subcaption{}
+  \end{minipage}
+  \caption{}
+  \label{fig:}
+\end{figure}

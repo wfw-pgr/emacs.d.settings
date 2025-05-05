@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: save__point-
+# key: save__point-
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+
+integer, parameter            :: lun  = 50
+integer, parameter            :: cLen = 300
+integer                       :: iL, nLines, nCmp
+character(cLen)               :: outFile = "${1:dat/output.dat}"
+
+open(lun,file=trim(outFile),status="replace")
+write(lun,"(a)") "# x_ y_ z_ "
+write(lun,"(a,2(i10,1x))") "# ", nLines, nCmp
+write(lun,"(a,2(i10,1x))") "# ", nLines, nCmp
+do iL=1, nLines
+   write(lun,*) ${2:Data}(:,iL)
+enddo
+close(lun)
+
+$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: arg-sys-
+# key: arg-sys-
+# --
+if ( $1 is None ): sys.exit( "[$2] $1 == ?? " )$0
