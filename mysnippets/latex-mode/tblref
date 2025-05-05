@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: tblref
-# key: tblref
-# --
-\tblref{tbl:$1}$0

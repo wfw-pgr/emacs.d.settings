@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: spline-
-# key: spline-
-# --
-import scipy.interpolate as itp
-cs     = itp.CubicSpline( Data[:,x_], Data[:,y_] )
-xAxis  = np.linspace( np.min( Data[:,x_] ), np.max( Data[:,x_] ), ${1:101} )
-yAxis  = cs( xAxis )
-$0

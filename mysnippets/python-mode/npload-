@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: npload-
-# key: npload-
-# --
-with open( $1, "r" ) as f:
-    Data = np.loadtxt( f )
-$0

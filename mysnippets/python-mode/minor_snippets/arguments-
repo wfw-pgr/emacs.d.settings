@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: arguments-
-# key: arguments-
-# --
-import nkUtilities.parse__arguments as par
-args = par.parse__arguments()

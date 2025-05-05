@@ -1,5 +1,3 @@
-backup/*
-default_snippets/*
-elpa/*
-plugins_git/*
-auto-save-list/*
+elpa/archives/*
+backups/*
+auto_save_list/*

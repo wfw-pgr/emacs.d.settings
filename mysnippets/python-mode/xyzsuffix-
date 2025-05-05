@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: xyzsuffix-
-# key: xyzsuffix-
-# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
-# --
-x_, y_, z_ = 0, 1, 2

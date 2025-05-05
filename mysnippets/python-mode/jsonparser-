@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: jsonparser-
-# key: jsonparser-
-# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
-# --
-import nkUtilities.json__formulaParser as jso
-inpFile = "${1:parameter.json}"
-params  = jso.json__formulaParser( inpFile=inpFile )
-$0

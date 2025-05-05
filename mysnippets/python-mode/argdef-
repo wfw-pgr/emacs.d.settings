@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: argdef-
-# key: argdef-
-# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
-# --
-if ( $1 is None ): $1 = $2
-$0

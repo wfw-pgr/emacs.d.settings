@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: sysexit-
-# key: sysexit-
-# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
-# --
-sys.exit( "[`(file-name-nondirectory (buffer-file-name) )`] ${1:error} [ERROR] " )

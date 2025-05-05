@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: blue-
-# key: blue-
-# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
-# --
- :blue:\`$1\` $0

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: arg-sub-
-# key: arg-sub-
-# --
-if ( $1 is None ): $1 = $2 $0
