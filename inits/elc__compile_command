@@ -1,5 +1,0 @@
-emacs --batch \
-  --eval "(progn
-            (add-to-list 'load-path \"~/.emacs.d/modes\")
-            (add-to-list 'load-path \"~/.emacs.d/lisps/yasnippet\"))" \
-  --eval "(byte-recompile-directory \"~/.emacs.d/inits\" 0)"

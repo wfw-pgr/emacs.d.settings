@@ -82,6 +82,9 @@
 (require 'phits-mode)
 (require 'elmer-mode)
 (require 'jsonc-mode)
+(require 'rst-extensions)
+
+
 
 
 ;; --------------------------------------- ;;
