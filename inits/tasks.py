@@ -24,3 +24,14 @@ def build( ctx ):
     print( "[Building] .elc files .... ", end="" )
     result = subprocess.run( emacs_cmd, shell=True )
     print( "     [Done]" )
+
+    
+# ========================================================= #
+# === clean command                                     === #
+# ========================================================= #
+@invoke.task
+def clean( ctx ):
+    
+    cmd = "rm ./*.elc"
+    print( cmd )
+    subprocess.run( cmd, shell=True )

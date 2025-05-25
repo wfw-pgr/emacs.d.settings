@@ -83,9 +83,7 @@
 (require 'elmer-mode)
 (require 'jsonc-mode)
 (require 'rst-extensions)
-
-
-
+(require 'madx-mode)
 
 ;; --------------------------------------- ;;
 ;; --- [2] yasnippets                  --- ;;
