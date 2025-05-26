@@ -37,38 +37,41 @@
   (font-lock-add-keywords
    nil
    '(("[:=;+\\-*/]" (0 'madx-operator-face prepend)))))
+;; ":=" "->"
 
 ;; ---------------------------------------- ;;
 ;;    [3] キーワード ハイライト 定義        ;;
 ;; ---------------------------------------- ;;
 ;;    -- [3-1] フォントフェイスの定義  --   ;; 
 (defface madx-keyword-face-1
-  '((t (:foreground "orchid" :weight bold)))
-  "Face for MAD-X controls commands.")
+  '((t (:foreground "hotpink1" :weight bold)))
+  "Face for MAD-X   system-controls commands.")
 (defface madx-keyword-face-2
-  '((t (:foreground "darkorange" :weight bold)))
-  "Face for MAD-X fundamental commands.")
+  '((t (:foreground "gold2" :weight bold)))
+  "Face for MAD-X   Fundamental commands.")
 (defface madx-keyword-face-3
   '((t (:foreground "palegreen1" :weight bold)))
-  "Face for MAD-X beamline components keywords.")
+  "Face for MAD-X   Beamline components.")
 (defface madx-keyword-face-4
-  '((t (:foreground "darkturquoise" :weight bold)))
-  "Face for MAD-X parameters keywords.")
+  '((t (:foreground "aquamarine1" :weight bold)))
+  "Face for MAD-X   Parameters.")
 (defface madx-keyword-face-5
-  '((t (:foreground "wheat" :weight bold)))
+  '((t (:foreground "orchid" :weight bold)))
   "Face for MAD-X analysis and control keywords.")
 
 ;;    -- [3-2] キーワード群の列挙  --       ;; 
-(setq madx-keywords-1   ;; 1 - controls ;;
-      '( "if" "elseif" "else" "while" "macro" "error" "ealign" "efcomp" "seterr" ":=" "->" ))
+(setq madx-keywords-1   ;; 1 - system controls ;;
+      '( "if" "elseif" "else" "stop" "while" "macro" "error" "ealign" "efcomp" "seterr" "true" "false"))
 (setq madx-keywords-2   ;; 2 - commands ;;
-      '("plot" "table" "tabindex" "tabstring" "twiss" "ibs" "line" "makethin" "aperture" "sixtrack" "dynap" "emit" "match" "endmatch" "vary" "constraint" "weight" "global" "gweight" "ptc_twiss" "ptc_printparametric" "ptc_normal" "select_ptc_normal" "ptc_track" "ptc_track_line" "ptc_create_universe" "ptc_create_layout" "ptc_read_errors" "ptc_move_to_layout" "ptc_align" "ptc_end" "ptc_track_end" "start" "run" "ptc_observe" "observe" "ptc_start" "ptc_setswitch" "ptc_knob" "ptc_setknobvalue" "match withptcknobs" "ptc_printframes" "ptc_select" "ptc_select_moment" "ptc_dumpmaps" "ptc_eplacement" "ptc_varyknob" "end_match" "ptc_moments" "ptc_setcavities" "ptc_setdebuglevel" "ptc_setaccel_method" "ptc_setexactmis" "ptc_setradiation" "ptc_settotalpath" "ptc_settime" "ptc_setfringe" "exit" "quit" "stop" "help" "show" "value" "option" "exec" "set" "system" "title" "use" "select" "assign" "call" "return" "print" "printf" "renamefile" "copyfile" "removefile" "create" "delete" "readtable" "readmytable" "write" "setvars" "setvars_lin" "fill" "shrink" "beam" "resbeam" "seqedit" "flatten" "cycle" "reflect" "install" "move" "remove" "replace" "extract" "endedit" "save" "dumpsequ" "savebeta" "coguess" "const" "eoption" "esave" "real" "lmdif" "migrad" "simplex" "jacobian" "use_macro" "correct" "usemonitor" "usekick" "csave" "setcorr" "coption" "sodd" "survey" "sxfread" "sxfwrite" "touschek" "track" "endtrack" ))
-(setq madx-keywords-3    ;; 3 - beamlines ;;
+      '("call" "beam" "plot" "survey" "value" "table" "tabindex" "tabstring" "twiss" "match" "endmatch" "vary" "constraint" "track" "endtrack" "start" "run" "exit" "quit" "observe" "ibs" "line" "makethin" "aperture" "sixtrack" "dynap" "emit" "weight" "global" "gweight" "ptc_twiss" "ptc_printparametric" "ptc_normal" "select_ptc_normal" "ptc_track" "ptc_track_line" "ptc_create_universe" "ptc_create_layout" "ptc_read_errors" "ptc_move_to_layout" "ptc_align" "ptc_end" "ptc_track_end" "ptc_observe" "ptc_start" "ptc_setswitch" "ptc_knob" "ptc_setknobvalue" "match withptcknobs" "ptc_printframes" "ptc_select" "ptc_select_moment" "ptc_dumpmaps" "ptc_eplacement" "ptc_varyknob" "end_match" "ptc_moments" "ptc_setcavities" "ptc_setdebuglevel" "ptc_setaccel_method" "ptc_setexactmis" "ptc_setradiation" "ptc_settotalpath" "ptc_settime" "ptc_setfringe" "help" "show" "option" "exec" "set" "system" "title" "use" "select" "assign" "return" "print" "printf" "renamefile" "copyfile" "removefile" "create" "delete" "readtable" "readmytable" "write" "setvars" "setvars_lin" "fill" "shrink" "resbeam" "seqedit" "flatten" "cycle" "reflect" "install" "move" "remove" "replace" "extract" "endedit" "dumpsequ" "savebeta" "coguess" "const" "eoption" "esave" "real" "lmdif" "migrad" "simplex" "jacobian" "use_macro" "correct" "usemonitor" "usekick" "csave" "setcorr" "coption" "sodd" "sxfread" "sxfwrite" "touschek"  ))
+(setq madx-keywords-3    ;; 3 - beamlines  ;;
       '("drift" "quadrupole" "sextupole" "octupole" "solenoid" "crabcavity" "rfcavity" "dipedge" "multipole" "collimator" "ecollimator" "rcollimator" "yrotation" "srotation" "translation" "changeref" "marker" "rbend" "sbend" "hkicker" "vkicker" "kicker" "tkicker" "elseparator" "hmonitor" "vmonitor" "monitor" "instrument" "placeholder" "beambeam" "matrix" "nllens" "rfmultipole"))
-(setq madx-keywords-4    ;; 4 - parameters ;;
-      '("file" "sequence" "endsequence" "refer" "particle" "energy" "flag" "haxis" "vaxis" "column" "betx" "bety" "positron" "electron" "proton" "antiproton" "posmuon" "negmuon" "ion" "pi" "twopi" "degrad" "raddeg" "e" "emass" "pmass" "nmass" "mumass" "clight" "qelect" "hbar" "erad" "prad" "true" "false" "simple" "collim" "teapot" "hybrid" "entry" "centre" "exit" "circle" "rectangle" "ellipse" "lhcscreen" "marguerite" "rectellipse" "racetrack" "octagon" "terminal"))
-(setq madx-keywords-5    ;; 5 - math ;;
-      '("sqrt" "log" "log10" "exp" "sin" "cos" "tan" "asin" "acos" "atan" "sinh" "cosh" "tanh" "sinc" "abs" "erf" "erfc" "floor" "ceil" "round" "ranf" "gauss" "tgauss" "flat5" "flat56"))
+(setq madx-keywords-4    ;; 4 - arguments, keywords ;;
+      '("file" "flag" "sequence" "endsequence" "refer" "particle" "energy" "column" "e" "s" "l" "k1" "angle" "name" "haxis" "vaxis" "betx" "bety" "alfx" "alfy" "emitx" "emity" "centre" "save" "positron" "electron" "proton" "antiproton" "posmuon" "negmuon" "ion" "pi" "twopi" "degrad" "raddeg" "entry" "centre" "exit" "circle" "rectangle" "ellipse" "emass" "pmass" "nmass" "mumass" "clight"))
+;; -- "qelect" "hbar" "erad" "prad" "simple" "collim" "teapot" "hybrid"
+
+(setq madx-keywords-5    ;; 6 - math ;;
+      '("sqrt" "log" "log10" "exp" "sin" "cos" "tan" "asin" "acos" "atan" "sinh" "cosh" "tanh" "sinc" "abs" "erf" "erfc" "floor" "ceil" "round" "ranf" "gauss" "tgauss"))
 
 ;;    -- [3-3] キーワードとフェイスを対応 (case-insensitive)  --  ;;
 (defvar madx-font-lock-keywords

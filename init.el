@@ -20,7 +20,6 @@
         ("gnu"   . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 
-
 ;; --------------------------------- ;;
 ;; ---  [2] call init-loader     --- ;;
 ;; --------------------------------- ;;

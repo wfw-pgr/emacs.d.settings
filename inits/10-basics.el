@@ -47,3 +47,9 @@
 (setq read-buffer-completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
 
+;; -- ウィンドウ制御 -- ;;
+(setq inhibit-startup-message t)      ;; 起動時のウィンドウは一つ 
+(add-hook 'window-setup-hook          ;; macOS起動時、背面にを改善
+          (lambda ()
+            (when (eq system-type 'darwin)
+              (do-applescript "tell application \"Emacs\" to activate"))))
