@@ -1105,23 +1105,25 @@
            (> endseq-pos (point))
            (< seq-pos (point))))))
 
-(defun madx-indent-line ()
-  "Indent current line if inside SEQUENCE...ENDSEQUENCE block."
-  (interactive)
-  (let ((indent (if (madx-inside-sequence-p) tab-width 0)))
-    (save-excursion
-      (beginning-of-line)
-      (delete-horizontal-space)
-      (indent-to indent))
-    (when (looking-back "^[ \t]*" (line-beginning-position))
-      (back-to-indentation))))
 
-(add-hook 'madx-mode-hook
-          (lambda ()
-            (setq indent-tabs-mode nil)
-            (setq tab-width 4)
-            (setq-local indent-line-function #'madx-indent-line)
-            (local-set-key (kbd "TAB") #'indent-for-tab-command)))
+
+;; (defun madx-indent-line ()
+;;   "Indent current line if inside SEQUENCE...ENDSEQUENCE block."
+;;   (interactive)
+;;   (let ((indent (if (madx-inside-sequence-p) tab-width 0)))
+;;     (save-excursion
+;;       (beginning-of-line)
+;;       (delete-horizontal-space)
+;;       (indent-to indent))
+;;     (when (looking-back "^[ \t]*" (line-beginning-position))
+;;       (back-to-indentation))))
+
+;; (add-hook 'madx-mode-hook
+;;           (lambda ()
+;;             (setq indent-tabs-mode nil)
+;;             (setq tab-width 4)
+;;             (setq-local indent-line-function #'madx-indent-line)
+;;             (local-set-key (kbd "TAB") #'indent-for-tab-command)))
 
 
 (provide 'madx-mode)

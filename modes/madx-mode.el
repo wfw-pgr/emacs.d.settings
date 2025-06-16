@@ -8,13 +8,15 @@
 ;; ---------------------------------------- ;;
 (define-derived-mode madx-mode prog-mode "MAD-X"
   "Major mode for editing MAD-X files with comments"
-  (setq-local indent-tabs-mode nil)
   (setq-local comment-start "//")            ;; comment
   (setq-local comment-start-skip "//+\\s-*") ;;
   (setq-local font-lock-defaults             ;; font-lock-defaults を case-insensitive 設定
               '((madx-font-lock-keywords)    ;; キーワード群
                 nil t nil nil))              ;; keywords-only, case-fold,syntax-alist,syntax-begin
-  (setq-local indent-line-function 'madx-indent-line)
+  ;; -- indent settings -- ;;
+  (setq-local indent-tabs-mode nil)
+  (setq-local tab-width 2)
+  (setq-local indent-line-function #'madx-indent-line)
   ;; -- highlight functions -- ;;
   (highlight-comments-override-in-madx)
   (highlight-at-variables-in-madx)
@@ -61,13 +63,13 @@
 
 ;;    -- [3-2] キーワード群の列挙  --       ;; 
 (setq madx-keywords-1   ;; 1 - system controls ;;
-      '( "if" "elseif" "else" "stop" "while" "macro" "error" "ealign" "efcomp" "seterr" "true" "false"))
+      '( "if" "elseif" "else" "stop" "while" "macro" "error" "seterr" "true" "false"))
 (setq madx-keywords-2   ;; 2 - commands ;;
-      '("call" "beam" "plot" "survey" "value" "table" "tabindex" "tabstring" "twiss" "match" "endmatch" "vary" "constraint" "track" "endtrack" "start" "run" "exit" "quit" "observe" "ibs" "line" "makethin" "aperture" "sixtrack" "dynap" "emit" "weight" "global" "gweight" "ptc_twiss" "ptc_printparametric" "ptc_normal" "select_ptc_normal" "ptc_track" "ptc_track_line" "ptc_create_universe" "ptc_create_layout" "ptc_read_errors" "ptc_move_to_layout" "ptc_align" "ptc_end" "ptc_track_end" "ptc_observe" "ptc_start" "ptc_setswitch" "ptc_knob" "ptc_setknobvalue" "match withptcknobs" "ptc_printframes" "ptc_select" "ptc_select_moment" "ptc_dumpmaps" "ptc_eplacement" "ptc_varyknob" "end_match" "ptc_moments" "ptc_setcavities" "ptc_setdebuglevel" "ptc_setaccel_method" "ptc_setexactmis" "ptc_setradiation" "ptc_settotalpath" "ptc_settime" "ptc_setfringe" "help" "show" "option" "exec" "set" "system" "title" "use" "select" "assign" "return" "print" "printf" "renamefile" "copyfile" "removefile" "create" "delete" "readtable" "readmytable" "write" "setvars" "setvars_lin" "fill" "shrink" "resbeam" "seqedit" "flatten" "cycle" "reflect" "install" "move" "remove" "replace" "extract" "endedit" "dumpsequ" "savebeta" "coguess" "const" "eoption" "esave" "real" "lmdif" "migrad" "simplex" "jacobian" "use_macro" "correct" "usemonitor" "usekick" "csave" "setcorr" "coption" "sodd" "sxfread" "sxfwrite" "touschek"  ))
+      '("call" "beam" "plot" "survey" "value" "table" "tabindex" "tabstring" "twiss" "match" "endmatch" "vary" "constraint" "track" "endtrack" "start" "run" "exit" "quit" "observe" "ibs" "line" "makethin" "aperture" "sixtrack" "dynap" "emit" "weight" "global" "gweight" "ptc_twiss" "ptc_printparametric" "ptc_normal" "select_ptc_normal" "ptc_track" "ptc_track_line" "ptc_create_universe" "ptc_create_layout" "ptc_read_errors" "ptc_move_to_layout" "ptc_align" "ptc_end" "ptc_track_end" "ptc_observe" "ptc_start" "ptc_setswitch" "ptc_knob" "ptc_setknobvalue" "match withptcknobs" "ptc_printframes" "ptc_select" "ptc_select_moment" "ptc_dumpmaps" "ptc_eplacement" "ptc_varyknob" "end_match" "ptc_moments" "ptc_setcavities" "ptc_setdebuglevel" "ptc_setaccel_method" "ptc_setexactmis" "ptc_setradiation" "ptc_settotalpath" "ptc_settime" "ptc_setfringe" "help" "show" "option" "exec" "set" "system" "title" "use" "select" "assign" "return" "print" "printf" "renamefile" "copyfile" "removefile" "create" "delete" "readtable" "readmytable" "write" "setvars" "setvars_lin" "fill" "shrink" "resbeam" "seqedit" "flatten" "cycle" "reflect" "install" "move" "remove" "replace" "extract" "endedit" "dumpsequ" "savebeta" "coguess" "const" "eoption" "esave" "real" "lmdif" "migrad" "simplex" "jacobian" "use_macro" "correct" "usemonitor" "usekick" "csave" "setcorr" "coption" "sodd" "sxfread" "sxfwrite" "touschek" "eprint" "ealign" "efcomp" ))
 (setq madx-keywords-3    ;; 3 - beamlines  ;;
       '("drift" "quadrupole" "sextupole" "octupole" "solenoid" "crabcavity" "rfcavity" "dipedge" "multipole" "collimator" "ecollimator" "rcollimator" "yrotation" "srotation" "translation" "changeref" "marker" "rbend" "sbend" "hkicker" "vkicker" "kicker" "tkicker" "elseparator" "hmonitor" "vmonitor" "monitor" "instrument" "placeholder" "beambeam" "matrix" "nllens" "rfmultipole"))
 (setq madx-keywords-4    ;; 4 - arguments, keywords ;;
-      '("file" "flag" "sequence" "endsequence" "refer" "particle" "energy" "column" "e" "s" "l" "k1" "angle" "name" "haxis" "vaxis" "betx" "bety" "alfx" "alfy" "emitx" "emity" "centre" "save" "positron" "electron" "proton" "antiproton" "posmuon" "negmuon" "ion" "pi" "twopi" "degrad" "raddeg" "entry" "centre" "exit" "circle" "rectangle" "ellipse" "emass" "pmass" "nmass" "mumass" "clight"))
+      '("file" "flag" "sequence" "endsequence" "refer" "particle" "energy" "column" "e" "s" "l" "k1" "angle" "name" "haxis" "vaxis" "betx" "bety" "alfx" "alfy" "emitx" "emity" "dx" "dy" "dpx" "dpy" "mux" "muy" "centre" "save" "positron" "electron" "proton" "antiproton" "posmuon" "negmuon" "ion" "pi" "twopi" "degrad" "raddeg" "entry" "centre" "exit" "circle" "rectangle" "ellipse" "emass" "pmass" "nmass" "mumass" "clight" "seed" "add" "pattern" "echo"))
 ;; -- "qelect" "hbar" "erad" "prad" "simple" "collim" "teapot" "hybrid"
 
 (setq madx-keywords-5    ;; 6 - math ;;
@@ -143,41 +145,67 @@
 ;;     [7] フックする拡張子 の設定          ;;
 ;; ---------------------------------------- ;;
 (add-to-list 'auto-mode-alist '("\\.madx\\'" . madx-mode))
+(add-to-list 'auto-mode-alist '("\\.seq\\'"  . madx-mode))
 
 ;; ---------------------------------------- ;;
 ;;     [8] インデント                       ;;
 ;; ---------------------------------------- ;;
-;; --- 全部スペースでインデント         --- ;;
-(add-hook 'javascript-mode-hook '(lambda() (setq indent-tabs-mode nil)))
 
-;; --- 全部スペースでインデント         --- ;;
+;; indent :: base == js ;;
+(require 'js)
 (defun madx-inside-sequence-p ()
-  "Return non-nil if the current line is inside a SEQUENCE...ENDSEQUENCE block."
+  "Return non-nil if point is inside a sequence ... endsequence, match ... end match block."
   (save-excursion
-    (let ((seq-pos nil)
-          (endseq-pos nil))
-      ;; 現在行より前の SEQUENCE を探す
-      (when (re-search-backward "^[ \t]*SEQUENCE\\b" nil t)
-        (setq seq-pos (point)))
-      (goto-char (point-at-bol))
-      ;; 現在行より後の ENDSEQUENCE を探す
-      (when (re-search-forward "^[ \t]*ENDSEQUENCE\\b" nil t)
-        (setq endseq-pos (point)))
-      ;; どちらも見つかり、かつ現在位置がその間なら t
-      (and seq-pos endseq-pos
-           (> endseq-pos (point))
-           (< seq-pos (point))))))
+    (let ((start nil) (end nil))
+      (save-excursion
+        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?sequence\\b" nil t)
+          (setq start (point))))
+      (save-excursion
+        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?match\\b" nil t)
+          (setq start (point))))
+      (save-excursion
+        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endsequence\\b" nil t)
+          (setq end (point))))
+      (save-excursion
+        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endmatch\\b" nil t)
+          (setq end (point))))
+      (and start (or (not end) (> start end))))))
+
+;; indent :: base == js ;;
+
+(defvar madx-basic-indent 2
+  "MAD-X mode basic indentation step.")
 
 (defun madx-indent-line ()
-  "Indent current line if inside SEQUENCE...ENDSEQUENCE block."
+  "Indent using js-mode-like logic, and increase indent inside sequence blocks."
   (interactive)
-  (let ((indent (if (madx-inside-sequence-p) tab-width 0)))
-    (save-excursion
-      (beginning-of-line)
-      (delete-horizontal-space)
-      (indent-to indent))
-    (when (looking-back "^[ \t]*" (line-beginning-position))
-      (back-to-indentation))))
+  ;; ベースインデントを仮取得
+  (let ((base-indent
+         (save-excursion
+           (beginning-of-line)
+           (let ((pos (point)))
+             ;; js風インデントを適用して、そのインデント幅を取得する
+             (if (fboundp 'js-indent-line)
+                 (progn
+                   (funcall 'js-indent-line)
+                   (current-indentation))
+               (current-indentation)))))
+        (line (thing-at-point 'line t)))
+
+    ;; endsequence の行は特別扱い：インデントを 1 段階減らす
+    (cond
+     ((string-match-p "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endsequence\\b" line)
+      (indent-line-to (max 0 (- base-indent madx-basic-indent))))
+     ((string-match-p "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endmatch\\b" line)
+      (indent-line-to (max 0 (- base-indent madx-basic-indent))))
+
+     ;; sequenceブロック中の行は base + 1 段階
+     ((madx-inside-sequence-p)
+      (indent-line-to (+ base-indent madx-basic-indent)))
+
+     ;; その他は base-indent にする
+     (t
+      (indent-line-to base-indent)))))
 
 ;; ---------------------------------------- ;;
 ;;         provide                          ;;
