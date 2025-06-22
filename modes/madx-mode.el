@@ -24,7 +24,6 @@
   (highlight-numbers-inside-strings-in-madx)
   (highlight-strings-in-madx)
   (highlight-operators-in-madx)
-  (highlight-keywords-in-madx)
   )
 
 ;; ---------------------------------------- ;;
@@ -63,13 +62,13 @@
 
 ;;    -- [3-2] キーワード群の列挙  --       ;; 
 (setq madx-keywords-1   ;; 1 - system controls ;;
-      '( "if" "elseif" "else" "stop" "while" "macro" "error" "seterr" "true" "false"))
+      '( "if" "elseif" "else" "stop" "while" "macro" "error" "seterr" "true" "false" "umass" ))
 (setq madx-keywords-2   ;; 2 - commands ;;
-      '("call" "beam" "plot" "survey" "value" "table" "tabindex" "tabstring" "twiss" "match" "endmatch" "vary" "constraint" "track" "endtrack" "start" "run" "exit" "quit" "observe" "ibs" "line" "makethin" "aperture" "sixtrack" "dynap" "emit" "weight" "global" "gweight" "ptc_twiss" "ptc_printparametric" "ptc_normal" "select_ptc_normal" "ptc_track" "ptc_track_line" "ptc_create_universe" "ptc_create_layout" "ptc_read_errors" "ptc_move_to_layout" "ptc_align" "ptc_end" "ptc_track_end" "ptc_observe" "ptc_start" "ptc_setswitch" "ptc_knob" "ptc_setknobvalue" "match withptcknobs" "ptc_printframes" "ptc_select" "ptc_select_moment" "ptc_dumpmaps" "ptc_eplacement" "ptc_varyknob" "end_match" "ptc_moments" "ptc_setcavities" "ptc_setdebuglevel" "ptc_setaccel_method" "ptc_setexactmis" "ptc_setradiation" "ptc_settotalpath" "ptc_settime" "ptc_setfringe" "help" "show" "option" "exec" "set" "system" "title" "use" "select" "assign" "return" "print" "printf" "renamefile" "copyfile" "removefile" "create" "delete" "readtable" "readmytable" "write" "setvars" "setvars_lin" "fill" "shrink" "resbeam" "seqedit" "flatten" "cycle" "reflect" "install" "move" "remove" "replace" "extract" "endedit" "dumpsequ" "savebeta" "coguess" "const" "eoption" "esave" "real" "lmdif" "migrad" "simplex" "jacobian" "use_macro" "correct" "usemonitor" "usekick" "csave" "setcorr" "coption" "sodd" "sxfread" "sxfwrite" "touschek" "eprint" "ealign" "efcomp" ))
+      '("call" "beam" "plot" "survey" "value" "table" "tabindex" "tabstring" "twiss" "match" "endmatch" "vary" "constraint" "track" "endtrack" "start" "run" "exit" "quit" "observe" "ibs" "line" "makethin" "aperture" "sixtrack" "dynap" "emit" "weight" "global" "gweight" "ptc_twiss" "ptc_printparametric" "ptc_normal" "select_ptc_normal" "ptc_track" "ptc_trackline" "ptc_create_universe" "ptc_create_layout" "ptc_read_errors" "ptc_move_to_layout" "ptc_align" "ptc_end" "ptc_track_end" "ptc_observe" "ptc_start" "ptc_setswitch" "ptc_knob" "ptc_setknobvalue" "match withptcknobs" "ptc_printframes" "ptc_select" "ptc_select_moment" "ptc_dumpmaps" "ptc_eplacement" "ptc_varyknob" "end_match" "ptc_moments" "ptc_setcavities" "ptc_setdebuglevel" "ptc_setaccel_method" "ptc_setexactmis" "ptc_setradiation" "ptc_settotalpath" "ptc_settime" "ptc_setfringe" "help" "show" "option" "exec" "set" "system" "title" "use" "select" "assign" "return" "print" "printf" "renamefile" "copyfile" "removefile" "create" "delete" "readtable" "readmytable" "write" "setvars" "setvars_lin" "fill" "shrink" "resbeam" "seqedit" "flatten" "cycle" "reflect" "install" "move" "remove" "replace" "extract" "endedit" "dumpsequ" "savebeta" "coguess" "const" "eoption" "esave" "real" "lmdif" "migrad" "simplex" "jacobian" "use_macro" "correct" "usemonitor" "usekick" "csave" "setcorr" "coption" "sodd" "sxfread" "sxfwrite" "touschek" "eprint" "ealign" "efcomp" ))
 (setq madx-keywords-3    ;; 3 - beamlines  ;;
       '("drift" "quadrupole" "sextupole" "octupole" "solenoid" "crabcavity" "rfcavity" "dipedge" "multipole" "collimator" "ecollimator" "rcollimator" "yrotation" "srotation" "translation" "changeref" "marker" "rbend" "sbend" "hkicker" "vkicker" "kicker" "tkicker" "elseparator" "hmonitor" "vmonitor" "monitor" "instrument" "placeholder" "beambeam" "matrix" "nllens" "rfmultipole"))
 (setq madx-keywords-4    ;; 4 - arguments, keywords ;;
-      '("file" "flag" "sequence" "endsequence" "refer" "particle" "energy" "column" "e" "s" "l" "k1" "angle" "name" "haxis" "vaxis" "betx" "bety" "alfx" "alfy" "emitx" "emity" "dx" "dy" "dpx" "dpy" "mux" "muy" "centre" "save" "positron" "electron" "proton" "antiproton" "posmuon" "negmuon" "ion" "pi" "twopi" "degrad" "raddeg" "entry" "centre" "exit" "circle" "rectangle" "ellipse" "emass" "pmass" "nmass" "mumass" "clight" "seed" "add" "pattern" "echo"))
+      '("file" "flag" "sequence" "endsequence" "refer" "particle" "mass" "charge" "energy" "column" "e" "s" "l" "k1" "angle" "name" "haxis" "vaxis" "betx" "bety" "betz" "alfx" "alfy" "emitx" "emity" "dx" "dy" "dpx" "dpy" "mux" "muy" "centre" "save" "positron" "electron" "proton" "antiproton" "posmuon" "negmuon" "ion" "pi" "twopi" "degrad" "raddeg" "entry" "centre" "exit" "circle" "rectangle" "ellipse" "emass" "pmass" "nmass" "mumass" "clight" "seed" "add" "pattern" "echo" "model" "method" "nst" "time" "totalpath" "beta0" "icase" "onetable" "exact" "maxacceleration" "debuglevel" ))
 ;; -- "qelect" "hbar" "erad" "prad" "simple" "collim" "teapot" "hybrid"
 
 (setq madx-keywords-5    ;; 6 - math ;;
@@ -151,25 +150,69 @@
 ;;     [8] インデント                       ;;
 ;; ---------------------------------------- ;;
 
+;; ;; indent :: base == js ;;
+;; (require 'js)
+;; (defun madx-inside-sequence-p ()
+;;   "Return non-nil if point is inside a sequence ... endsequence, match ... end match block."
+;;   (save-excursion
+;;     (let ((start nil) (end nil))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?sequence\\b" nil t)
+;;           (setq start (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?match\\b" nil t)
+;;           (setq start (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?track\\b" nil t)
+;;           (setq start (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?ptc_track\\b" nil t)
+;;           (setq start (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?ptc_create_universe\\b" nil t)
+;;           (setq start (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endsequence\\b" nil t)
+;;           (setq end (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endmatch\\b" nil t)
+;;           (setq end (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endtrack\\b" nil t)
+;;           (setq end (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?ptc_track_end\\b" nil t)
+;;           (setq end (point))))
+;;       (save-excursion
+;;         (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?ptc_end\\b" nil t)
+;;           (setq end (point))))
+;;       (and start (or (not end) (> start end))))))
+
 ;; indent :: base == js ;;
 (require 'js)
 (defun madx-inside-sequence-p ()
-  "Return non-nil if point is inside a sequence ... endsequence, match ... end match block."
+  "Return non-nil if point is inside a MAD-X block like sequence, match, track, etc."
   (save-excursion
-    (let ((start nil) (end nil))
-      (save-excursion
-        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?sequence\\b" nil t)
-          (setq start (point))))
-      (save-excursion
-        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?match\\b" nil t)
-          (setq start (point))))
-      (save-excursion
-        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endsequence\\b" nil t)
-          (setq end (point))))
-      (save-excursion
-        (when (re-search-backward "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endmatch\\b" nil t)
-          (setq end (point))))
+    (let ((start nil)
+          (end nil)
+	  ;; 開始キーワード 定義
+	  (start-keywords '("sequence" "match" "track" "ptc_create_universe"))
+	  ;; 終了キーワード 定義
+          (end-keywords '("endsequence" "endmatch" "endtrack" "ptc_end")))
+      ;;  --- 開始 マッチ ---  ;;
+      (dolist (kw start-keywords)
+        (unless start
+          (save-excursion
+            (when (re-search-backward (format "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?%s\\b" kw) nil t)
+              (setq start (point))))))
+      ;;  --- 終了 マッチ ---  ;;
+      (dolist (kw end-keywords)
+        (unless end
+          (save-excursion
+            (when (re-search-backward (format "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?%s\\b" kw) nil t)
+              (setq end (point))))))
       (and start (or (not end) (> start end))))))
+
 
 ;; indent :: base == js ;;
 
@@ -197,6 +240,12 @@
      ((string-match-p "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endsequence\\b" line)
       (indent-line-to (max 0 (- base-indent madx-basic-indent))))
      ((string-match-p "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endmatch\\b" line)
+      (indent-line-to (max 0 (- base-indent madx-basic-indent))))
+     ((string-match-p "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?endtrack\\b" line)
+      (indent-line-to (max 0 (- base-indent madx-basic-indent))))
+     ((string-match-p "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?ptc_track_end\\b" line)
+      (indent-line-to (max 0 (- base-indent madx-basic-indent))))
+     ((string-match-p "^\\s-*\\(?:[A-Za-z0-9_]+:\\s-*\\)?ptc_end\\b" line)
       (indent-line-to (max 0 (- base-indent madx-basic-indent))))
 
      ;; sequenceブロック中の行は base + 1 段階
