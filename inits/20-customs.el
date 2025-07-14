@@ -84,6 +84,7 @@
 (require 'jsonc-mode)
 (require 'rst-extensions)
 (require 'madx-mode)
+(require 'opal-mode)
 
 ;; --------------------------------------- ;;
 ;; --- [2] yasnippets                  --- ;;
