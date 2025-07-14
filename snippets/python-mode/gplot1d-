@@ -3,8 +3,8 @@
 # key: gplot1d-
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
-import nkUtilities.load__config   as lcf
-import nkUtilities.gplot1D        as gp1
+import nk_toolkit.plot.load__config   as lcf
+import nk_toolkit.plot.gplot1D        as gp1
 
 config   = lcf.load__config()
 config_  = {
@@ -24,7 +24,7 @@ config_  = {
 config = { **config, **config_ }
     
 fig    = gp1.gplot1D( config=config )
-fig.add__plot( xAxis=Data[:,0], yAxis=Data[:,1], label="sample" )
+fig.add__plot( xAxis=xAxis, yAxis=yAxis, label="sample" )
 fig.set__axis()
 fig.set__legend()
 fig.save__figure()
